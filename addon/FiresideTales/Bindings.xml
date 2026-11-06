@@ -1,0 +1,11 @@
+<Bindings>
+	<Binding name="FIRESIDETALES_SPEAK" header="FIRESIDETALES">
+		FiresideTales_Speak()
+	</Binding>
+	<Binding name="FIRESIDETALES_SKIP">
+		FiresideTales_Skip()
+	</Binding>
+	<Binding name="FIRESIDETALES_STORIES">
+		FiresideTales_ToggleStories()
+	</Binding>
+</Bindings>

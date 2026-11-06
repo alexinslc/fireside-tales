@@ -1,0 +1,7 @@
+# Stories stay on this computer for now.
+addon/FiresideTales/Stories*.lua
+addon/FiresideTales/More*.lua
+addon/FiresideTales/MyStories.lua
+
+# Built zips contain the stories.
+dist/

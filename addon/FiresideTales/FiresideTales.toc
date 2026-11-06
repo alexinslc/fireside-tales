@@ -1,0 +1,24 @@
+## Interface: 16001
+## Title: Fireside Tales
+## Notes: Offers in-character lines as you play, and a menu of stories for each character to tell one line at a time.
+## Version: 0.7.0
+## SavedVariables: FiresideTalesDB
+
+Lines.lua
+Stories.lua
+StoriesCharacters.lua
+StoriesRaces.lua
+StoriesClasses.lua
+StoryData.lua
+MoreCharacters1.lua
+MoreCharacters2.lua
+MoreRaces.lua
+MoreClasses.lua
+MoreShared.lua
+MoreZones.lua
+StoriesTargeted.lua
+MyStories.lua
+Core.lua
+StoryMenu.lua
+TellerBar.lua
+MinimapButton.lua
