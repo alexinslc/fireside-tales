@@ -3,7 +3,8 @@ local _, ns = ...
 
 ns.ZoneStories = {}
 
--- Story files aren't in the repository, so a fresh copy may not have these yet.
+-- Some story files stay local and aren't in the repository, so a fresh copy may
+-- not have these yet.
 ns.Stories = ns.Stories or {}
 ns.CharacterStories = ns.CharacterStories or {}
 ns.RaceStories = ns.RaceStories or {}

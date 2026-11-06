@@ -284,6 +284,7 @@ function handlers.ADDON_LOADED(name)
 	if db.settings.enabled == nil then db.settings.enabled = true end
 	db.settings.cooldown = db.settings.cooldown or 30
 	db.chars = db.chars or {}
+	db.imported = db.imported or {} -- Stories from the Add Stories window.
 	buildFrame()
 end
 
@@ -365,14 +366,14 @@ BINDING_NAME_FIRESIDETALES_SKIP = "Skip the offered line"
 BINDING_NAME_FIRESIDETALES_STORIES = "Open or close the story menu"
 
 local function showStatus()
-	say(("%s the %s %s: prompts %s, cooldown %ds, %d stories, %d of them personal."):format(
+	say(("%s the %s %s: prompts %s, cooldown %ds, %d stories for you, %d pasted in across all characters."):format(
 		charKey,
 		UnitRace("player"),
 		UnitClass("player"),
 		db.settings.enabled and "on" or "off",
 		db.settings.cooldown,
 		ns.Story.Count(),
-		#(ns.CharacterStories[charKey] or {})
+		ns.Import.Count()
 	))
 end
 
@@ -381,6 +382,8 @@ SlashCmdList.FIRESIDETALES = function(input)
 	local command, argument = (input or ""):lower():match("^%s*(%S*)%s*(.-)%s*$")
 	if command == "stories" then
 		ns.Story.Toggle()
+	elseif command == "add" then
+		ns.Import.Toggle()
 	elseif command == "minimap" then
 		ns.ToggleMinimapButton()
 	elseif command == "on" or command == "off" then
@@ -399,6 +402,6 @@ SlashCmdList.FIRESIDETALES = function(input)
 	elseif command == "status" then
 		showStatus()
 	else
-		say("/tales stories | minimap | on | off | status | cooldown <seconds> | test [zone_enter, quest_done, level_up, death]")
+		say("/tales stories | add | minimap | on | off | status | cooldown <seconds> | test [zone_enter, quest_done, level_up, death]")
 	end
 end

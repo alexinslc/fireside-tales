@@ -38,7 +38,8 @@ local MOODS = {
 }
 
 local window, reader, readerContent, readerText, status, speakButton, restartButton
-local favoriteButton, tonightButton, clearFiltersButton
+local favoriteButton, tonightButton, deleteButton, clearFiltersButton
+local confirmingDelete = false
 local list, listContent, countLabel, emptyLabel, searchBox
 local rows, headers = {}, {}
 local sections
@@ -79,16 +80,32 @@ local function getSections()
 	-- Both Skyborne races share one list, and their exact token isn't known.
 	local raceKey = (raceName .. raceToken):find("Skyborne") and "Skyborne" or raceToken
 
-	add("mine", name, ns.CharacterStories[name])
-	add("race", raceName, ns.RaceStories[raceKey])
-	add("class", className, ns.ClassStories[classToken])
-	add("target", "Target Someone First", ns.TargetStories)
-	for _, story in ipairs(ns.TargetStories) do
+	-- A built-in list plus any stories pasted into the Add Stories window.
+	local imported = ns.GetDB().imported
+	local function withPasted(builtIn, kind, listKey)
+		local merged = {}
+		for _, story in ipairs(builtIn or {}) do
+			merged[#merged + 1] = story
+		end
+		for _, story in ipairs(imported) do
+			if story.kind == kind and story.listKey == listKey then
+				merged[#merged + 1] = story
+			end
+		end
+		return merged
+	end
+
+	add("mine", name, withPasted(ns.CharacterStories[name], "character", name))
+	add("race", raceName, withPasted(ns.RaceStories[raceKey], "race", raceKey))
+	add("class", className, withPasted(ns.ClassStories[classToken], "class", classToken))
+	local targetStories = withPasted(ns.TargetStories, "target")
+	add("target", "Target Someone First", targetStories)
+	for _, story in ipairs(targetStories) do
 		story.needsTarget = true
 	end
 
 	local themes = {}
-	for _, story in ipairs(ns.Stories) do
+	for _, story in ipairs(withPasted(ns.Stories, "shared")) do
 		if not themes[story.theme] then
 			themes[story.theme] = {}
 			sections[#sections + 1] = { source = "shared", header = story.theme, stories = themes[story.theme] }
@@ -96,13 +113,22 @@ local function getSections()
 		table.insert(themes[story.theme], story)
 	end
 
-	local zones = {}
+	local zoneNames = {}
 	for zone in pairs(ns.ZoneStories) do
+		zoneNames[zone] = true
+	end
+	for _, story in ipairs(imported) do
+		if story.kind == "zone" then
+			zoneNames[story.listKey] = true
+		end
+	end
+	local zones = {}
+	for zone in pairs(zoneNames) do
 		zones[#zones + 1] = zone
 	end
 	table.sort(zones)
 	for _, zone in ipairs(zones) do
-		add("places", zone, ns.ZoneStories[zone])
+		add("places", zone, withPasted(ns.ZoneStories[zone], "zone", zone))
 	end
 
 	for _, section in ipairs(sections) do
@@ -197,6 +223,7 @@ local function refreshReader()
 		restartButton:Disable()
 		favoriteButton:Disable()
 		tonightButton:Disable()
+		deleteButton:Hide()
 		return
 	end
 
@@ -209,6 +236,9 @@ local function refreshReader()
 	tonightButton:Enable()
 	tonightButton:SetText(onTonight and "On Tonight" or "Add to Tonight")
 	ns.SetFlatButtonOn(tonightButton, onTonight)
+	-- Only pasted stories have a kind, and only they can be deleted here.
+	deleteButton:SetShown(currentStory.kind ~= nil)
+	deleteButton:SetText(confirmingDelete and "Sure?" or "Delete")
 
 	local total = #currentStory.lines
 	local heading = COLOR_THEME .. currentStory.title .. "|r"
@@ -269,6 +299,7 @@ local function selectStory(story)
 	currentStory = story
 	nextLine = 1
 	storyTarget = nil
+	confirmingDelete = false
 	ns.Teller.StopCue()
 	refreshRowColors()
 	refreshReader()
@@ -349,8 +380,12 @@ local function getHereStories()
 		end
 	end
 
-	for _, story in ipairs(ns.ZoneStories[zone] or {}) do
-		addStory(story)
+	for _, section in ipairs(getSections()) do
+		if section.source == "places" and section.header == zone then
+			for _, story in ipairs(section.stories) do
+				addStory(story)
+			end
+		end
 	end
 	for _, section in ipairs(getSections()) do
 		-- Tales of other places stay put even if they mention this one in passing.
@@ -561,6 +596,40 @@ local function clearTonight()
 	refreshReader()
 end
 
+-- Rebuilds the menu after stories are pasted in or deleted.
+function ns.Story.StoriesChanged()
+	sections = nil
+	wipe(storyByKey)
+	hereZone, hereList, hereSet = nil, nil, nil
+	if not window then return end
+	currentStory = nil
+	nextLine = 1
+	storyTarget = nil
+	confirmingDelete = false
+	filters.source = nil
+	ns.Teller.Hide()
+	refreshSelectors()
+	renderList()
+	refreshReader()
+end
+
+-- The first click asks, and the second deletes.
+local function deleteCurrent()
+	if not confirmingDelete then
+		confirmingDelete = true
+		refreshReader()
+		return
+	end
+	local imported = ns.GetDB().imported
+	for index, story in ipairs(imported) do
+		if story == currentStory then
+			table.remove(imported, index)
+			break
+		end
+	end
+	ns.Story.StoriesChanged()
+end
+
 local function setSearch(text)
 	filters.words = {}
 	for word in text:lower():gmatch("%S+") do
@@ -697,16 +766,19 @@ local function buildFilters()
 	searchBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
 
 	-- Only offer sources this character actually has stories in.
-	local sources = { { key = nil, label = "All" }, { key = "here", label = "Here" } }
-	local grouped = { shared = "Everyone", places = "Places", target = "Target" }
-	local seen = {}
-	for _, section in ipairs(getSections()) do
-		if not seen[section.source] then
-			seen[section.source] = true
-			sources[#sources + 1] = { key = section.source, label = grouped[section.source] or section.header }
+	local function getSources()
+		local sources = { { key = nil, label = "All" }, { key = "here", label = "Here" } }
+		local grouped = { shared = "Everyone", places = "Places", target = "Target" }
+		local seen = {}
+		for _, section in ipairs(getSections()) do
+			if not seen[section.source] then
+				seen[section.source] = true
+				sources[#sources + 1] = { key = section.source, label = grouped[section.source] or section.header }
+			end
 		end
+		return sources
 	end
-	local fromButton = buildSelector("From", "source", function() return sources end, 118)
+	local fromButton = buildSelector("From", "source", getSources, 118)
 	fromButton:SetPoint("TOPLEFT", searchBox, "TOPRIGHT", 10, 1)
 
 	local moods = { { key = nil, label = "All" } }
@@ -782,13 +854,18 @@ local function buildReader()
 	status = window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	status:SetPoint("BOTTOMLEFT", LIST_WIDTH + 30, 40)
 
-	favoriteButton = ns.MakeFlatButton(window, "Favorite", 64)
+	favoriteButton = ns.MakeFlatButton(window, "Favorite", 60)
 	favoriteButton:SetPoint("BOTTOMLEFT", LIST_WIDTH + 30, 12)
 	favoriteButton:SetScript("OnClick", toggleFavorite)
 
-	tonightButton = ns.MakeFlatButton(window, "Add to Tonight", 96)
+	tonightButton = ns.MakeFlatButton(window, "Add to Tonight", 90)
 	tonightButton:SetPoint("LEFT", favoriteButton, "RIGHT", 4, 0)
 	tonightButton:SetScript("OnClick", toggleTonight)
+
+	deleteButton = ns.MakeFlatButton(window, "Delete", 44)
+	deleteButton:SetPoint("LEFT", tonightButton, "RIGHT", 4, 0)
+	deleteButton:SetScript("OnClick", deleteCurrent)
+	deleteButton:Hide()
 
 	-- Speak is the one main action, so it's the only raised button here.
 	speakButton = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
@@ -821,6 +898,10 @@ local function buildWindow()
 
 	local close = CreateFrame("Button", nil, window, "UIPanelCloseButton")
 	close:SetPoint("TOPRIGHT", -2, -2)
+
+	local addStories = ns.MakeFlatButton(window, "Add Stories", 76)
+	addStories:SetPoint("TOPRIGHT", -34, -8)
+	addStories:SetScript("OnClick", ns.Import.Toggle)
 
 	buildList()
 	buildReader()

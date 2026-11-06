@@ -1,7 +1,12 @@
-# Stories stay on this computer for now.
-addon/FiresideTales/Stories*.lua
-addon/FiresideTales/More*.lua
-addon/FiresideTales/MyStories.lua
+# These stories stay on this computer. Stories.lua, MoreShared.lua, and
+# StoriesTargeted.lua are the starter stories that everyone gets.
+addon/FiresideTales/StoriesCharacters.lua
+addon/FiresideTales/StoriesRaces.lua
+addon/FiresideTales/StoriesClasses.lua
+addon/FiresideTales/MoreCharacters*.lua
+addon/FiresideTales/MoreRaces.lua
+addon/FiresideTales/MoreClasses.lua
+addon/FiresideTales/MoreZones.lua
 
-# Built zips contain the stories.
+# Built zips.
 dist/

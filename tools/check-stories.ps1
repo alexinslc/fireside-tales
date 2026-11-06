@@ -8,8 +8,7 @@
 #>
 [CmdletBinding()]
 param(
-    # A shared copy keeps this script in the addon's own folder.
-    [string]$AddonDir = $(if (Test-Path (Join-Path $PSScriptRoot 'FiresideTales.toc')) { $PSScriptRoot } else { Join-Path $PSScriptRoot '..\addon\FiresideTales' }),
+    [string]$AddonDir = (Join-Path $PSScriptRoot '..' 'addon' 'FiresideTales'),
     [string]$File
 )
 
@@ -29,7 +28,15 @@ $structural = @(
 
 $files = if ($File) { @(Split-Path $File -Leaf) } else {
     Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') |
-        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(Lines|StoryData|Core|StoryMenu|TellerBar|MinimapButton)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
+        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(Lines|StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
+}
+
+# Macs can treat file names as case-sensitive, so a .toc entry must match exactly.
+$actualNames = @(Get-ChildItem -LiteralPath $AddonDir -File | ForEach-Object Name)
+foreach ($entry in Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') | Where-Object { $_ -match '\.lua$' }) {
+    if ($entry -match '[\\/]') { $problems.Add("FiresideTales.toc: '$entry' uses a path separator") }
+    $match = $actualNames | Where-Object { $_ -ieq $entry }
+    if ($match -and $match -cne $entry) { $problems.Add("FiresideTales.toc: '$entry' doesn't match the file's capitalization: $match") }
 }
 
 $grandTotal = 0
