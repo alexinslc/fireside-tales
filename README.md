@@ -22,7 +22,7 @@ An addon for telling stories at the campfire in World of Warcraft: Forever, one 
 It comes in two halves:
 
 - **The storytelling:** a story menu with filters, a small teller bar, favorites, and an evening list.
-- **The stories:** a starter set that fits any character, plus **Write My Story**, which helps you use an AI to write your own character's stories right from the game.
+- **The stories:** a shared collection for every race, class, and zone, plus **Write My Story**, which helps you use an AI to write your own character's stories right from the game.
 
 The addon never sends chat by itself. The game requires a key press or click for `/say` and `/e` outside instances, so every line waits for you to press Speak.
 
@@ -138,6 +138,7 @@ Built-in stories are in `addon/FiresideTales/`:
 
 - **Starter stories for everyone:** `Stories.lua` and `MoreShared.lua`.
 - **Starter stories told to a target:** `StoriesTargeted.lua`. Write `{target}` where the name goes, and describe only what the teller does, never what the listener does or feels.
+- **Race, class, and zone stories:** `StoriesRaces.lua`, `MoreRaces.lua`, `StoriesClasses.lua`, `MoreClasses.lua`, and `MoreZones.lua`.
 - **Automatic prompt lines:** `Lines.lua`.
 
 Each story needs a `title`, a `mood` (`funny`, `heartfelt`, `dark`, `action`, `spooky`, or `wise`), and `lines`. Shared stories also need a `theme`.
@@ -156,7 +157,7 @@ Any other story files in `.gitignore` stay on the computer that has them, with n
 
 ### Building the zip
 
-This builds `dist/FiresideTales-<version>.zip` with the addon, starter stories, and prompts, and without local stories:
+This builds `dist/FiresideTales-<version>.zip` with the addon, shared stories, and prompts, and without local stories:
 
 ```powershell
 ./tools/build-release.ps1
