@@ -88,6 +88,7 @@ function ns.PlaceFrame(target, key, ...)
 	end
 end
 
+-- For small frames: dark, with a border in the bronze of the game's own windows.
 function ns.ApplyBackdrop(target)
 	target:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -95,11 +96,59 @@ function ns.ApplyBackdrop(target)
 		edgeSize = 16,
 		insets = { left = 4, right = 4, top = 4, bottom = 4 },
 	})
-	target:SetBackdropColor(0.05, 0.05, 0.08, 0.92)
+	target:SetBackdropColor(0.06, 0.05, 0.04, 0.96)
+	target:SetBackdropBorderColor(0.72, 0.55, 0.32)
+end
+
+-- A full window in the game's own style: its border, title bar, round portrait, and
+-- close button. If the client doesn't have that template, a plain frame stands in.
+function ns.NewWindow(name, title, icon, width, height)
+	local ok, frame = pcall(CreateFrame, "Frame", name, UIParent, "PortraitFrameTemplate")
+	if ok and frame and frame.SetTitle then
+		frame:SetTitle(title)
+		if frame.SetPortraitToAsset then frame:SetPortraitToAsset(icon) end
+	else
+		frame = CreateFrame("Frame", name, UIParent, "BackdropTemplate")
+		ns.ApplyBackdrop(frame)
+		local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		text:SetPoint("TOP", 0, -8)
+		text:SetText(title)
+		local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+		close:SetPoint("TOPRIGHT", -2, -2)
+	end
+	frame:SetSize(width, height)
+	return frame
+end
+
+-- A recessed panel from the game, on its dark marble, to hold a list or a page.
+function ns.NewInset(parent)
+	local ok, inset = pcall(CreateFrame, "Frame", nil, parent, "InsetFrameTemplate")
+	if not ok or not inset then
+		inset = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+		ns.ApplyBackdrop(inset)
+		return inset
+	end
+	if type(inset.Bg) == "table" and inset.Bg.SetTexture then
+		inset.Bg:SetTexture("Interface\\FrameGeneral\\UI-Background-Marble", "REPEAT", "REPEAT")
+		inset.Bg:SetHorizTile(true)
+		inset.Bg:SetVertTile(true)
+		inset.Bg:SetVertexColor(1, 1, 1, 1)
+	end
+	return inset
 end
 
 -- A quiet button for everything except the one main action.
 function ns.MakeFlatButton(parent, label, width)
+	-- The game's own quiet button, as its filter buttons use, where the client has it.
+	local ok, native = pcall(CreateFrame, "Button", nil, parent, "UIMenuButtonStretchTemplate")
+	if ok and native then
+		native:SetSize(width, 22)
+		native:SetNormalFontObject("GameFontHighlightSmall")
+		native:SetDisabledFontObject("GameFontDisableSmall")
+		native:SetText(label)
+		return native
+	end
+
 	local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
 	button:SetSize(width, 22)
 	button:SetBackdrop({
@@ -108,7 +157,7 @@ function ns.MakeFlatButton(parent, label, width)
 		edgeSize = 1,
 	})
 	button:SetBackdropColor(1, 1, 1, 0.05)
-	button:SetBackdropBorderColor(1, 1, 1, 0.15)
+	button:SetBackdropBorderColor(0.72, 0.55, 0.32, 0.5)
 	button:SetNormalFontObject("GameFontHighlightSmall")
 	button:SetDisabledFontObject("GameFontDisableSmall")
 	button:SetText(label)
@@ -284,7 +333,7 @@ function handlers.ADDON_LOADED(name)
 	if db.settings.enabled == nil then db.settings.enabled = true end
 	db.settings.cooldown = db.settings.cooldown or 30
 	db.chars = db.chars or {}
-	db.imported = db.imported or {} -- Stories from the Add Stories window.
+	db.imported = db.imported or {} -- Stories from the Write My Story window.
 	buildFrame()
 end
 
@@ -298,6 +347,7 @@ function handlers.PLAYER_LOGIN()
 		told = saved.told or {}, -- Story key to the time it was last finished.
 		favorites = saved.favorites or {},
 		tonight = saved.tonight or {}, -- Story keys, in telling order.
+		about = saved.about, -- The player's description, for the Write My Story prompt.
 	}
 	db.chars[charKey] = char
 	ns.BuildMinimapButton()

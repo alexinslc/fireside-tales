@@ -221,7 +221,7 @@ local function build()
 	lineLabel:SetWordWrap(true)
 
 	divider = bar:CreateTexture(nil, "ARTWORK")
-	divider:SetColorTexture(1, 1, 1, 0.12)
+	divider:SetColorTexture(0.83, 0.69, 0.22, 0.25)
 	divider:SetPoint("TOPLEFT", lineLabel, "BOTTOMLEFT", 0, -5)
 	divider:SetSize(WIDTH - 24, 1)
 

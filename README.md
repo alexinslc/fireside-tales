@@ -1,11 +1,28 @@
 # Fireside Tales
 
+## The vision
+
+Fireside Tales is a rumor mill for World of Warcraft: Forever: a big, ever-growing collection of stories and legends that anyone can sit down and tell at a campfire. It's a fun side thing to the game, for people who want to tell a tale or stop and listen to one.
+
+If you're working on this project, whether you're a person or an AI, these are the goals that decide what to do:
+
+- **Keep adding stories.** The collection is the product. There should be so many that you always have something new to tell, whenever you reach a fire.
+- **Stories belong to everyone.** Zone, race, and class stories are welcome as long as they're generic enough for any character who fits to tell. Stories tied to one specific character stay out of the shared collection.
+- **Your own stories are what make you care.** The built-in stories give everyone something to tell, but telling your own character's story is what gives a player buy-in. Adding your own has to be easy, probably with the help of an AI, and they stay yours to tell at the fire.
+- **Stories work at a campfire.** Each one takes 60 seconds or less to tell, including the pauses that let people read. Add up each line's read cue from `TellerBar.lua` to estimate this: 3 seconds plus 1 for every 20 characters, between 4 and 14 per line.
+- **The addon stays stupid simple.** Pick a story and press Speak. A new feature has to earn its place, and it shouldn't make that any harder.
+- **Delight the players.** Favor whatever makes someone at the fire smile, lean in, or want to tell one of their own.
+
+For now, all the stories ship in this one addon. Text is small, so it doesn't need separate story packs, and it isn't on CurseForge yet.
+
+## What it is
+
 An addon for telling stories at the campfire in World of Warcraft: Forever, one line at a time, using `/say` and `/e`. It works on Windows and macOS.
 
 It comes in two halves:
 
 - **The storytelling:** a story menu with filters, a small teller bar, favorites, and an evening list.
-- **The stories:** a starter set that fits any character, plus prompts that get an AI to write more for yours, which you paste in from inside the game.
+- **The stories:** a starter set that fits any character, plus **Write My Story**, which helps you use an AI to write your own character's stories right from the game.
 
 The addon never sends chat by itself. The game requires a key press or click for `/say` and `/e` outside instances, so every line waits for you to press Speak.
 
@@ -57,7 +74,7 @@ The filters sit in one row above the list. They combine, and the count at the to
 - **Search:** type any words. A story matches if its title, theme, mood, or text contains all of them, such as `bear` or `winter inn`.
 - **From:** show only the stories for where you are, your character's own, your race's, your class's, the ones told to a target, the ones for everyone, or tales of places.
 - **Mood:** Funny, Heartfelt, Dark, Action, Spooky, or Wise.
-- **Show:** Favorites, stories you haven't told yet, or only Tonight's list.
+- **Show:** Favorites, stories you haven't told yet, stories you've added, or only Tonight's list.
 
 **Clear** appears while a filter is on and resets all four.
 
@@ -69,7 +86,7 @@ The list is built for whoever you're logged in as, in this order:
 
 1. **Tonight**, if you've added any
 2. **Here in your zone**: tales of the zone you're in, plus any of your other stories that mention it or a place in it. It updates as you travel.
-3. **Personal stories**, matched by the character's first name
+3. **Your character's tales**, matched by the character's first name. This section always lists all of them, so one that mentions your zone appears in both places.
 4. **Race stories**, chosen from what the game reports
 5. **Class stories**, chosen the same way
 6. **Target Someone First**, told to one listener
@@ -78,13 +95,18 @@ The list is built for whoever you're logged in as, in this order:
 
 To teach a zone new place names, add them to `ns.ZoneTerms` in `StoryData.lua`.
 
-## Adding stories with AI
+## Writing your own stories
 
-1. Pick a prompt from the addon's `prompts` folder, copy it into an AI, and fill in the bracketed parts. There are prompts for one character, a race or class, a zone, everyone, and stories told to someone by name.
-2. In the game, press **Add Stories** in the menu, or type `/tales add`.
-3. Paste what the AI wrote and press **Add**. A few stories at a time works best.
+1. Press **Write My Story** in the menu, or type `/tales add`.
+2. Optionally, write a sentence or two about your character. It's saved for next time, and without it the AI invents something.
+3. Press **Select Prompt**, copy it with Cmd+C or Ctrl+C, and paste it into any AI. Your character's name, race, class, and zone are already filled in.
+4. Paste the AI's answer into the bottom box and press **Add**. It's fine to paste the whole reply.
 
-The window says how many it added, and why it skipped any. Pasted stories are saved with your account, outside the addon's folder, so updating the addon doesn't remove them. **Delete** in the menu removes a pasted story.
+Your stories appear under **`<name>`'s Tales**, near the top of the list. Anything you've added has a small note icon and says "added by you", and **Show: Added by me** lists just those. The window says how many it added, and why it skipped any. Read them before you tell them, since you're the one saying them out loud.
+
+Pasted stories are saved with your account, outside the addon's folder, so updating the addon doesn't remove them. **Delete** in the menu removes a pasted story.
+
+The addon's `prompts` folder has more prompts for a race or class, a zone, everyone, and stories told to someone by name. Their answers go in the same box.
 
 ## Automatic prompts
 
@@ -95,7 +117,7 @@ A prompt appears when you enter a new zone, turn in a quest, level up, or come b
 | Command | What it does |
 | --- | --- |
 | `/tales stories` | Open or close the story menu |
-| `/tales add` | Open or close the Add Stories window |
+| `/tales add` | Open or close the Write My Story window |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales on`, `/tales off` | Turn automatic prompts on or off |
 | `/tales cooldown 60` | Minimum seconds between prompts (default 30) |

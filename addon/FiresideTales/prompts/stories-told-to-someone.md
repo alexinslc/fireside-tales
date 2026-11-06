@@ -2,7 +2,7 @@
 
 Stories told to one listener, using their name. You target someone first.
 
-Copy everything below the line into an AI, and fill in the bracketed parts. Then paste what it writes into **Add Stories** in the game.
+Copy everything below the line into an AI, and fill in the bracketed parts. Then paste what it writes into **Write My Story** in the game.
 
 ---
 

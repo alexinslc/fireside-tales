@@ -1,5 +1,6 @@
--- The Add Stories window: paste stories an AI wrote, and they're saved with the
--- addon's data, outside its folder, so updating the addon never removes them.
+-- The Write My Story window: describe your character, copy a ready-made prompt into
+-- any AI, and paste back what it writes. Stories are saved with the addon's data,
+-- outside its folder, so updating the addon never removes them.
 local _, ns = ...
 
 local MAX_BYTES = 250
@@ -20,9 +21,68 @@ local RACES = {
 	troll = "Troll", skyborne = "Skyborne",
 }
 
-local window, editBox, resultLabel
+local STORIES_PER_PROMPT = 5
+local ABOUT_MAX_LETTERS = 500
+
+local window, editBox, resultLabel, aboutBox, promptBox, aboutLabel, copyHint
+local currentPrompt = ""
 
 ns.Import = {}
+
+-------------------------------------------------------------------------------
+-- The prompt, filled in from the character. It avoids the vertical bar because an
+-- edit box would treat it as a code when showing it.
+-------------------------------------------------------------------------------
+
+local function buildPrompt()
+	local name = ns.PlayerName()
+	local about = (ns.CharData().about or ""):gsub("|", ""):gsub("%s+", " ")
+	if about == "" then
+		about = "Not much yet. Invent something fitting, and keep it simple."
+	end
+	return table.concat({
+		("Write %d short roleplay stories for my World of Warcraft: Forever character. They're for an addon called Fireside Tales. I tell them one line at a time, sitting at a campfire with other players, using /say and /e."):format(STORIES_PER_PROMPT),
+		"",
+		"First name: " .. name,
+		("Race and class: %s %s"):format((UnitRace("player")), (UnitClass("player"))),
+		"Where they are now: " .. (ns.CurrentZone() or "on the road"),
+		"About them: " .. about,
+		"",
+		"Output only plain text in a single code block, exactly in this form, and add nothing else:",
+		"",
+		"```",
+		"CHARACTER: " .. name,
+		"TITLE: The Ferry at Dusk",
+		"MOOD: heartfelt",
+		"EMOTE: turns a worn ferry token over in their fingers, watching the fire.",
+		"SAY: My father ran a ferry on a brown river. He said every crossing was a promise you made to a stranger.",
+		"SAY: The night the bridge fell, he made eleven trips in the dark. He came home soaked and said it had been a slow evening.",
+		"EMOTE: sets the token on one knee and leaves it there.",
+		"```",
+		"",
+		"Rules that make it work:",
+		"- Write the CHARACTER line once at the top, then start each story with its own TITLE line. Each title must be unique.",
+		"- MOOD must be exactly one of: funny, heartfelt, dark, action, spooky, wise.",
+		"- A story must take under a minute to tell. Aim for 4 to 6 lines, and never fewer than 3 or more than 8, with at least one SAY and one EMOTE.",
+		"- Each line must be under 220 characters and on a single line, because it's sent as one chat message. Don't use the vertical bar or curly braces.",
+		"",
+		"How to write them:",
+		"- Write SAY lines in the first person, as if talking to people at the fire, and keep them easy to say aloud.",
+		"- The game puts my name in front of an emote, so start every EMOTE with a lowercase verb.",
+		"- Every emote must work while sitting down. Use the hands and upper body, and never stand, walk, kneel, or crouch.",
+		"- Don't say what listeners do, feel, or say, since they're other real players.",
+		"- Draw on this character's life. Give each story a clear hook, a turn, and an ending worth waiting for, using real specifics rather than vague fantasy phrases.",
+		"- Mix the moods, and don't let every story end on the same note.",
+		"- Stay true to Warcraft's setting. Name real places when they fit, and write original stories rather than retelling quests or books.",
+	}, "\n")
+end
+
+local function refreshPrompt()
+	currentPrompt = buildPrompt()
+	promptBox:SetText(currentPrompt)
+	promptBox:SetCursorPosition(0)
+	copyHint:SetText("")
+end
 
 -------------------------------------------------------------------------------
 -- Reading pasted text
@@ -91,14 +151,23 @@ local function parse(text)
 		if problem then
 			problems[#problems + 1] = ('"%s": %s'):format(story.title, problem)
 		else
-			story.unreadable = nil
+			story.unreadable, story.stray = nil, nil
 			stories[#stories + 1] = story
 		end
 		story = nil
 	end
 
+	-- A stray line only costs a story when more of the story comes after it, which
+	-- means text went missing. Trailing chatter from the AI is simply ignored.
+	local function addLine(kind, value)
+		if story.stray then
+			story.unreadable = story.unreadable or story.stray
+		end
+		story.lines[#story.lines + 1] = { kind = kind, text = value }
+	end
+
 	for rawLine in (text .. "\n"):gmatch("(.-)\n") do
-		local line = rawLine:match("^%s*(.-)%s*$")
+		local line = rawLine:match("^%s*(.-)%s*$"):gsub("%*%*", "") -- AIs like bold labels.
 		local label, value = line:match("^(%u+):%s*(.*)$")
 		if label and sectionReaders[label] then
 			finishStory()
@@ -115,12 +184,14 @@ local function parse(text)
 		elseif story and label == "MOOD" then
 			story.mood = value:lower()
 		elseif story and label == "SAY" then
-			story.lines[#story.lines + 1] = { kind = "say", text = value }
+			addLine("say", value)
 		elseif story and label == "EMOTE" then
 			-- The game puts the character's name first, so it continues a sentence.
-			story.lines[#story.lines + 1] = { kind = "emote", text = value:sub(1, 1):lower() .. value:sub(2) }
-		elseif story and line ~= "" and not line:find("^```") then
-			story.unreadable = story.unreadable or line
+			addLine("emote", value:sub(1, 1):lower() .. value:sub(2))
+		elseif line:find("^```") then
+			finishStory() -- Whatever follows a code block is the AI talking, not the story.
+		elseif story and line ~= "" and not line:find("^[-*_=]+$") then
+			story.stray = story.stray or line
 		end
 	end
 	finishStory()
@@ -172,31 +243,17 @@ end
 -- The window
 -------------------------------------------------------------------------------
 
-local function build()
-	window = CreateFrame("Frame", "FiresideTalesImportFrame", UIParent, "BackdropTemplate")
-	window:SetSize(500, 440)
-	window:SetFrameStrata("DIALOG")
-	ns.ApplyBackdrop(window)
-	ns.MakeDraggable(window, "importPosition")
-	ns.PlaceFrame(window, "importPosition", "CENTER", UIParent, "CENTER", 0, 40)
-	table.insert(UISpecialFrames, "FiresideTalesImportFrame") -- Escape closes it.
-
-	local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	title:SetPoint("TOPLEFT", 14, -14)
-	title:SetText("Add Stories")
-
-	local close = CreateFrame("Button", nil, window, "UIPanelCloseButton")
-	close:SetPoint("TOPRIGHT", -2, -2)
-
-	local help = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	help:SetPoint("TOPLEFT", 14, -34)
-	help:SetWidth(472)
-	help:SetJustifyH("LEFT")
-	help:SetText("Paste what your AI wrote using a prompt from the addon's prompts folder, then press Add. A few stories at a time works best.")
-
+-- A scrolling multi-line box. Give it a fixed height, or bottom to stretch it down
+-- to that distance from the window's bottom edge.
+local function makeTextBox(top, height, bottom)
 	local box = CreateFrame("Frame", nil, window, "BackdropTemplate")
-	box:SetPoint("TOPLEFT", 14, -66)
-	box:SetPoint("BOTTOMRIGHT", -14, 104)
+	box:SetPoint("TOPLEFT", 12, top)
+	if height then
+		box:SetPoint("TOPRIGHT", -12, top)
+		box:SetHeight(height)
+	else
+		box:SetPoint("BOTTOMRIGHT", -12, bottom)
+	end
 	box:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8" })
 	box:SetBackdropColor(0, 0, 0, 0.45)
 
@@ -209,16 +266,72 @@ local function build()
 		self:SetVerticalScroll(math.max(0, math.min(target, self:GetVerticalScrollRange())))
 	end)
 
-	editBox = CreateFrame("EditBox", nil, scroll)
-	editBox:SetMultiLine(true)
-	editBox:SetAutoFocus(false)
-	editBox:SetMaxLetters(0)
-	editBox:SetFontObject("ChatFontNormal")
-	editBox:SetWidth(460)
-	editBox:SetHeight(300)
-	editBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-	scroll:SetScrollChild(editBox)
-	scroll:SetScript("OnMouseDown", function() editBox:SetFocus() end)
+	local edit = CreateFrame("EditBox", nil, scroll)
+	edit:SetMultiLine(true)
+	edit:SetAutoFocus(false)
+	edit:SetMaxLetters(0)
+	edit:SetFontObject("ChatFontNormal")
+	edit:SetWidth(460)
+	edit:SetHeight(height and height - 12 or 200)
+	edit:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+	scroll:SetScrollChild(edit)
+	scroll:SetScript("OnMouseDown", function() edit:SetFocus() end)
+	return edit, box
+end
+
+local function makeStepLabel(top, text, left)
+	local label = window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	label:SetPoint("TOPLEFT", left or 12, top)
+	label:SetJustifyH("LEFT")
+	label:SetText(text)
+	return label
+end
+
+local function build()
+	window = ns.NewWindow("FiresideTalesImportFrame", "Write My Story", "Interface\\Icons\\INV_Misc_Note_01", 500, 590)
+	window:SetFrameStrata("DIALOG")
+	ns.MakeDraggable(window, "importPosition")
+	ns.PlaceFrame(window, "importPosition", "CENTER", UIParent, "CENTER", 0, 40)
+	table.insert(UISpecialFrames, "FiresideTalesImportFrame") -- Escape closes it.
+
+	-- Step 1: who this character is. Saved as you type, and it fills in the prompt.
+	-- The label starts clear of the round portrait.
+	aboutLabel = makeStepLabel(-44, "", 66)
+	aboutBox = makeTextBox(-64, 50)
+	aboutBox:SetMaxLetters(ABOUT_MAX_LETTERS)
+
+	-- Step 2: the prompt. It can be selected and copied, but not edited.
+	makeStepLabel(-126, "2. Copy this prompt, then paste it into any AI.")
+	copyHint = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	copyHint:SetPoint("TOPLEFT", 12, -230)
+	local selectPrompt = ns.MakeFlatButton(window, "Select Prompt", 96)
+	selectPrompt:SetPoint("TOPRIGHT", -12, -120)
+
+	promptBox = makeTextBox(-146, 76)
+	promptBox:SetScript("OnTextChanged", function(self, userInput)
+		if userInput then
+			self:SetText(currentPrompt)
+			self:HighlightText()
+		end
+	end)
+	promptBox:SetScript("OnEditFocusLost", function(self) self:HighlightText(0, 0) end)
+	selectPrompt:SetScript("OnClick", function()
+		promptBox:SetFocus()
+		promptBox:HighlightText()
+		copyHint:SetText("Selected. Press Cmd+C on a Mac or Ctrl+C on Windows to copy it.")
+	end)
+
+	-- Set up last, because typing here refreshes the prompt box above.
+	aboutBox:SetScript("OnTextChanged", function(self)
+		local about = self:GetText()
+		ns.CharData().about = about ~= "" and about or nil
+		refreshPrompt()
+	end)
+
+	-- Step 3: what the AI wrote.
+	makeStepLabel(-250, "3. Paste what the AI wrote here, then press Add.")
+	local box
+	editBox, box = makeTextBox(-266, nil, 104)
 
 	resultLabel = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	resultLabel:SetPoint("TOPLEFT", box, "BOTTOMLEFT", 0, -8)
@@ -236,7 +349,14 @@ end
 
 function ns.Import.Toggle()
 	if not window then build() end
-	window:SetShown(not window:IsShown())
+	if window:IsShown() then
+		window:Hide()
+		return
+	end
+	aboutLabel:SetText(("1. Who is %s? A sentence or two: where they're from, how they talk. Optional."):format(ns.PlayerName()))
+	aboutBox:SetText(ns.CharData().about or "")
+	refreshPrompt() -- You may have traveled since it was last open.
+	window:Show()
 end
 
 function ns.Import.Count()

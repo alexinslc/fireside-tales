@@ -11,7 +11,8 @@ local COLOR_SAY_NEXT = "|cffffffff"
 local COLOR_SAY_LATER = "|cffcccccc"
 local COLOR_EMOTE_NEXT = "|cffff8040" -- The game's own emote color.
 local COLOR_EMOTE_LATER = "|cffc87040"
-local STAR = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:12|t "
+local COLOR_ADDED = "|cffb9e6c9" -- Stories you added.
+local COLOR_META = "|cffb0a080"
 local NO_TARGET = "[your target]"
 
 -- A small colored square, so a story's mood shows in the list.
@@ -37,7 +38,7 @@ local MOODS = {
 	{ key = "wise", label = MOOD_DOTS.wise .. "Wise" },
 }
 
-local window, reader, readerContent, readerText, status, speakButton, restartButton
+local window, reader, readerContent, readerTitle, readerMeta, readerRule, readerText, status, speakButton, restartButton
 local favoriteButton, tonightButton, deleteButton, clearFiltersButton
 local confirmingDelete = false
 local list, listContent, countLabel, emptyLabel, searchBox
@@ -68,9 +69,11 @@ end
 local function getSections()
 	if sections then return sections end
 	sections = {}
-	local function add(source, header, stories)
+	-- The header is part of each story's saved key, so a friendlier name for the
+	-- list goes in label instead.
+	local function add(source, header, stories, label)
 		if stories and #stories > 0 then
-			sections[#sections + 1] = { source = source, header = header, stories = stories }
+			sections[#sections + 1] = { source = source, header = header, stories = stories, label = label }
 		end
 	end
 
@@ -80,7 +83,7 @@ local function getSections()
 	-- Both Skyborne races share one list, and their exact token isn't known.
 	local raceKey = (raceName .. raceToken):find("Skyborne") and "Skyborne" or raceToken
 
-	-- A built-in list plus any stories pasted into the Add Stories window.
+	-- A built-in list plus any stories pasted into the Write My Story window.
 	local imported = ns.GetDB().imported
 	local function withPasted(builtIn, kind, listKey)
 		local merged = {}
@@ -95,7 +98,7 @@ local function getSections()
 		return merged
 	end
 
-	add("mine", name, withPasted(ns.CharacterStories[name], "character", name))
+	add("mine", name, withPasted(ns.CharacterStories[name], "character", name), name .. "'s Tales")
 	add("race", raceName, withPasted(ns.RaceStories[raceKey], "race", raceKey))
 	add("class", className, withPasted(ns.ClassStories[classToken], "class", classToken))
 	local targetStories = withPasted(ns.TargetStories, "target")
@@ -206,9 +209,11 @@ local function refreshRowColors()
 		if row:IsShown() then
 			local story = row.story
 			-- The chosen story is gold, and ones you've told are gray.
-			local color = story == currentStory and COLOR_NEXT or (char.told[story.key] and COLOR_SPOKEN or COLOR_SAY_NEXT)
-			row:SetText((char.favorites[story.key] and STAR or "") .. (MOOD_DOTS[story.mood] or "")
-				.. color .. story.title .. "|r")
+			local color = story == currentStory and COLOR_NEXT or (char.told[story.key] and COLOR_SPOKEN)
+				or (story.kind and COLOR_ADDED or COLOR_SAY_NEXT)
+			row:SetText((MOOD_DOTS[story.mood] or "") .. color .. story.title .. "|r")
+			row.star:SetShown(char.favorites[story.key] and true or false)
+			row.noteIcon:SetShown(story.kind ~= nil)
 			row.count:SetText(#story.lines)
 		end
 	end
@@ -216,7 +221,10 @@ end
 
 local function refreshReader()
 	if not currentStory then
-		readerText:SetText("Choose a story from the list.")
+		readerTitle:SetText("")
+		readerMeta:SetText("")
+		readerRule:Hide()
+		readerText:SetText(COLOR_META .. "Choose a story from the list.|r")
 		status:SetText("")
 		speakButton:SetText("Speak")
 		speakButton:Disable()
@@ -241,11 +249,19 @@ local function refreshReader()
 	deleteButton:SetText(confirmingDelete and "Sure?" or "Delete")
 
 	local total = #currentStory.lines
-	local heading = COLOR_THEME .. currentStory.title .. "|r"
-	if char.told[currentStory.key] then
-		heading = heading .. " " .. COLOR_SPOKEN .. toldText(char.told[currentStory.key]) .. "|r"
+	readerTitle:SetText(currentStory.title)
+	local mood = currentStory.mood or ""
+	local meta = (MOOD_DOTS[mood] or "") .. COLOR_META .. mood:gsub("^%l", string.upper) .. "|r"
+	if currentStory.kind then
+		meta = meta .. COLOR_META .. "  -  |r" .. COLOR_ADDED .. "added by you|r"
 	end
-	local parts = { heading }
+	if char.told[currentStory.key] then
+		meta = meta .. COLOR_META .. "  -  " .. toldText(char.told[currentStory.key]) .. "|r"
+	end
+	readerMeta:SetText(meta)
+	readerRule:Show()
+
+	local parts = {}
 	for index, line in ipairs(currentStory.lines) do
 		local isEmote = line.kind == "emote"
 		local text
@@ -259,7 +275,7 @@ local function refreshReader()
 		parts[#parts + 1] = text
 	end
 	readerText:SetText(table.concat(parts, "\n\n"))
-	readerContent:SetHeight(readerText:GetStringHeight() + 8)
+	readerContent:SetHeight(readerTitle:GetStringHeight() + readerMeta:GetStringHeight() + readerText:GetStringHeight() + 30)
 
 	local statusText, canSpeak, speakLabel, barText
 	local following = nextLine > total and nextOnTonight()
@@ -416,6 +432,9 @@ local function matchesFilters(story)
 	if filters.show == "untold" and char.told[story.key] then
 		return false
 	end
+	if filters.show == "added" and not story.kind then
+		return false
+	end
 	local text = textOf(story)
 	for _, word in ipairs(filters.words) do
 		if not text:find(word, 1, true) then
@@ -435,12 +454,22 @@ local function getRow(index)
 		row:SetText(" ")
 		local label = row:GetFontString()
 		label:ClearAllPoints()
-		label:SetPoint("LEFT", 16, 0)
-		label:SetPoint("RIGHT", -26, 0)
+		label:SetPoint("LEFT", 18, 0)
+		label:SetPoint("RIGHT", -38, 0)
 		label:SetJustifyH("LEFT")
 		label:SetWordWrap(false)
 		row.count = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 		row.count:SetPoint("RIGHT", -6, 0)
+		-- These have fixed spots, so titles line up whichever ones a story has.
+		row.star = row:CreateTexture(nil, "OVERLAY")
+		row.star:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_1")
+		row.star:SetSize(12, 12)
+		row.star:SetPoint("LEFT", 3, 0)
+		row.noteIcon = row:CreateTexture(nil, "OVERLAY")
+		row.noteIcon:SetTexture("Interface\\Icons\\INV_Misc_Note_01")
+		row.noteIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+		row.noteIcon:SetSize(13, 13)
+		row.noteIcon:SetPoint("RIGHT", -22, 0)
 		row:SetScript("OnClick", function(self) selectStory(self.story) end)
 		rows[index] = row
 	end
@@ -457,8 +486,15 @@ local function getHeader(index)
 		header:SetText(" ")
 		local label = header:GetFontString()
 		label:ClearAllPoints()
-		label:SetPoint("LEFT", 2, 0)
+		label:SetPoint("LEFT", 18, 0)
+		label:SetPoint("RIGHT", -26, 0)
 		label:SetJustifyH("LEFT")
+		label:SetWordWrap(false)
+		header.icon = header:CreateTexture(nil, "ARTWORK")
+		header.icon:SetSize(13, 13)
+		header.icon:SetPoint("LEFT", 2, 0)
+		header.count = header:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+		header.count:SetPoint("RIGHT", -6, 0)
 		headers[index] = header
 	end
 	return header
@@ -484,16 +520,20 @@ local function renderList(keepScroll)
 	for _, header in ipairs(headers) do header:Hide() end
 
 	local y, rowIndex, headerIndex, shown = 0, 0, 0, 0
+	local counted = {} -- A story can be listed twice, but it's still one story.
 	-- Sections stay closed until opened, unless a filter is narrowing the list.
 	local function showSection(title, stories, skip, openByDefault)
 		local matches = {}
 		for _, story in ipairs(stories) do
 			if not (skip and skip[story]) and matchesFilters(story) then
 				matches[#matches + 1] = story
+				if not counted[story] then
+					counted[story] = true
+					shown = shown + 1
+				end
 			end
 		end
 		if #matches == 0 then return end
-		shown = shown + #matches
 
 		local open = sectionOpen[title]
 		if open == nil then open = openByDefault or false end
@@ -503,7 +543,10 @@ local function renderList(keepScroll)
 		headerIndex = headerIndex + 1
 		local header = getHeader(headerIndex)
 		header:SetPoint("TOPLEFT", 0, y)
-		header:SetText(COLOR_THEME .. (open and "- " or "+ ") .. title .. "|r " .. COLOR_SPOKEN .. #matches .. "|r")
+		header:SetText(COLOR_THEME .. title .. "|r")
+		header.icon:SetTexture(open and "Interface\\Buttons\\UI-MinusButton-Up" or "Interface\\Buttons\\UI-PlusButton-Up")
+		header.count:SetText(#matches)
+		header.open = open
 		header:SetScript("OnClick", function()
 			if isFiltering() then return end -- Filters keep every match in view.
 			sectionOpen[title] = not open
@@ -524,8 +567,9 @@ local function renderList(keepScroll)
 	end
 
 	-- Tonight's list comes first, then stories about this zone, each moving up
-	-- rather than appearing twice. Choosing a specific source shows that source's
-	-- stories in their usual places.
+	-- rather than appearing twice. The exception is your character's own section,
+	-- which always lists all of them. Choosing a specific source shows that
+	-- source's stories in their usual places.
 	local skip = {}
 	local function moveUp(stories)
 		for _, story in ipairs(stories) do
@@ -548,7 +592,8 @@ local function renderList(keepScroll)
 		if filters.source ~= "here" then
 			for _, section in ipairs(getSections()) do
 				if not filters.source or section.source == filters.source then
-					showSection(section.header, section.stories, skip, section.source == "mine")
+					local isMine = section.source == "mine"
+					showSection(section.label or section.header, section.stories, not isMine and skip or nil, isMine)
 				end
 			end
 		end
@@ -751,17 +796,25 @@ local function buildSelector(caption, filterName, getItems, width)
 end
 
 local function buildFilters()
-	searchBox = CreateFrame("EditBox", nil, window, "InputBoxTemplate")
+	-- The game's search box, with its magnifier and clear button, where the client has it.
+	-- It keeps its own text handling, so the search hooks in after that.
+	local modern = SearchBoxTemplate_OnTextChanged ~= nil
+	searchBox = CreateFrame("EditBox", nil, window, modern and "SearchBoxTemplate" or "InputBoxTemplate")
 	searchBox:SetAutoFocus(false)
-	searchBox:SetSize(170, 20)
-	searchBox:SetPoint("TOPLEFT", 20, -35)
-	local hint = searchBox:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-	hint:SetPoint("LEFT", 2, 0)
-	hint:SetText("Search stories")
-	searchBox:SetScript("OnTextChanged", function(self)
-		hint:SetShown(self:GetText() == "")
-		setSearch(self:GetText())
-	end)
+	searchBox:SetSize(150, 20)
+	searchBox:SetPoint("TOPLEFT", 66, -32) -- Clear of the round portrait.
+	if modern and type(searchBox.Instructions) == "table" then
+		searchBox.Instructions:SetText("Search stories")
+		searchBox:HookScript("OnTextChanged", function(self) setSearch(self:GetText()) end)
+	else
+		local hint = searchBox:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+		hint:SetPoint("LEFT", 2, 0)
+		hint:SetText("Search stories")
+		searchBox:SetScript("OnTextChanged", function(self)
+			hint:SetShown(self:GetText() == "")
+			setSearch(self:GetText())
+		end)
+	end
 	searchBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
 	searchBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
 
@@ -779,7 +832,7 @@ local function buildFilters()
 		return sources
 	end
 	local fromButton = buildSelector("From", "source", getSources, 118)
-	fromButton:SetPoint("TOPLEFT", searchBox, "TOPRIGHT", 10, 1)
+	fromButton:SetPoint("LEFT", searchBox, "RIGHT", 6, 0)
 
 	local moods = { { key = nil, label = "All" } }
 	for _, mood in ipairs(MOODS) do
@@ -792,6 +845,7 @@ local function buildFilters()
 		{ key = nil, label = "All" },
 		{ key = "favorites", label = "Favorites" },
 		{ key = "untold", label = "Not told yet" },
+		{ key = "added", label = "Added by me" },
 		{ key = "tonight", label = "Tonight" },
 	}
 	local showButton = buildSelector("Show", "show", function()
@@ -805,57 +859,90 @@ local function buildFilters()
 	clearFiltersButton = ns.MakeFlatButton(window, "Clear", 46)
 	clearFiltersButton:SetPoint("LEFT", showButton, "RIGHT", 4, 0)
 	clearFiltersButton:SetScript("OnClick", clearFilters)
-
-	local divider = window:CreateTexture(nil, "ARTWORK")
-	divider:SetColorTexture(1, 1, 1, 0.12)
-	divider:SetPoint("TOPLEFT", 14, -60)
-	divider:SetPoint("TOPRIGHT", -14, -60)
-	divider:SetHeight(1)
 end
 
+local INSET_TOP, INSET_BOTTOM = -60, 34
+local INSET_LEFT = 8
+
 local function buildList()
+	local inset = ns.NewInset(window)
+	inset:SetPoint("TOPLEFT", INSET_LEFT, INSET_TOP)
+	inset:SetPoint("BOTTOMLEFT", INSET_LEFT, INSET_BOTTOM)
+	inset:SetWidth(LIST_WIDTH + 8)
+
 	list = CreateFrame("ScrollFrame", nil, window)
-	list:SetPoint("TOPLEFT", 14, -66)
-	list:SetPoint("BOTTOMLEFT", 14, 14)
+	list:SetPoint("TOPLEFT", inset, "TOPLEFT", 4, -4)
+	list:SetPoint("BOTTOMLEFT", inset, "BOTTOMLEFT", 4, 4)
 	list:SetWidth(LIST_WIDTH)
+	list:SetFrameLevel(inset:GetFrameLevel() + 5) -- Above the panel's own border.
 	enableWheelScroll(list)
 
 	listContent = CreateFrame("Frame", nil, list)
 	listContent:SetSize(LIST_WIDTH, 1)
 	list:SetScrollChild(listContent)
 
-	emptyLabel = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+	emptyLabel = list:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	emptyLabel:SetPoint("TOPLEFT", list, "TOPLEFT", 4, -4)
 	emptyLabel:SetText("No stories match these filters.")
 end
 
-local function buildReader()
-	reader = CreateFrame("ScrollFrame", nil, window)
-	reader:SetPoint("TOPLEFT", LIST_WIDTH + 30, -66)
-	reader:SetPoint("BOTTOMRIGHT", -14, 60)
+local function makeReaderString(parent, template)
+	local text = parent:CreateFontString(nil, "OVERLAY", template)
+	text:SetWidth(READER_WIDTH)
+	text:SetJustifyH("LEFT")
+	text:SetWordWrap(true)
+	return text
+end
 
-	local divider = window:CreateTexture(nil, "ARTWORK")
-	divider:SetColorTexture(1, 1, 1, 0.12)
-	divider:SetPoint("TOPLEFT", LIST_WIDTH + 21, -66)
-	divider:SetPoint("BOTTOMLEFT", LIST_WIDTH + 21, 14)
-	divider:SetWidth(1)
+-- A faint glow of firelight rising from the bottom of the page, where the client can
+-- draw a gradient. Without one, the page is just the dark panel.
+local function addFirelight(inset)
+	local glow = inset:CreateTexture(nil, "BORDER")
+	glow:SetTexture("Interface\\Buttons\\WHITE8X8")
+	glow:SetPoint("BOTTOMLEFT", 3, 3)
+	glow:SetPoint("BOTTOMRIGHT", -3, 3)
+	glow:SetHeight(230)
+	local drawn = CreateColor and pcall(glow.SetGradient, glow, "VERTICAL",
+		CreateColor(0.62, 0.27, 0.05, 0.42), CreateColor(0.62, 0.27, 0.05, 0))
+	if not drawn then glow:Hide() end
+end
+
+local function buildReader()
+	local inset = ns.NewInset(window)
+	inset:SetPoint("TOPLEFT", INSET_LEFT + LIST_WIDTH + 12, INSET_TOP)
+	inset:SetPoint("BOTTOMRIGHT", -8, INSET_BOTTOM)
+	addFirelight(inset)
+
+	reader = CreateFrame("ScrollFrame", nil, window)
+	reader:SetPoint("TOPLEFT", inset, "TOPLEFT", 12, -12)
+	reader:SetPoint("BOTTOMRIGHT", inset, "BOTTOMRIGHT", -10, 26)
+	reader:SetFrameLevel(inset:GetFrameLevel() + 5) -- Above the panel's own border.
 	enableWheelScroll(reader)
 
 	readerContent = CreateFrame("Frame", nil, reader)
 	readerContent:SetSize(READER_WIDTH, 1)
 	reader:SetScrollChild(readerContent)
 
-	readerText = readerContent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	readerText:SetPoint("TOPLEFT")
-	readerText:SetWidth(READER_WIDTH)
-	readerText:SetJustifyH("LEFT")
-	readerText:SetWordWrap(true)
+	readerTitle = makeReaderString(readerContent, "GameFontNormalLarge")
+	readerTitle:SetPoint("TOPLEFT")
 
-	status = window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	status:SetPoint("BOTTOMLEFT", LIST_WIDTH + 30, 40)
+	readerMeta = makeReaderString(readerContent, "GameFontNormalSmall")
+	readerMeta:SetPoint("TOPLEFT", readerTitle, "BOTTOMLEFT", 0, -4)
 
+	readerRule = readerContent:CreateTexture(nil, "ARTWORK")
+	readerRule:SetColorTexture(0.72, 0.55, 0.32, 0.35)
+	readerRule:SetPoint("TOPLEFT", readerMeta, "BOTTOMLEFT", 0, -7)
+	readerRule:SetSize(READER_WIDTH, 1)
+
+	readerText = makeReaderString(readerContent, "GameFontHighlight")
+	readerText:SetPoint("TOPLEFT", readerRule, "BOTTOMLEFT", 0, -9)
+
+	status = inset:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	status:SetPoint("BOTTOMLEFT", 12, 9)
+
+	-- The buttons sit along the window's foot, as they do in the game's own windows.
 	favoriteButton = ns.MakeFlatButton(window, "Favorite", 60)
-	favoriteButton:SetPoint("BOTTOMLEFT", LIST_WIDTH + 30, 12)
+	favoriteButton:SetPoint("BOTTOMLEFT", inset, "BOTTOMLEFT", 0, -27)
 	favoriteButton:SetScript("OnClick", toggleFavorite)
 
 	tonightButton = ns.MakeFlatButton(window, "Add to Tonight", 90)
@@ -870,7 +957,7 @@ local function buildReader()
 	-- Speak is the one main action, so it's the only raised button here.
 	speakButton = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
 	speakButton:SetSize(90, 22)
-	speakButton:SetPoint("BOTTOMRIGHT", -12, 12)
+	speakButton:SetPoint("BOTTOMRIGHT", inset, "BOTTOMRIGHT", 0, -27)
 	speakButton:SetText("Speak")
 	speakButton:SetScript("OnClick", ns.Story.SpeakNext)
 
@@ -882,26 +969,18 @@ local function buildReader()
 end
 
 local function buildWindow()
-	window = CreateFrame("Frame", "FiresideTalesStoryFrame", UIParent, "BackdropTemplate")
-	window:SetSize(LIST_WIDTH + READER_WIDTH + 58, 520)
-	ns.ApplyBackdrop(window)
+	window = ns.NewWindow("FiresideTalesStoryFrame", "Fireside Tales", "Interface\\Icons\\INV_Misc_Book_09",
+		LIST_WIDTH + READER_WIDTH + 58, 540)
 	ns.MakeDraggable(window, "storyPosition")
 	ns.PlaceFrame(window, "storyPosition", "CENTER", UIParent, "CENTER", 0, 40)
 	table.insert(UISpecialFrames, "FiresideTalesStoryFrame") -- Escape closes it.
 
-	local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	title:SetPoint("TOPLEFT", 14, -14)
-	title:SetText("Stories")
+	local writeStory = ns.MakeFlatButton(window, "Write My Story", 104)
+	writeStory:SetPoint("BOTTOMLEFT", INSET_LEFT, 7)
+	writeStory:SetScript("OnClick", ns.Import.Toggle)
 
 	countLabel = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	countLabel:SetPoint("LEFT", title, "RIGHT", 12, 0)
-
-	local close = CreateFrame("Button", nil, window, "UIPanelCloseButton")
-	close:SetPoint("TOPRIGHT", -2, -2)
-
-	local addStories = ns.MakeFlatButton(window, "Add Stories", 76)
-	addStories:SetPoint("TOPRIGHT", -34, -8)
-	addStories:SetScript("OnClick", ns.Import.Toggle)
+	countLabel:SetPoint("LEFT", writeStory, "RIGHT", 8, 0)
 
 	buildList()
 	buildReader()
