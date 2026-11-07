@@ -100,6 +100,20 @@ function ns.ApplyBackdrop(target)
 	target:SetBackdropBorderColor(0.72, 0.55, 0.32)
 end
 
+-- Plays one of the game's interface sounds. A client without that sound stays silent.
+function ns.PlayUISound(name)
+	local id = SOUNDKIT and SOUNDKIT[name]
+	if id then
+		PlaySound(id)
+	end
+end
+
+-- Call this after a window's first Hide, so building it doesn't play the closing sound.
+function ns.AddWindowSounds(frame)
+	frame:HookScript("OnShow", function() ns.PlayUISound("IG_SPELLBOOK_OPEN") end)
+	frame:HookScript("OnHide", function() ns.PlayUISound("IG_SPELLBOOK_CLOSE") end)
+end
+
 -- A full window in the game's own style: its border, title bar, round portrait, and
 -- close button. If the client doesn't have that template, a plain frame stands in.
 function ns.NewWindow(name, title, icon, width, height)

@@ -470,7 +470,10 @@ local function getRow(index)
 		row.noteIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 		row.noteIcon:SetSize(13, 13)
 		row.noteIcon:SetPoint("RIGHT", -22, 0)
-		row:SetScript("OnClick", function(self) selectStory(self.story) end)
+		row:SetScript("OnClick", function(self)
+			ns.PlayUISound("IG_ABILITY_PAGE_TURN")
+			selectStory(self.story)
+		end)
 		rows[index] = row
 	end
 	return row
@@ -549,6 +552,7 @@ local function renderList(keepScroll)
 		header.open = open
 		header:SetScript("OnClick", function()
 			if isFiltering() then return end -- Filters keep every match in view.
+			ns.PlayUISound(open and "IG_MAINMENU_OPTION_CHECKBOX_OFF" or "IG_MAINMENU_OPTION_CHECKBOX_ON")
 			sectionOpen[title] = not open
 			renderList(true)
 		end)
@@ -616,12 +620,14 @@ end
 local function toggleFavorite()
 	local favorites = ns.CharData().favorites
 	favorites[currentStory.key] = not favorites[currentStory.key] or nil
+	ns.PlayUISound(favorites[currentStory.key] and "IG_MAINMENU_OPTION_CHECKBOX_ON" or "IG_MAINMENU_OPTION_CHECKBOX_OFF")
 	renderList(true)
 	refreshReader()
 end
 
 local function toggleTonight()
 	local tonight = ns.CharData().tonight
+	ns.PlayUISound(isOnTonight(currentStory) and "IG_MAINMENU_OPTION_CHECKBOX_OFF" or "IG_MAINMENU_OPTION_CHECKBOX_ON")
 	if isOnTonight(currentStory) then
 		for index = #tonight, 1, -1 do
 			if tonight[index] == currentStory.key then
@@ -684,6 +690,7 @@ local function setSearch(text)
 end
 
 local function clearFilters()
+	ns.PlayUISound("IG_MAINMENU_OPTION")
 	searchBox:SetText("")
 	searchBox:ClearFocus()
 	filters.words = {}
@@ -754,6 +761,7 @@ local function showPopup(owner, items, selected, onPick)
 		row:SetNormalFontObject(not item.action and item.key == selected and "GameFontNormalSmall" or "GameFontHighlightSmall")
 		row:SetText(item.label)
 		row:SetScript("OnClick", function()
+			ns.PlayUISound("IG_MAINMENU_OPTION")
 			hidePopup()
 			if item.action then
 				item.action()
@@ -784,6 +792,7 @@ local function buildSelector(caption, filterName, getItems, width)
 		ns.SetFlatButtonOn(button, selected ~= nil)
 	end
 	button:SetScript("OnClick", function()
+		ns.PlayUISound("IG_MAINMENU_OPTION")
 		showPopup(button, getItems(), filters[filterName], function(key)
 			filters[filterName] = key
 			button.Refresh()
@@ -964,7 +973,10 @@ local function buildReader()
 	restartButton = ns.MakeFlatButton(window, "Restart", 56)
 	restartButton:SetPoint("RIGHT", speakButton, "LEFT", -4, 0)
 	restartButton:SetScript("OnClick", function()
-		if currentStory then selectStory(currentStory) end
+		if currentStory then
+			ns.PlayUISound("IG_ABILITY_PAGE_TURN")
+			selectStory(currentStory)
+		end
 	end)
 end
 
@@ -988,8 +1000,9 @@ local function buildWindow()
 	renderList()
 	refreshReader()
 	window:Hide()
+	ns.AddWindowSounds(window)
 	-- Closing the menu partway through a story goes back to the teller bar.
-	window:SetScript("OnHide", function()
+	window:HookScript("OnHide", function()
 		hidePopup()
 		if currentStory and nextLine > 1 and nextLine <= #currentStory.lines then
 			ns.Teller.Show()

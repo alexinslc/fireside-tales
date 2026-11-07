@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Added the game's own sounds for opening and closing windows, picking a story, and using sections, filters, favorites, and the list for tonight.
+
 ## 1.0.0
 
 The first release.

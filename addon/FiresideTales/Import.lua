@@ -345,6 +345,7 @@ local function build()
 	add:SetScript("OnClick", addPasted)
 
 	window:Hide()
+	ns.AddWindowSounds(window)
 end
 
 function ns.Import.Toggle()
