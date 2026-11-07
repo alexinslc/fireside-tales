@@ -969,7 +969,7 @@ local function buildReader()
 end
 
 local function buildWindow()
-	window = ns.NewWindow("FiresideTalesStoryFrame", "Fireside Tales", "Interface\\Icons\\INV_Misc_Book_09",
+	window = ns.NewWindow("FiresideTalesStoryFrame", "Fireside Tales", "Interface\\AddOns\\FiresideTales\\Textures\\Icon",
 		LIST_WIDTH + READER_WIDTH + 58, 540)
 	ns.MakeDraggable(window, "storyPosition")
 	ns.PlaceFrame(window, "storyPosition", "CENTER", UIParent, "CENTER", 0, 40)

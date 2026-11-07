@@ -288,7 +288,7 @@ local function makeStepLabel(top, text, left)
 end
 
 local function build()
-	window = ns.NewWindow("FiresideTalesImportFrame", "Write My Story", "Interface\\Icons\\INV_Misc_Note_01", 500, 590)
+	window = ns.NewWindow("FiresideTalesImportFrame", "Write My Story", "Interface\\AddOns\\FiresideTales\\Textures\\Icon", 500, 590)
 	window:SetFrameStrata("DIALOG")
 	ns.MakeDraggable(window, "importPosition")
 	ns.PlaceFrame(window, "importPosition", "CENTER", UIParent, "CENTER", 0, 40)

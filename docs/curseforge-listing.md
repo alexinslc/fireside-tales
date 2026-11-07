@@ -17,6 +17,8 @@ Everything the project form asks for. Paste the description in Markdown mode.
 
 ## Description
 
+![Fireside Tales](https://raw.githubusercontent.com/alexinslc/fireside-tales/main/art/banner.png)
+
 **Sit down at the fire and tell a story.** Fireside Tales gives you more than 400 short tales to share with whoever's nearby, one line at a time, in `/say` and `/e`. Everyone around the fire just sees you telling a story, and they don't need the addon to enjoy it.
 
 ### Stories for everyone
@@ -52,6 +54,6 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 
 ### Good to know
 
-The built-in stories are original tales written with AI help and chosen by hand. They're fan fiction set in Azeroth, not official lore. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
+The built-in stories are original tales written with AI help and chosen by hand, and the logo and banner are AI-assisted art. Screenshots are from the real game. The stories are fan fiction set in Azeroth, not official lore. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
 
 Found a bug, or a story that doesn't sit right? Leave a comment, or open an issue on [GitHub](https://github.com/alexinslc/fireside-tales).

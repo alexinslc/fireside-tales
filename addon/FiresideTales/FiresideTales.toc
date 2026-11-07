@@ -2,7 +2,7 @@
 ## Title: Fireside Tales
 ## Notes: Tell stories at the campfire, one line at a time. Hundreds of tales for every race, class, and zone, plus your own.
 ## Version: 1.0.0
-## IconTexture: Interface\Icons\INV_Misc_Book_09
+## IconTexture: Interface\AddOns\FiresideTales\Textures\Icon
 ## SavedVariables: FiresideTalesDB
 
 Lines.lua

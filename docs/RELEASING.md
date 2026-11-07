@@ -6,7 +6,7 @@ Fireside Tales is released from a git tag. GitHub Actions checks the stories, bu
 
 These need the project owner's CurseForge account:
 
-1. Create the project at [authors.curseforge.com](https://authors.curseforge.com/#/projects/create/choose-game), using [curseforge-listing.md](curseforge-listing.md) and the logo from [artwork-brief.md](artwork-brief.md).
+1. Create the project at [authors.curseforge.com](https://authors.curseforge.com/#/projects/create/choose-game), using [curseforge-listing.md](curseforge-listing.md) and [art/logo.png](../art/logo.png).
 2. Copy the project ID from the project page.
 3. Create an API token at [authors-old.curseforge.com/account/api-tokens](https://authors-old.curseforge.com/account/api-tokens).
 4. In the GitHub repository's **Settings > Secrets and variables > Actions**, add:

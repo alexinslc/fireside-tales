@@ -35,21 +35,16 @@ function ns.BuildMinimapButton()
 	button:RegisterForDrag("LeftButton")
 	button:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 
+	-- The same gold ring as every other minimap button, with the round icon inside it.
 	local border = button:CreateTexture(nil, "OVERLAY")
 	border:SetSize(53, 53)
 	border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
 	border:SetPoint("TOPLEFT")
 
-	local background = button:CreateTexture(nil, "BACKGROUND")
-	background:SetSize(20, 20)
-	background:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-	background:SetPoint("TOPLEFT", 7, -5)
-
 	local icon = button:CreateTexture(nil, "ARTWORK")
-	icon:SetSize(17, 17)
-	icon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
-	icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
-	icon:SetPoint("TOPLEFT", 7, -6)
+	icon:SetSize(20, 20)
+	icon:SetTexture("Interface\\AddOns\\FiresideTales\\Textures\\MinimapIcon")
+	icon:SetPoint("TOPLEFT", 6, -6)
 
 	button:SetScript("OnClick", ns.Story.Toggle)
 	button:SetScript("OnDragStart", function(self)
