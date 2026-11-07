@@ -178,6 +178,10 @@ Delete the `FiresideTales` folder from `AddOns`. If you linked it instead, this 
 ./install-addon.ps1 -Uninstall
 ```
 
+## License
+
+The code and stories are under the [MIT License](LICENSE).
+
 ## Requirements
 
 The WoW: Forever client (interface `16001`) on Windows or macOS. Update `## Interface` in `FiresideTales.toc` when the client's version changes, or the game will mark the addon out of date.

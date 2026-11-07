@@ -13,6 +13,7 @@ Everything the project form asks for. Paste the description in Markdown mode.
 | Allow comments | On |
 | Experimental | Off |
 | Game version | 1.60.1 (WoW Forever) |
+| License | MIT |
 
 ## Description
 
