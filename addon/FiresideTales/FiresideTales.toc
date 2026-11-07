@@ -1,7 +1,8 @@
 ## Interface: 16001
 ## Title: Fireside Tales
-## Notes: Offers in-character lines as you play, and a menu of stories for each character to tell one line at a time.
-## Version: 0.8.0
+## Notes: Tell stories at the campfire, one line at a time. Hundreds of tales for every race, class, and zone, plus your own.
+## Version: 1.0.0
+## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## SavedVariables: FiresideTalesDB
 
 Lines.lua

@@ -1,0 +1,98 @@
+name: Release
+
+# Pushing a tag like v1.0.0 checks the stories, builds the zip, uploads it to CurseForge, and
+# makes a GitHub release. Running it by hand, or on a push or pull request, only checks and builds.
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # CurseForge's name for the client version. Change this when the client's version changes,
+  # along with ## Interface in FiresideTales.toc.
+  GAME_VERSION: "1.60.1"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - name: Check the stories
+        shell: pwsh
+        run: ./tools/check-stories.ps1
+
+      - name: Check the tag matches the TOC
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="$(sed -n 's/^## Version:[[:space:]]*//p' addon/FiresideTales/FiresideTales.toc | tr -d '\r')"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match ## Version: $version"
+            exit 1
+          fi
+
+      - name: Build the zip
+        shell: pwsh
+        run: ./tools/build-release.ps1
+
+      - name: Check the zip
+        run: |
+          zip_file="$(ls dist/FiresideTales-*.zip)"
+          unzip -l "$zip_file" | grep -q 'FiresideTales/Core.lua' || { echo "::error::The zip has the wrong layout"; exit 1; }
+          if unzip -l "$zip_file" | grep -qE 'StoriesCharacters|MoreCharacters'; then
+            echo "::error::The zip contains character stories"
+            exit 1
+          fi
+          if unzip -p "$zip_file" FiresideTales/FiresideTales.toc | grep -qE 'StoriesCharacters|MoreCharacters'; then
+            echo "::error::The zip's TOC lists character stories"
+            exit 1
+          fi
+          echo "ZIP_FILE=$zip_file" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: FiresideTales-zip
+          path: dist/FiresideTales-*.zip
+
+      - name: Take the notes from the changelog
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v heading="## $version" '$0 == heading { found = 1; next } /^## / { found = 0 } found' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then
+            echo "::error::CHANGELOG.md has no section for $version"
+            exit 1
+          fi
+
+      - name: Upload to CurseForge
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_PROJECT_ID: ${{ vars.CF_PROJECT_ID }}
+        run: |
+          if [ -z "$CF_API_TOKEN" ] || [ -z "$CF_PROJECT_ID" ]; then
+            echo "::error::Set the CF_API_TOKEN secret and CF_PROJECT_ID variable (see docs/RELEASING.md)"
+            exit 1
+          fi
+          api="https://wow.curseforge.com/api"
+          ids="$(curl -fsS -H "X-Api-Token: $CF_API_TOKEN" "$api/game/versions" |
+            jq -c --arg name "$GAME_VERSION" '[.[] | select(.name == $name) | .id]')"
+          if [ "$(jq length <<< "$ids")" != 1 ]; then
+            echo "::error::Expected one CurseForge game version named $GAME_VERSION, found: $ids"
+            exit 1
+          fi
+          metadata="$(jq -n --rawfile notes notes.md --arg name "Fireside Tales ${GITHUB_REF_NAME#v}" --argjson ids "$ids" \
+            '{changelog: $notes, changelogType: "markdown", displayName: $name, gameVersions: $ids, releaseType: "release"}')"
+          curl -sS --fail-with-body -H "X-Api-Token: $CF_API_TOKEN" \
+            --form-string "metadata=$metadata" -F "file=@$ZIP_FILE" \
+            "$api/projects/$CF_PROJECT_ID/upload-file"
+
+      - name: Make the GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "$ZIP_FILE" --title "Fireside Tales ${GITHUB_REF_NAME#v}" --notes-file notes.md

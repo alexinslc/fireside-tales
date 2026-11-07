@@ -14,6 +14,7 @@ param(
 
 $Moods = 'funny', 'heartfelt', 'dark', 'action', 'spooky', 'wise'
 $MaxBytes = 250
+$MaxSeconds = 60
 $TargetFile = 'StoriesTargeted.lua'
 $TargetRoom = 'x' * 24 # {target} is measured as a long character name.
 $problems = [Collections.Generic.List[string]]::new()
@@ -51,6 +52,7 @@ foreach ($name in $files) {
         if ($story.Says -lt 1) { $problems.Add("$name`: '$($story.Title)' has no spoken line") }
         if ($name -eq $TargetFile -and $story.Targets -lt 1) { $problems.Add("$name`: '$($story.Title)' never uses {target}") }
         if ($name -ne $TargetFile -and $story.Targets -gt 0) { $problems.Add("$name`: '$($story.Title)' uses {target} outside $TargetFile") }
+        if ([math]::Round($story.Seconds) -gt $MaxSeconds) { $problems.Add("$name`: '$($story.Title)' takes about $([math]::Round($story.Seconds)) seconds (limit $MaxSeconds)") }
     }
     foreach ($row in Get-Content -LiteralPath (Join-Path $AddonDir $name) -Encoding utf8) {
         $n++
@@ -64,6 +66,8 @@ foreach ($name in $files) {
                 if ($text.Contains('{target}')) { $story.Targets++ }
             }
             $bytes = $utf8.GetByteCount($text.Replace('{target}', $TargetRoom))
+            # The same read cue TellerBar.lua shows: 3 seconds plus 1 per 20 bytes, from 4 to 14.
+            if ($story) { $story.Seconds += [math]::Max(4, [math]::Min(14, 3 + $bytes / 20)) }
             if ($bytes -gt $MaxBytes) { $problems.Add("$name`:$n is $bytes bytes (limit $MaxBytes)") }
             if ($text.Replace('{target}', '') -match '[|{}]|[^\x20-\x7E]') { $problems.Add("$name`:$n has an unsafe character: $text") }
             if ($kind -eq 'emote' -and $text -cmatch '^[A-Z]') { $problems.Add("$name`:$n emote starts with a capital: $text") }
@@ -72,7 +76,7 @@ foreach ($name in $files) {
         if ($row -match '^\s*title = "([^"\\]+)",$') {
             Close-Story
             $title = $Matches[1]
-            $story = [pscustomobject]@{ Title = $title; Mood = $null; Lines = 0; Emotes = 0; Says = 0; Targets = 0 }
+            $story = [pscustomobject]@{ Title = $title; Mood = $null; Lines = 0; Emotes = 0; Says = 0; Targets = 0; Seconds = 0.0 }
             $stories++
             continue
         }

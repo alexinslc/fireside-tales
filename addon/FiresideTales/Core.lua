@@ -430,7 +430,7 @@ end
 SLASH_FIRESIDETALES1 = "/tales"
 SlashCmdList.FIRESIDETALES = function(input)
 	local command, argument = (input or ""):lower():match("^%s*(%S*)%s*(.-)%s*$")
-	if command == "stories" then
+	if command == "" or command == "stories" then
 		ns.Story.Toggle()
 	elseif command == "add" then
 		ns.Import.Toggle()

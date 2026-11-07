@@ -116,7 +116,8 @@ A prompt appears when you enter a new zone, turn in a quest, level up, or come b
 
 | Command | What it does |
 | --- | --- |
-| `/tales stories` | Open or close the story menu |
+| `/tales` or `/tales stories` | Open or close the story menu |
+| `/tales help` | List the commands |
 | `/tales add` | Open or close the Write My Story window |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales on`, `/tales off` | Turn automatic prompts on or off |
@@ -154,6 +155,10 @@ Edits to these files load with `/reload`. A brand-new file needs a game restart 
 ### Local stories
 
 Any other story files in `.gitignore` stay on the computer that has them, with no copy on GitHub. The `.toc` lists them, and the game skips any that aren't there. To add a new one, add it to `.gitignore` and `FiresideTales.toc`.
+
+### Releasing
+
+Pushing a version tag publishes to CurseForge and GitHub. See [docs/RELEASING.md](docs/RELEASING.md).
 
 ### Building the zip
 
