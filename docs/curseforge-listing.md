@@ -49,8 +49,7 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 | `/tales stories` | Open or close the story menu |
 | `/tales add` | Open or close Write My Story |
 | `/tales minimap` | Show or hide the minimap icon |
-| `/tales on`, `/tales off` | Turn automatic prompts on or off |
-| `/tales status` | Show your settings and story counts |
+| `/tales status` | Show your story counts |
 
 ### Good to know
 

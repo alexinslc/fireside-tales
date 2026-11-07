@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- Removed the pop-up that offered a line after quests, level-ups, new zones, and deaths, along with its Skip key binding and the `/tales on`, `off`, `cooldown`, and `test` commands. Stories, the teller bar, and its reading cue are unchanged.
+- Restart the game once after updating, since a file was removed.
+
 ## 1.1.0
 
 - 81 new stories, for 488 in all. Moonglade, Deadwind Pass, Mount Hyjal, the Riverglades, and Shen'dralas have stories for the first time, Dalaran has three under Alterac Mountains, and 36 other zones each get a new one.

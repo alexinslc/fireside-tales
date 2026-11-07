@@ -29,7 +29,7 @@ $structural = @(
 
 $files = if ($File) { @(Split-Path $File -Leaf) } else {
     Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') |
-        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(Lines|StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
+        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
 }
 
 # Macs can treat file names as case-sensitive, so a .toc entry must match exactly.

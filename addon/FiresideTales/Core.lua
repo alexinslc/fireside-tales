@@ -1,21 +1,10 @@
--- Fireside Tales: offers in-character lines when things happen as you play.
+-- Fireside Tales: stories to tell at the campfire, one line at a time.
 -- Nothing is ever sent without a key press or click.
 local ADDON, ns = ...
 
-local CHAT_MAX_BYTES = 255
-local PROMPT_SECONDS = 45
-local RECENT_MAX = 8
-
--- Higher priority replaces a visible prompt and ignores the cooldown (from 2 up).
-local PRIORITY = { zone_enter = 1, quest_done = 1, death = 2, level_up = 3 }
 local CHAT_TYPE = { say = "SAY", emote = "EMOTE" }
 
 local db, char, charKey
-local pending -- { text, chatType, priority }
-local promptToken = 0
-local lastPromptAt = -math.huge
-local awaitingRevival = false
-local frame, textLabel, kindLabel
 
 local function say(msg)
 	print("|cffd4af37Fireside Tales:|r " .. msg)
@@ -186,151 +175,17 @@ function ns.SetFlatButtonOn(button, on)
 end
 
 -------------------------------------------------------------------------------
--- Choosing a line
+-- Key bindings
 -------------------------------------------------------------------------------
 
--- Returns the finished text, or nil when a placeholder has no value or the
--- result would not fit in one chat message.
-local function formatLine(text, context)
-	local result = text:gsub("{(%a+)}", function(key)
-		local value = context[key]
-		if value ~= nil then
-			return (tostring(value):gsub("|", ""))
-		end
-	end)
-	if result:find("{%a+}") or #result > CHAT_MAX_BYTES then
-		return nil
-	end
-	return result
-end
-
-local function contains(list, value)
-	for _, item in ipairs(list) do
-		if item == value then return true end
-	end
-	return false
-end
-
-local function chooseLine(trigger, context)
-	local recent = char.recent[trigger] or {}
-	local usable, fresh = {}, {}
-	for _, line in ipairs(ns.PromptLines[trigger] or {}) do
-		local text = formatLine(line.text, context)
-		if text then
-			local candidate = { raw = line.text, text = text, chatType = CHAT_TYPE[line.kind] }
-			usable[#usable + 1] = candidate
-			if not contains(recent, line.text) then
-				fresh[#fresh + 1] = candidate
-			end
-		end
-	end
-	local pool = #fresh > 0 and fresh or usable
-	if #pool == 0 then
-		return nil
-	end
-	local chosen = pool[math.random(#pool)]
-	recent[#recent + 1] = chosen.raw
-	while #recent > RECENT_MAX do
-		table.remove(recent, 1)
-	end
-	char.recent[trigger] = recent
-	return chosen
-end
-
--------------------------------------------------------------------------------
--- Speak prompt
--------------------------------------------------------------------------------
-
-local function hidePrompt()
-	pending = nil
-	promptToken = promptToken + 1
-	if frame then frame:Hide() end
-end
-ns.HidePrompt = hidePrompt
-
-local function showPrompt(trigger, context, force)
-	if not char then return end
-	if not force then
-		-- Don't interrupt a story you're in the middle of telling.
-		if not db.settings.enabled or ns.Story.IsOpen() then return end
-		local priority = PRIORITY[trigger] or 1
-		if pending and priority < pending.priority then return end
-		if GetTime() - lastPromptAt < db.settings.cooldown and priority < 2 then return end
-	end
-
-	local line = chooseLine(trigger, context)
-	if not line then return end
-
-	pending = { text = line.text, chatType = line.chatType, priority = PRIORITY[trigger] or 1 }
-	lastPromptAt = GetTime()
-	promptToken = promptToken + 1
-	local token = promptToken
-
-	kindLabel:SetText(line.chatType == "EMOTE" and "Emote" or "Say")
-	if line.chatType == "EMOTE" then
-		textLabel:SetText(charKey .. " " .. line.text)
-	else
-		textLabel:SetText(line.text)
-	end
-	frame:SetHeight(textLabel:GetStringHeight() + 72)
-	frame:Show()
-
-	C_Timer.After(PROMPT_SECONDS, function()
-		if token == promptToken then hidePrompt() end
-	end)
-end
-
-local function speakPrompt()
-	if pending and ns.SendLine(pending.text, pending.chatType) then
-		hidePrompt()
-	end
-end
-
--- The key binding tells the open story; otherwise it answers the prompt.
 function FiresideTales_Speak()
 	if ns.Story.IsOpen() then
 		ns.Story.SpeakNext()
-	else
-		speakPrompt()
 	end
-end
-
-function FiresideTales_Skip()
-	hidePrompt()
 end
 
 function FiresideTales_ToggleStories()
 	ns.Story.Toggle()
-end
-
-local function makeButton(label, x, onClick)
-	local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	button:SetSize(90, 22)
-	button:SetPoint("BOTTOMRIGHT", x, 10)
-	button:SetText(label)
-	button:SetScript("OnClick", onClick)
-	return button
-end
-
-local function buildFrame()
-	frame = CreateFrame("Frame", "FiresideTalesFrame", UIParent, "BackdropTemplate")
-	frame:SetSize(380, 110)
-	ns.ApplyBackdrop(frame)
-	ns.MakeDraggable(frame, "position")
-	ns.PlaceFrame(frame, "position", "BOTTOM", UIParent, "BOTTOM", 0, 220)
-
-	kindLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	kindLabel:SetPoint("TOPLEFT", 12, -10)
-
-	textLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	textLabel:SetPoint("TOPLEFT", 12, -26)
-	textLabel:SetWidth(356)
-	textLabel:SetJustifyH("LEFT")
-	textLabel:SetWordWrap(true)
-
-	makeButton("Speak", -106, speakPrompt)
-	makeButton("Skip", -12, hidePrompt)
-	frame:Hide()
 end
 
 -------------------------------------------------------------------------------
@@ -343,21 +198,17 @@ function handlers.ADDON_LOADED(name)
 	if name ~= ADDON then return end
 	FiresideTalesDB = FiresideTalesDB or {}
 	db = FiresideTalesDB
-	db.settings = db.settings or {}
-	if db.settings.enabled == nil then db.settings.enabled = true end
-	db.settings.cooldown = db.settings.cooldown or 30
+	-- Settings and position of the old automatic prompts, which are gone.
+	db.settings, db.position = nil, nil
 	db.chars = db.chars or {}
 	db.imported = db.imported or {} -- Stories from the Write My Story window.
-	buildFrame()
 end
 
 function handlers.PLAYER_LOGIN()
 	charKey = UnitName("player")
-	-- Keeps only what's used now, which also clears any older journal data.
+	-- Keeps only what's used now, which also clears any older data.
 	local saved = db.chars[charKey] or {}
 	char = {
-		recent = saved.recent or {},
-		lastZone = saved.lastZone,
 		told = saved.told or {}, -- Story key to the time it was last finished.
 		favorites = saved.favorites or {},
 		tonight = saved.tonight or {}, -- Story keys, in telling order.
@@ -367,47 +218,9 @@ function handlers.PLAYER_LOGIN()
 	ns.BuildMinimapButton()
 end
 
-function handlers.PLAYER_ENTERING_WORLD(isInitialLogin)
-	-- Arriving somewhere after a login or reload is not a story beat.
-	if isInitialLogin or not char.lastZone then
-		char.lastZone = currentZone() or char.lastZone
-	end
-end
-
 function handlers.ZONE_CHANGED_NEW_AREA()
 	ns.Story.ZoneChanged()
-	local zone = currentZone()
-	if not zone or zone == char.lastZone then return end
-	char.lastZone = zone
-	showPrompt("zone_enter", { zone = zone })
 end
-
-function handlers.QUEST_TURNED_IN(questID)
-	showPrompt("quest_done", {
-		quest = plain(C_QuestLog.GetTitleForQuestID(questID)),
-		zone = currentZone(),
-	})
-end
-
-function handlers.PLAYER_LEVEL_UP(level)
-	showPrompt("level_up", { level = plain(level), zone = currentZone() })
-end
-
-function handlers.PLAYER_DEAD()
-	awaitingRevival = true
-end
-
--- Living players can't hear ghosts, so the line waits until you're back on your feet.
-local function offerRevivalLine()
-	C_Timer.After(1, function()
-		if awaitingRevival and not UnitIsDeadOrGhost("player") then
-			awaitingRevival = false
-			showPrompt("death", { zone = currentZone() })
-		end
-	end)
-end
-handlers.PLAYER_ALIVE = offerRevivalLine
-handlers.PLAYER_UNGHOST = offerRevivalLine
 
 local eventFrame = CreateFrame("Frame")
 for event in pairs(handlers) do
@@ -426,16 +239,13 @@ end)
 
 BINDING_HEADER_FIRESIDETALES = "Fireside Tales"
 BINDING_NAME_FIRESIDETALES_SPEAK = "Speak the next line"
-BINDING_NAME_FIRESIDETALES_SKIP = "Skip the offered line"
 BINDING_NAME_FIRESIDETALES_STORIES = "Open or close the story menu"
 
 local function showStatus()
-	say(("%s the %s %s: prompts %s, cooldown %ds, %d stories for you, %d pasted in across all characters."):format(
+	say(("%s the %s %s: %d stories for you, %d pasted in across all characters."):format(
 		charKey,
 		UnitRace("player"),
 		UnitClass("player"),
-		db.settings.enabled and "on" or "off",
-		db.settings.cooldown,
 		ns.Story.Count(),
 		ns.Import.Count()
 	))
@@ -443,29 +253,16 @@ end
 
 SLASH_FIRESIDETALES1 = "/tales"
 SlashCmdList.FIRESIDETALES = function(input)
-	local command, argument = (input or ""):lower():match("^%s*(%S*)%s*(.-)%s*$")
+	local command = (input or ""):lower():match("^%s*(%S*)")
 	if command == "" or command == "stories" then
 		ns.Story.Toggle()
 	elseif command == "add" then
 		ns.Import.Toggle()
 	elseif command == "minimap" then
 		ns.ToggleMinimapButton()
-	elseif command == "on" or command == "off" then
-		db.settings.enabled = command == "on"
-		showStatus()
-	elseif command == "cooldown" and tonumber(argument) then
-		db.settings.cooldown = math.max(0, tonumber(argument))
-		showStatus()
-	elseif command == "test" then
-		local trigger = PRIORITY[argument] and argument or "zone_enter"
-		showPrompt(trigger, {
-			zone = currentZone() or "these lands",
-			quest = "A Test of Nerve",
-			level = plain(UnitLevel("player")),
-		}, true)
 	elseif command == "status" then
 		showStatus()
 	else
-		say("/tales stories | add | minimap | on | off | status | cooldown <seconds> | test [zone_enter, quest_done, level_up, death]")
+		say("/tales stories | add | minimap | status")
 	end
 end

@@ -1015,7 +1015,6 @@ function ns.Story.Toggle()
 	if window:IsShown() then
 		window:Hide()
 	else
-		ns.HidePrompt()
 		ns.Teller.Hide()
 		renderList() -- You may have changed zones since it was last open.
 		window:Show()

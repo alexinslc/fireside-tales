@@ -37,7 +37,7 @@ The addon never sends chat by itself. The game requires a key press or click for
 
 2. Start the game. If addons load individually, turn on Fireside Tales at the character screen.
 
-3. Optional: bind keys under **Options > Keybindings > Fireside Tales** for Speak, Skip, and the story menu. The on-screen buttons work without them.
+3. Optional: bind keys under **Options > Keybindings > Fireside Tales** for Speak and the story menu. The on-screen buttons work without them.
 
 ## Telling a story
 
@@ -78,7 +78,7 @@ The filters sit in one row above the list. They combine, and the count at the to
 
 **Clear** appears while a filter is on and resets all four.
 
-**Restart** goes back to the first line. **Escape** closes the menu. Automatic prompts pause while the menu or teller bar is open, and your place in a story is kept until you pick another or `/reload`.
+**Restart** goes back to the first line. **Escape** closes the menu. Your place in a story is kept until you pick another or `/reload`.
 
 ### What's in the list
 
@@ -108,10 +108,6 @@ Pasted stories are saved with your account, outside the addon's folder, so updat
 
 The addon's `prompts` folder has more prompts for a race or class, a zone, everyone, and stories told to someone by name. Their answers go in the same box.
 
-## Automatic prompts
-
-A prompt appears when you enter a new zone, turn in a quest, level up, or come back from dying. Press **Speak** to say it or **Skip** to dismiss it, or ignore it and it disappears after 45 seconds. Drag either window to move it.
-
 ## Commands
 
 | Command | What it does |
@@ -120,10 +116,7 @@ A prompt appears when you enter a new zone, turn in a quest, level up, or come b
 | `/tales help` | List the commands |
 | `/tales add` | Open or close the Write My Story window |
 | `/tales minimap` | Show or hide the minimap icon |
-| `/tales on`, `/tales off` | Turn automatic prompts on or off |
-| `/tales cooldown 60` | Minimum seconds between prompts (default 30) |
-| `/tales status` | Show who the addon thinks you are, plus settings and story counts |
-| `/tales test quest_done` | Show a prompt: `zone_enter`, `quest_done`, `level_up`, or `death`. Speak on a test prompt is real. |
+| `/tales status` | Show who the addon thinks you are, and your story counts |
 
 ## Working on the addon
 
@@ -140,7 +133,6 @@ Built-in stories are in `addon/FiresideTales/`:
 - **Starter stories for everyone:** `Stories.lua` and `MoreShared.lua`.
 - **Starter stories told to a target:** `StoriesTargeted.lua`. Write `{target}` where the name goes, and describe only what the teller does, never what the listener does or feels.
 - **Race, class, and zone stories:** `StoriesRaces.lua`, `MoreRaces.lua`, `StoriesClasses.lua`, `MoreClasses.lua`, and `MoreZones.lua`.
-- **Automatic prompt lines:** `Lines.lua`.
 
 Each story needs a `title`, a `mood` (`funny`, `heartfelt`, `dark`, `action`, `spooky`, or `wise`), and `lines`. Shared stories also need a `theme`.
 
