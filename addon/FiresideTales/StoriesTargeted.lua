@@ -64,18 +64,6 @@ ns.TargetStories = {
 		},
 	},
 	{
-		title = "A Stranger Sat Down",
-		mood = "heartfelt",
-		lines = {
-			{ kind = "emote", text = "looks across the flames at {target} and smiles a little." },
-			{ kind = "say", text = "I used to sit alone on nights like this. A whole year of them, after I lost someone I'd walked with since I was young." },
-			{ kind = "say", text = "Then one night a stranger sat down at my fire without asking. Said nothing. Shared their bread and went to sleep." },
-			{ kind = "say", text = "Gone by morning. I never got a name. But I started sleeping again after that." },
-			{ kind = "emote", text = "tosses a twig onto the coals and watches it catch." },
-			{ kind = "say", text = "So I'm glad you stopped here, {target}. You don't have to say a word. I know what sitting down can do." },
-		},
-	},
-	{
 		title = "The Letter You Owe",
 		mood = "heartfelt",
 		lines = {
@@ -148,18 +136,6 @@ ns.TargetStories = {
 		},
 	},
 	{
-		title = "Paid to Dig",
-		mood = "dark",
-		lines = {
-			{ kind = "emote", text = "rolls an invisible coin across their knuckles, watching {target}." },
-			{ kind = "say", text = "Know what this is, {target}? It's what a man paid me to bury his brother and ask no questions." },
-			{ kind = "say", text = "I asked no questions. I dug by moonlight. The shroud was heavy, and halfway down, the shroud coughed." },
-			{ kind = "emote", text = "stops the coin dead between two fingers." },
-			{ kind = "say", text = "I've told that part to plenty of folk. They always ask what I did next." },
-			{ kind = "say", text = "I kept digging, {target}. I'd been paid. That's the whole of the story, and I've carried this coin ever since." },
-		},
-	},
-	{
 		title = "The Chapel Books",
 		mood = "dark",
 		lines = {
@@ -202,7 +178,7 @@ ns.TargetStories = {
 		lines = {
 			{ kind = "say", text = "I hope your kit's in better shape than mine was, {target}, the night I got jumped outside Thelsamar. Rusty blade, no armor, one boot." },
 			{ kind = "say", text = "One boot because they caught me in my bedroll. The first one got a faceful of hot coals. The second got the boot." },
-			{ kind = "emote", text = "kicks one leg out hard from where they sit, then hauls back an invisible blade." },
+			{ kind = "emote", text = "jerks one fist forward, then draws back an imagined blade with the other hand." },
 			{ kind = "say", text = "The third had a crossbow and all the time in the world. He took aim. Click. The string snapped clean." },
 			{ kind = "say", text = "We looked at each other for a good long while. Then we both ran. Opposite ways." },
 			{ kind = "emote", text = "wags a finger across the fire at {target}." },
@@ -256,31 +232,6 @@ ns.TargetStories = {
 			{ kind = "say", text = "They come up close behind whoever's listening hardest. They only want to hear. They like a story as much as anyone." },
 			{ kind = "emote", text = "watches the space behind {target} for a long, slow moment, then looks back to the flames." },
 			{ kind = "say", text = "There. It's gone now. Still, I'd stay near the fire until morning." },
-		},
-	},
-	{
-		title = "Count Us",
-		mood = "spooky",
-		lines = {
-			{ kind = "say", text = "Let's try something, {target}. Count how many of us are sitting at this fire." },
-			{ kind = "emote", text = "points around the circle one at a time, lips moving silently." },
-			{ kind = "say", text = "I was with a caravan once. Six of us around the fire every night. I know, because I cooked for six." },
-			{ kind = "say", text = "Then one night I noticed I'd been cooking for seven. Seven bowls, all emptied, for weeks. Nobody could say who'd joined us, or when." },
-			{ kind = "emote", text = "finishes counting, frowns, and starts over from {target}." },
-			{ kind = "say", text = "How many did you get? No. Don't tell me. Just don't count again." },
-		},
-	},
-	{
-		title = "The Third Call",
-		mood = "spooky",
-		lines = {
-			{ kind = "say", text = "If you're ever sleeping out here, {target}, and you hear someone call your name from the trees, don't answer." },
-			{ kind = "say", text = "Not the first time. Not the second. You wait for a third call, because whatever's out there has only learned two." },
-			{ kind = "emote", text = "cups a hand behind one ear, listening to the dark beyond the firelight." },
-			{ kind = "say", text = "My brother answered on the second call. We looked for him all summer." },
-			{ kind = "say", text = "Some nights I still hear him out there, calling my name. Always twice." },
-			{ kind = "emote", text = "lowers the hand and looks across at {target}, without a smile." },
-			{ kind = "say", text = "Wait for the third, {target}. Promise me you'll wait for the third." },
 		},
 	},
 	{
@@ -363,6 +314,52 @@ ns.TargetStories = {
 			{ kind = "say", text = "I've sat at all kinds of fires, with all kinds of folk, and they all do the same thing the moment night comes on." },
 			{ kind = "emote", text = "holds their palms out to the flames and nods toward {target}'s side of the fire." },
 			{ kind = "say", text = "Everyone edges a little closer. You can learn nearly all you'll ever need to know from that." },
+		},
+	},
+	{
+		title = "A Map With Room Left",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "I once bought a map with one corner left blank, {target}. I thought I'd been cheated, until the mapmaker said she just hadn't been there yet." },
+			{ kind = "say", text = "I offered to tell her what was out past the last mark. She handed me the pen instead." },
+			{ kind = "emote", text = "holds out an invisible pen across the fire toward {target}." },
+			{ kind = "say", text = "I drew it very badly. She asked about every line anyway, and by the end that corner was the most useful part of the map." },
+			{ kind = "say", text = "You look like someone who's been past the edge of a few maps, {target}. If you ever want the pen, it's yours." },
+		},
+	},
+	{
+		title = "The Soup Question",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "{target}, an old friend and I have argued for years over whether soup is a food or a drink. We've ruined a lot of good soup over it." },
+			{ kind = "say", text = "Last time we met, we finally agreed on one thing. The next stranger to share our fire would settle it for good." },
+			{ kind = "emote", text = "leans toward {target} with great seriousness, hands folded." },
+			{ kind = "say", text = "My friend isn't here, which I think is to my advantage. I'll tell her it was a fair hearing." },
+			{ kind = "say", text = "Take your time, {target}. Whatever you say, I'm writing it down, and one of us is buying the other a bowl." },
+		},
+	},
+	{
+		title = "Your Turn",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "The first time I sat at a storyteller's fire, she finished her tale, looked right at me, and said, your turn." },
+			{ kind = "say", text = "I had nothing. I told a story about a goat I'd once owned. It had no ending. The goat just sort of wandered off, and so did the story." },
+			{ kind = "emote", text = "winces at the memory, then laughs quietly to themselves." },
+			{ kind = "say", text = "Nobody minded. She told me that's how every teller starts. With a goat and no ending." },
+			{ kind = "emote", text = "turns to {target} and opens one hand, palm up." },
+			{ kind = "say", text = "So, {target}. Your turn. Goats are welcome. Endings are optional." },
+		},
+	},
+	{
+		title = "The Seat With Its Back to the Dark",
+		mood = "spooky",
+		lines = {
+			{ kind = "say", text = "{target}, would you mind if I told you something about where you're sitting? It's nothing bad. Probably." },
+			{ kind = "say", text = "An old woodsman once told me that at any fire, the seat with its back to the dark is the one things come to first. Not to hurt you. Just to look." },
+			{ kind = "emote", text = "glances past {target} into the dark, and holds very still for a moment." },
+			{ kind = "say", text = "I used to think that was nonsense. Then one night I sat there myself, and something breathed on my neck. Warm. Patient." },
+			{ kind = "say", text = "I didn't turn around. I just said good evening, very politely. It said it back." },
+			{ kind = "emote", text = "smiles at {target} a little too brightly." },
 		},
 	},
 }

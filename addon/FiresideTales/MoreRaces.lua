@@ -70,17 +70,6 @@ ns.AddStories("race", "Human", {
 		},
 	},
 	{
-		title = "The Twelfth Reaper",
-		mood = "spooky",
-		lines = {
-			{ kind = "say", text = "My uncle's farm hired eleven hands for the harvest, every year. And every year at dusk, if you counted the row, there were twelve." },
-			{ kind = "say", text = "You could never tell which one was extra. Count again and you'd lose your place. So the old foreman just left a twelfth pay packet on the stump." },
-			{ kind = "emote", text = "counts the shapes around the fire under their breath, loses their place, and starts over." },
-			{ kind = "say", text = "It was always gone by morning. Then a new foreman came along, a man with a bad leg, and he laughed and pocketed it. That winter he left without a word to anyone." },
-			{ kind = "say", text = "Next harvest we hired eleven, and at dusk we counted thirteen. One of them walked with his limp." },
-		},
-	},
-	{
 		title = "The Barren Tree",
 		mood = "wise",
 		lines = {
@@ -183,6 +172,17 @@ ns.AddStories("race", "Dwarf", {
 			{ kind = "say", text = "I've made one or two bad things since. I don't cry about them. I just find a nail." },
 		},
 	},
+	{
+		title = "The Measure of the Mug",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "I once complained in Kharanos that my mug held less than the fellow's next to me. Loudly. The keeper handed me a measuring cup." },
+			{ kind = "say", text = "I measured both. Same. I measured again. Still the same. By then half the inn had turned round to watch." },
+			{ kind = "emote", text = "squints along the rim of an invisible mug, deeply unconvinced." },
+			{ kind = "say", text = "The keeper asked if I'd like to apologize. I said I'd found a fault in my eyes, and I'd need another drink to test it." },
+			{ kind = "say", text = "She charged me for the measuring cup. Fair enough. I'd used it the most." },
+		},
+	},
 })
 
 ns.AddStories("race", "NightElf", {
@@ -246,7 +246,7 @@ ns.AddStories("race", "NightElf", {
 		title = "Quiet Feet",
 		mood = "spooky",
 		lines = {
-			{ kind = "say", text = "My people walk softly. A child of Teldrassil can cross dry leaves without a whisper. So you learn something early on about footsteps." },
+			{ kind = "say", text = "My people walk softly. A child of Ashenvale can cross dry leaves without a whisper. So you learn something early on about footsteps." },
 			{ kind = "say", text = "If you can hear them, they aren't ours." },
 			{ kind = "say", text = "I heard some once, on the root road, far past any lamp. Behind me, slow and heavy. I stopped walking, and they went on for one step longer." },
 			{ kind = "emote", text = "breaks off and turns one long ear toward the dark, utterly still." },
@@ -369,6 +369,17 @@ ns.AddStories("race", "Gnome", {
 			{ kind = "say", text = "She was sitting on a rock, drawing in the snow with a stick. She looked up and said, \"Largest failure I've ever been part of. Think how much there is to learn.\"" },
 		},
 	},
+	{
+		title = "The Buckle That Held",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "I once designed a quick-release buckle. One tug and it lets go, for getting out of a harness in a hurry. Beautiful drawings." },
+			{ kind = "say", text = "I tested it on a toolbox. I tugged. Nothing. I hung off it with my full weight. That buckle held on like a grudge." },
+			{ kind = "emote", text = "yanks an invisible strap twice, then lets it go with a sigh." },
+			{ kind = "say", text = "I wrote FAILED across the drawings. A miner saw them over my shoulder and asked if he could buy a dozen." },
+			{ kind = "say", text = "They're still on his ore carts. Never let go once. Best thing I've ever made by accident, and I've made a lot of things by accident." },
+		},
+	},
 })
 
 ns.AddStories("race", "Orc", {
@@ -441,18 +452,6 @@ ns.AddStories("race", "Orc", {
 		},
 	},
 	{
-		title = "Clean Dust",
-		mood = "spooky",
-		lines = {
-			{ kind = "say", text = "The wind out here smooths the dust every night. Every morning the ground is clean as a fresh hide, so if anything has walked it, you'll know." },
-			{ kind = "say", text = "One morning, there were bootprints outside my tent. Walking up to the flap, and stopping. None going away." },
-			{ kind = "say", text = "We set a watch. Nobody came, and still there were prints. We moved camp three times. Same prints, each morning, a little closer to my bedroll." },
-			{ kind = "emote", text = "lifts one foot and looks at the sole of their boot for a long moment." },
-			{ kind = "say", text = "Finally, our elder laid a cord across one and measured it, and then had me stand beside it. Nobody said anything. I sleep tied down now." },
-			{ kind = "emote", text = "watches their own shadow shift on the ground behind them, and does not turn around." },
-		},
-	},
-	{
 		title = "Two More Feet",
 		mood = "wise",
 		lines = {
@@ -461,6 +460,17 @@ ns.AddStories("race", "Orc", {
 			{ kind = "say", text = "Forty feet of dry rock, and then one morning they found the old one sitting at the bottom of it, dead, with the pick still across their knees." },
 			{ kind = "say", text = "It was a pup who went down to bring up the body, one of the ones who'd laughed loudest. For no reason anyone can name, that pup swung the pick a few times. Two more feet." },
 			{ kind = "say", text = "We all drink from it now. Whatever you're digging, understand that you may not be the one who gets the water. Dig anyway." },
+		},
+	},
+	{
+		title = "Within Reach",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "When we were building our camp in Durotar, I was given the job of hanging the gathering drum. I put it on the highest beam, so it would carry." },
+			{ kind = "say", text = "An old warrior asked me to reach it with my left hand. I couldn't. Then she asked me to picture my right arm in a sling." },
+			{ kind = "emote", text = "holds one forearm close against their chest, and reaches carefully up with the other." },
+			{ kind = "say", text = "I said a lower drum wouldn't carry as far. She said a drum nobody can reach doesn't carry at all." },
+			{ kind = "say", text = "We moved it down to shoulder height. A lot of tired, hurt people have beaten that drum since." },
 		},
 	},
 })
@@ -539,7 +549,7 @@ ns.AddStories("race", "Scourge", {
 		lines = {
 			{ kind = "say", text = "It's very quiet in a Tirisfal graveyard at night, once you've got a crowd of us standing around. We don't breathe, you see. So there's no sound at all." },
 			{ kind = "say", text = "That's how we noticed. A slow sound, in and out, coming from an open grave at the far end of the row." },
-			{ kind = "emote", text = "leans in toward the listeners, raises one finger, and tilts their head at something nobody else can hear." },
+			{ kind = "emote", text = "leans toward the fire, raises one finger, and tilts their head as though listening." },
 			{ kind = "say", text = "There were seven of us. We walked over and stood around it in a circle, and not one of us would be the first to look down." },
 			{ kind = "say", text = "I've been dead for five years. I've walked through things you wouldn't believe. I don't mind telling you, I ran." },
 		},
@@ -553,6 +563,17 @@ ns.AddStories("race", "Scourge", {
 			{ kind = "emote", text = "lifts an unseen plate and wipes it, very gently, with their sleeve." },
 			{ kind = "say", text = "Forty years she'd been saving them. I don't think anything was ever eaten off them, not one meal." },
 			{ kind = "say", text = "I set them all out on what remained of the table, and I sat there a while. I'm dead, and that's the whole of what I've learned from it. Use the good plates." },
+		},
+	},
+	{
+		title = "Three Candles",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "In Brill, I ordered a little cake for the day I woke up as myself again. The baker asked how many candles. I said I'd stopped counting." },
+			{ kind = "emote", text = "holds up one finger, thinks better of it, and opens both hands." },
+			{ kind = "say", text = "He put one candle on it. Then he charged me for three, because three was the smallest box he sold." },
+			{ kind = "say", text = "I argued until he gave me the other two. We ended up eating the cake together, behind his counter." },
+			{ kind = "say", text = "I've booked the next two years with him. I hate to waste good candles." },
 		},
 	},
 })
@@ -599,7 +620,7 @@ ns.AddStories("race", "Tauren", {
 			{ kind = "say", text = "One evening my grandfather finished half his meal. He set his bowl down in front of me, and he stood, and he walked out into the plain." },
 			{ kind = "emote", text = "sets something down with both hands and does not look up." },
 			{ kind = "say", text = "I started to call after him. My mother laid a hand on my arm. No one at the fire looked up, and he did not look back." },
-			{ kind = "say", text = "There were others after him, that summer. All of the old ones, in time. And every child in our camp lived to see the rain." },
+			{ kind = "say", text = "He did not come back. And every child in our camp lived to see the rain." },
 			{ kind = "emote", text = "looks slowly around the circle, at each face the firelight reaches, and then away." },
 		},
 	},
@@ -648,6 +669,17 @@ ns.AddStories("race", "Tauren", {
 			{ kind = "say", text = "My grandfather never said a word about it. He only planted the row again. You pay your neighbors what you owe them, or else they come and collect." },
 		},
 	},
+	{
+		title = "The Little Stool",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "A traveler once gave me a stool she'd made on the road. She hadn't measured me first. It came up to about my knee." },
+			{ kind = "say", text = "I couldn't sit on it, so I used it to hold my sewing bowl. It was exactly the right height to keep the thread out of my supper." },
+			{ kind = "emote", text = "pinches an invisible thread and lifts it carefully clear of something below." },
+			{ kind = "say", text = "She came back a year later and started apologizing for it again. Then she saw the worn patch where the bowl had sat every night." },
+			{ kind = "say", text = "The next stool she made me, I can actually sit on. I still use the little one more." },
+		},
+	},
 })
 
 ns.AddStories("race", "Troll", {
@@ -655,7 +687,7 @@ ns.AddStories("race", "Troll", {
 		title = "The Painted Crab",
 		mood = "funny",
 		lines = {
-			{ kind = "say", text = "My auntie ran the crab races back on the islands, mon. Every market day, six crabs in six colors, and folks would come from all over to bet." },
+			{ kind = "say", text = "My auntie raced crabs back on the islands, mon. Every market day, crabs from all over in every color, and folks would come from miles to bet." },
 			{ kind = "emote", text = "scuttles two fingers along an imaginary track, grinning wide." },
 			{ kind = "say", text = "She won a great deal of the time, my auntie. Sometimes on the red crab, sometimes on the blue. Nobody ever could find a pattern in it." },
 			{ kind = "say", text = "I was eight when I went round the back of her hut and saw it. One big crab, in a bucket, and six little pots of paint." },
@@ -690,7 +722,7 @@ ns.AddStories("race", "Troll", {
 		lines = {
 			{ kind = "say", text = "A stranger came to one of our burials once, and I watched his face fall. Drums, singing, somebody's cousin dancing on a table. He thought we had no respect." },
 			{ kind = "say", text = "My auntie sat him down and put a cup in his hand. She said, you people cry so quiet. How's the dead supposed to know you came?" },
-			{ kind = "emote", text = "stamps one foot in slow time, then the other, eyes closed." },
+			{ kind = "emote", text = "taps a slow rhythm on their own knee with both hands, eyes closed." },
 			{ kind = "say", text = "When we buried her, I danced until my feet bled, mon. I sang so loud I had no voice for a week." },
 			{ kind = "say", text = "I wanted to be sure she heard. She always did complain that I mumbled." },
 		},
@@ -740,6 +772,17 @@ ns.AddStories("race", "Troll", {
 			{ kind = "say", text = "So don't aim for where a person looks like they're standing. Aim a little under. You'd be surprised what you hit." },
 		},
 	},
+	{
+		title = "Something Friendly",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "A village once asked me to carve a mask for their children's festival. Something friendly, they said. Nothing frightening." },
+			{ kind = "say", text = "I tried. I gave it a big smile. Then a bigger smile. By the end it had more teeth than I do, and I have a lot of teeth." },
+			{ kind = "emote", text = "grins wide, showing every tooth, and holds it a little too long." },
+			{ kind = "say", text = "The parents were horrified. The children fought over who got to wear it. One of them slept in it." },
+			{ kind = "say", text = "They ask me back every year now. The parents have stopped saying friendly. Now they just say smaller." },
+		},
+	},
 })
 
 ns.AddStories("race", "Skyborne", {
@@ -752,18 +795,7 @@ ns.AddStories("race", "Skyborne", {
 			{ kind = "emote", text = "walks two fingers briskly off the edge of one knee, then winces all the way down." },
 			{ kind = "say", text = "It turns out a stair is not a ledge. The stairs have opinions about this. I met each of them personally, and at the bottom I met the soup." },
 			{ kind = "say", text = "The innkeeper looked down at me and asked if I'd been drinking. I told him no. I said, why would anyone build this?" },
-			{ kind = "emote", text = "looks around at the listeners, waiting for an answer, and seems honestly troubled when none comes." },
-		},
-	},
-	{
-		title = "The Hat Merchant",
-		mood = "funny",
-		lines = {
-			{ kind = "say", text = "A trader once came to Zephras Isle selling hats. On Zephras. He landed on the one calm day of the season, so nobody could really blame him." },
-			{ kind = "say", text = "They were lovely hats. Feathers, wide brims. We don't have hats at home, so everyone wanted one. He sold every last hat by noon, and he was so pleased." },
-			{ kind = "emote", text = "holds on to the top of their head, and watches something sail away into the distance." },
-			{ kind = "say", text = "Then the afternoon wind came in. It took about as long as a sneeze. The whole island stood on the cliffs and watched forty hats leave for the open sea." },
-			{ kind = "say", text = "He came back the next year with twice as many. Fishing boats still find them. Those seabirds have the finest nests in the world." },
+			{ kind = "emote", text = "spreads their hands, still honestly troubled by the question." },
 		},
 	},
 	{
@@ -793,7 +825,7 @@ ns.AddStories("race", "Skyborne", {
 		mood = "dark",
 		lines = {
 			{ kind = "say", text = "We have a word for a day when the wind dies all at once. We don't say it aloud, not even to explain it. I was nine, the only time I saw one." },
-			{ kind = "say", text = "There were people up, a long way out over the strait. A good many of them, on a fine clear morning. And then every banner on the isle just went limp." },
+			{ kind = "say", text = "There were people out on the high cliff paths, leaning on the wind the way we all do. A good many of them, on a fine clear morning. And then every banner on the isle went limp." },
 			{ kind = "emote", text = "lifts a wet finger into the air, holds it there, and slowly lowers it." },
 			{ kind = "say", text = "There's nothing anyone can do from the cliff. You only stand there. It's very quiet, and you can see a very long way." },
 			{ kind = "say", text = "There's a row of white stones along that cliff. I know how many there are. Please don't ask me." },
@@ -818,7 +850,7 @@ ns.AddStories("race", "Skyborne", {
 			{ kind = "say", text = "The wind off the north cliffs of Zephras carries voices. Everyone there will tell you it's only the sea caves, and it's nothing, and you shouldn't go there alone." },
 			{ kind = "say", text = "I went there alone. It was a still sort of evening. I sat with my back against a rock, a long way from the drop, and listened to it mutter." },
 			{ kind = "say", text = "After a while, it was saying my name, in my grandmother's voice. Very kind. \"Come out here,\" it said. \"There's plenty of room.\" She'd been dead six years." },
-			{ kind = "emote", text = "looks slowly down at their own feet, and draws them back from the edge of the firelight." },
+			{ kind = "emote", text = "looks slowly down at their own hands, and draws them in close to the fire." },
 			{ kind = "say", text = "And I was thinking how nice that was, when I noticed the rock wasn't behind me anymore. I was four steps from the edge, and I don't remember standing up." },
 		},
 	},
@@ -826,11 +858,22 @@ ns.AddStories("race", "Skyborne", {
 		title = "Lean Into It",
 		mood = "wise",
 		lines = {
-			{ kind = "say", text = "Here's the thing every young one gets wrong the first time they're up in a real crosswind. Everything in your body tells you to lean away from it." },
+			{ kind = "say", text = "Here's the thing every young one gets wrong the first time they walk the cliff paths in a real crosswind. Everything in your body tells you to lean away from it." },
 			{ kind = "emote", text = "rolls their shoulders, then tilts slowly into some unfelt gust." },
-			{ kind = "say", text = "And that's how you fall. It gets under you and flips you over. To stay up, you have to turn and lean right into the thing that's trying to knock you down." },
-			{ kind = "say", text = "I lost someone a few years ago. I spent a long time flying the other way from that, as fast as I could go, and I kept on tumbling out of the sky." },
+			{ kind = "say", text = "And that's how you go over. It gets under you and takes your feet. To stay on the path, you have to turn and lean right into the thing that's trying to knock you down." },
+			{ kind = "say", text = "I lost someone a few years ago. I spent a long time leaning away from that, as hard as I could, and I kept on losing my footing." },
 			{ kind = "say", text = "It took me far too long to remember my first lesson. It still blows just as hard, but I'm not falling now. Some days, it even holds me up." },
+		},
+	},
+	{
+		title = "The Best Seat on the Isle",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "I once showed a visitor around Zephras Isle. I kept pointing at the sky, and she kept looking at the path. I thought she was bored." },
+			{ kind = "say", text = "Then I saw her hands. She was holding on to her own sleeves so they wouldn't shake. I asked if she wanted to stop. She said yes before I'd finished." },
+			{ kind = "emote", text = "lets go of their own sleeves and settles both hands in their lap." },
+			{ kind = "say", text = "We sat in a hollow where she could see solid ground all round. After a while, she pointed at a cloud and asked what it meant." },
+			{ kind = "say", text = "I'd walked past that hollow for years. It has the best view of the sky on the whole island. I'd never once sat down in it." },
 		},
 	},
 })

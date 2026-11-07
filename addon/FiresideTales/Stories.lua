@@ -60,11 +60,11 @@ ns.Stories = {
 		title = "The Boots",
 		mood = "funny",
 		lines = {
-			{ kind = "emote", text = "props one battered boot across their knee and regards it fondly." },
+			{ kind = "emote", text = "holds their hands apart as though measuring a very fine pair of boots." },
 			{ kind = "say", text = "I took these from a bandit who no longer needed them. He'd taken them from a soldier, who'd won them at dice." },
 			{ kind = "say", text = "Every owner they've had came to a bad end, as far as I can trace it." },
 			{ kind = "say", text = "But they've never once given me a blister, so I've decided that's a risk worth taking." },
-			{ kind = "emote", text = "knocks the mud off the heel with a satisfied nod." },
+			{ kind = "emote", text = "gives a satisfied nod and brushes their palms together." },
 		},
 	},
 	{
@@ -117,19 +117,6 @@ ns.Stories = {
 			{ kind = "say", text = "Afterward, shaking too hard to hold a cup, I asked how she had stayed so calm." },
 			{ kind = "emote", text = "leans in and drops their voice, as if the captain might still overhear." },
 			{ kind = "say", text = "She looked at me and said, calm? I've been sick behind that wagon twice." },
-		},
-	},
-	{
-		theme = "Ghost Stories",
-		title = "The Empty Inn",
-		mood = "spooky",
-		lines = {
-			{ kind = "say", text = "I stopped at an inn once, out past the last village on the old road. Warm fire. Hot stew. Friendly keeper." },
-			{ kind = "say", text = "Charged me two coppers. I remember thinking that was far too cheap, and I left a silver on the table." },
-			{ kind = "say", text = "Next town over, I told them about it. They went very quiet." },
-			{ kind = "say", text = "That inn burned down thirty years back, they said. Keeper and all." },
-			{ kind = "emote", text = "lowers their voice as the fire burns low, shadows crawling across their face." },
-			{ kind = "say", text = "I went back to look. Nothing there but ash and weeds. And on one blackened stone, a single silver coin." },
 		},
 	},
 	{
@@ -220,7 +207,7 @@ ns.Stories = {
 		title = "Good Morning",
 		mood = "wise",
 		lines = {
-			{ kind = "emote", text = "stretches and breathes in the cold air, as if it were already morning." },
+			{ kind = "emote", text = "stretches their shoulders and lets out a slow, contented breath." },
 			{ kind = "say", text = "An old soldier taught me this. Every morning, name one thing you're glad you lived to see." },
 			{ kind = "say", text = "Some days it's a sunrise. Some days it's a hot meal. Some days, I'll be honest, it's that someone I can't stand tripped over a tent rope." },
 			{ kind = "say", text = "Doesn't matter what it is. You just have to find one. And you always can." },

@@ -95,6 +95,17 @@ ns.AddStories("class", "WARRIOR", {
 			{ kind = "say", text = "I wrote to tell her. The letter came back with one line on it: \"Good. Come back next winter and we'll do your eyes.\"" },
 		},
 	},
+	{
+		title = "The Cheap Practice Blade",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "I bought a wooden practice sword in Lakeshire. The seller swore it would survive anything an apprentice could do to it." },
+			{ kind = "say", text = "I broke it on the first swing." },
+			{ kind = "emote", text = "holds two invisible halves apart and looks from one to the other." },
+			{ kind = "say", text = "I brought both pieces back for a refund. He looked at them and said I was clearly no apprentice, so the promise didn't apply." },
+			{ kind = "say", text = "Then he sold me the advanced model, for twice the price. I've beaten a lot of armed opponents since. That man is still undefeated." },
+		},
+	},
 })
 
 ns.AddStories("class", "PALADIN", {
@@ -153,7 +164,7 @@ ns.AddStories("class", "PALADIN", {
 			{ kind = "say", text = "A young soldier with a broken leg, shouting, and there I was, all eager. I laid on my hands before anyone had set the bone." },
 			{ kind = "emote", text = "tilts slowly to one side, holds it for a moment, then straightens with a sigh." },
 			{ kind = "say", text = "It knit in an instant, strong as oak and crooked as a dog's hind leg. Undoing it meant breaking it again, and he wouldn't have that." },
-			{ kind = "say", text = "That was twenty years ago. Every midwinter I get a note from him, and it only ever says, \"Still leaning.\" I keep them all. I check the bone first now." },
+			{ kind = "say", text = "That was years ago. Every midwinter I get a note from him, and it only ever says, \"Still leaning.\" I keep them all. I check the bone first now." },
 		},
 	},
 	{
@@ -177,18 +188,6 @@ ns.AddStories("class", "PALADIN", {
 			{ kind = "say", text = "I called it down and walked in. Up the ladder, a child under each arm, down again, and out, saying the words the whole way. I reached the last line at the door." },
 			{ kind = "say", text = "They said there was a third. The shelter doesn't come twice that quickly. So I tied a wet sack round my head and went back in on just the words." },
 			{ kind = "say", text = "The scars are on the left, if you're curious. I have learned to pray very, very slowly." },
-		},
-	},
-	{
-		title = "Supper With No Smoke",
-		mood = "spooky",
-		lines = {
-			{ kind = "say", text = "My hands prickle around certain kinds of wrongness. It's not a vision, just a feeling like frost on a door latch. You learn to notice." },
-			{ kind = "say", text = "I came through a village at dusk once. Lovely people, warm and smiling. Everybody wanted me at their table. My hands prickled at every door." },
-			{ kind = "emote", text = "rubs their fingertips together slowly, frowning." },
-			{ kind = "say", text = "There was nothing to strike. No one had done a single wrong thing. So I ate, thanked them, and said I had to ride on before full dark." },
-			{ kind = "say", text = "From the top of the hill I looked back. It was a bitter night, and every hearth was lit, they'd told me. Not one chimney had any smoke." },
-			{ kind = "say", text = "I went back at dawn with six others. Old foundations and long grass. I have thought a great deal about what I had for supper." },
 		},
 	},
 })
@@ -261,7 +260,7 @@ ns.AddStories("class", "HUNTER", {
 			{ kind = "say", text = "So I did, one grey morning in the high woods. And there they were, fresh prints laid over mine. Somebody had been walking in my steps." },
 			{ kind = "emote", text = "leans down and lays two fingers on the ground, then goes very still." },
 			{ kind = "say", text = "Same boots. Same stride. And the same little patch on the left heel, where I'd mended it myself with a scrap of elk hide." },
-			{ kind = "emote", text = "lifts one boot into the firelight and checks the heel, without quite meaning to." },
+			{ kind = "emote", text = "traces a little patch shape in the air and goes still." },
 			{ kind = "say", text = "They went on ahead toward my camp, at an easy pace. Whoever it was knew where they were going." },
 			{ kind = "say", text = "I left a perfectly good kettle at that camp. I have never wanted a kettle less." },
 		},
@@ -300,18 +299,6 @@ ns.AddStories("class", "ROGUE", {
 			{ kind = "say", text = "Four days. I learned every tumbler in that thing by feel. I could draw it for you now. I wept on it." },
 			{ kind = "say", text = "On the fifth day she came by, reached past me, and pulled the handle. It swung right open. It had never been locked." },
 			{ kind = "say", text = "\"First lesson,\" she said, eating my dinner. \"Try the door.\" You'd be amazed how rich that lesson has made me, and how few people learn it." },
-		},
-	},
-	{
-		title = "The Goose",
-		mood = "funny",
-		lines = {
-			{ kind = "say", text = "In twenty years I've gone past sleeping guards, trained dogs, and a wizard's wards. Only one watchman has ever truly beaten me." },
-			{ kind = "say", text = "She was a goose. A big grey goose, in a merchant's courtyard. You can't bribe a goose. I tried drugged bread. She ate it and came back for more." },
-			{ kind = "emote", text = "touches the back of their knee and winces." },
-			{ kind = "say", text = "Four tries I made at that house, and every time she was there at the foot of the wall, hissing, looking right at me. Right at me." },
-			{ kind = "emote", text = "shifts to keep their eyes on the dark beyond the fire, as if that goose might still be out there." },
-			{ kind = "say", text = "I gave up that job in the end. Still, I go by sometimes. Nobody else in this world has ever known me at a glance." },
 		},
 	},
 	{
@@ -384,6 +371,17 @@ ns.AddStories("class", "ROGUE", {
 			{ kind = "say", text = "I happened through one of those towns last year. Those two brothers still don't speak. Nobody ever taught me how to count that." },
 		},
 	},
+	{
+		title = "A Flower in the Pocket",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "I once bought a secondhand coat with a hidden pocket in the lining. Good work. Then I found a little flower stitched right across the opening." },
+			{ kind = "say", text = "I went back and asked the seller if she knew. She said she'd sewn it herself, the year her husband gave up stealing." },
+			{ kind = "emote", text = "rests their fingertips lightly over one pocket." },
+			{ kind = "say", text = "He'd asked her to, she said. His hand still went looking for that pocket all day long. He liked it to find a flower instead." },
+			{ kind = "say", text = "I kept the flower. It's been through three coats now." },
+		},
+	},
 })
 
 ns.AddStories("class", "PRIEST", {
@@ -425,7 +423,7 @@ ns.AddStories("class", "PRIEST", {
 		title = "The Chained Book",
 		mood = "dark",
 		lines = {
-			{ kind = "say", text = "There's a second book in every old temple library. At the back, on a short chain, with no name on its spine. Novices dare each other to touch it." },
+			{ kind = "say", text = "There's a second book in the old temple library where I studied. At the back, on a short chain, with no name on its spine. Novices dare each other to touch it." },
 			{ kind = "say", text = "My teacher said I could read it when I stopped wanting to. A fine riddle, I thought. Later I lost someone, and stopped wanting anything, and I read it." },
 			{ kind = "emote", text = "lets their eyes drift past the firelight into the dark, and keeps them there a little too long." },
 			{ kind = "say", text = "You'd think it would be wicked. Most of it is only honest. It explains what a mind is, and where it's fastened on." },
@@ -479,6 +477,17 @@ ns.AddStories("class", "PRIEST", {
 			{ kind = "say", text = "Around midnight, somebody started pounding on the door. A farmer, out of breath, mud to the knees. His wife's labor had gone wrong. Would I come?" },
 			{ kind = "say", text = "I told him, and I'm ashamed of this, \"Not now. I'm waiting for a sign.\"" },
 			{ kind = "say", text = "He didn't say anything. He just looked at me. I got my coat." },
+		},
+	},
+	{
+		title = "The Prayer I Borrowed",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "I once sat with a frightened traveler who asked me for a prayer. I offered one of mine. She shook her head. Wrong one." },
+			{ kind = "say", text = "So I asked her to teach me hers. She gave it to me a few words at a time, and stopped me every time I rushed." },
+			{ kind = "emote", text = "bows their head and moves their lips silently, slowly, as if learning the words." },
+			{ kind = "say", text = "By the time I could say it right, her hands had stopped shaking. So had mine, which I hadn't noticed." },
+			{ kind = "say", text = "I wrote it down, with her blessing. I've left room under it for the next one somebody teaches me." },
 		},
 	},
 })
@@ -575,6 +584,17 @@ ns.AddStories("class", "SHAMAN", {
 			{ kind = "say", text = "He planted it, though. Out of spite, I think. Twelve years on, his springs run all summer. He tells everyone a shaman made it rain. I let him." },
 		},
 	},
+	{
+		title = "The Answer Under the Hammer",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "A boulder once came down across a path I was helping clear. I asked the earth to move it. The earth declined." },
+			{ kind = "say", text = "I asked again, louder, with feeling. An old miner walked over, handed me a hammer, and pointed at a thin white seam in the rock." },
+			{ kind = "emote", text = "traces a line across their palm with one finger, then taps it with a knuckle." },
+			{ kind = "say", text = "One blow, and the rock split clean in two. I thanked the earth, though I was a little annoyed about doing the lifting." },
+			{ kind = "say", text = "The miner asked who I thought had put that seam there. I carried his hammer for the rest of the day." },
+		},
+	},
 })
 
 ns.AddStories("class", "MAGE", {
@@ -669,6 +689,17 @@ ns.AddStories("class", "MAGE", {
 			{ kind = "emote", text = "snaps their fingers, looks pleased, and then lets the smile slowly fade." },
 			{ kind = "say", text = "The second time, I lit it without moving at all, turned the flame blue, and made it sing. Come back in a year." },
 			{ kind = "say", text = "The third year, I looked at that candle for a long time, with the sun on my face. Finally I said, \"What's it for?\" She smiled and put down her pen." },
+		},
+	},
+	{
+		title = "The Accurate Illusion",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "I once offered to make someone's portrait out of an illusion. He asked if it would be flattering. I promised him it would be perfectly accurate." },
+			{ kind = "say", text = "He looked at it and asked why his collar was crooked. I pointed at his collar. He fixed it, and I fixed the picture." },
+			{ kind = "emote", text = "straightens their own collar, then straightens it again, more carefully." },
+			{ kind = "say", text = "Then it was his hair. Then his posture. Then a stain on his sleeve. By suppertime he looked splendid." },
+			{ kind = "say", text = "He paid me, thanked me, and walked off without the portrait. I'm told he's courting now." },
 		},
 	},
 })
@@ -770,6 +801,17 @@ ns.AddStories("class", "WARLOCK", {
 			{ kind = "say", text = "I've outlived four warlocks much cleverer than I am. Not one of them could cook." },
 		},
 	},
+	{
+		title = "The Imp's Better Offer",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "My imp once demanded a share of my earnings. I asked what it planned to buy. It said that was private." },
+			{ kind = "say", text = "I refused. It offered to stop insulting my hair for a whole week. I agreed far too quickly, now that I think about it." },
+			{ kind = "emote", text = "smooths down their hair, looking faintly worried." },
+			{ kind = "say", text = "It bought a comb. A very fine one. Every morning it leaves the comb beside my bedroll, without a word." },
+			{ kind = "say", text = "Three days of silence left. Honestly, the silence is worse." },
+		},
+	},
 })
 
 ns.AddStories("class", "DRUID", {
@@ -791,9 +833,9 @@ ns.AddStories("class", "DRUID", {
 			{ kind = "say", text = "Everyone wants to know what the animals are saying. They look at me all misty, as if it's going to be something wise. Very well." },
 			{ kind = "say", text = "Squirrels: \"Mine. Mine. Where did I put it? Mine.\" That's the entire conversation. Deer: \"What was that? What was that? Oh, what was that?\"" },
 			{ kind = "emote", text = "twitches their nose and jerks their head around, wide-eyed, at nothing." },
-			{ kind = "say", text = "Owls, I'm sorry to tell you, aren't saying anything. There's nothing going on in there. It's the biggest fraud in all of nature." },
+			{ kind = "say", text = "Owls mostly want me to stop moving. I thought it was a lesson in stillness until one explained that I was frightening its supper." },
 			{ kind = "say", text = "Crows, though. Crows know exactly what you did. They've told all their friends, and they think it's hilarious. I wouldn't ask them, if I were you." },
-			{ kind = "emote", text = "looks around the circle and waits, as if to see who has gone a little pale." },
+			{ kind = "emote", text = "tilts their head toward the dark and attempts an innocent expression." },
 		},
 	},
 	{
@@ -812,10 +854,10 @@ ns.AddStories("class", "DRUID", {
 		mood = "dark",
 		lines = {
 			{ kind = "say", text = "Before I change shape, I say my own name out loud. I do it again after. Most of us do. It's not superstition, and I'll tell you why." },
-			{ kind = "say", text = "I trained with someone who ran with the wolves for a season, and then another. The most gifted of us. A year went by, and we went to look." },
+			{ kind = "say", text = "I trained with someone who ran with the stags of Ashenvale for a season, and then another. The most gifted of us. A year went by, and we went to look." },
 			{ kind = "emote", text = "sniffs the air once, then stops, and presses their lips together." },
-			{ kind = "say", text = "We found the pack. That one came right up to me and smelled my hand. Then we brought the child they'd left at home, and stood her at the edge of the trees." },
-			{ kind = "say", text = "The wolf looked at her for a while, head on one side. Then the pack called, and off it went. It wasn't cruel about it. It just had somewhere to be." },
+			{ kind = "say", text = "We found the herd. That one came right up to me and smelled my hand. Then we brought the child they'd left at home, and stood her at the edge of the trees." },
+			{ kind = "say", text = "The stag looked at her for a while, head on one side. Then the herd moved, and off it went. It wasn't cruel about it. It just had somewhere to be." },
 			{ kind = "say", text = "So I say my name, going in and coming out. Now and again, coming back, it takes a moment." },
 		},
 	},
@@ -865,6 +907,17 @@ ns.AddStories("class", "DRUID", {
 			{ kind = "say", text = "But when the first big snow came, I went up there, took the shape, and crawled into the den beside her. She looked at me. She let out a long breath." },
 			{ kind = "say", text = "It took three days. There's no lesson in it, and it did nothing for the balance of anything. I just didn't want her to have the last of it alone." },
 			{ kind = "emote", text = "eases a fresh log onto the fire with great care, as one might tuck in something sleeping." },
+		},
+	},
+	{
+		title = "The Coat on the Bank",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "I once left my clothes with a friend while I went swimming in another shape. When I came back, he was wearing my coat." },
+			{ kind = "say", text = "He said it had turned cold. I said he could have asked. He asked how he was supposed to pick me out from all the fish." },
+			{ kind = "emote", text = "opens their mouth to answer, then thoughtfully closes it." },
+			{ kind = "say", text = "I said the handsome one would have been a safe guess. He took the coat off and handed it back without a word." },
+			{ kind = "say", text = "I found out later he'd spent the whole afternoon on the bank, watching the water, looking for the handsome one." },
 		},
 	},
 })

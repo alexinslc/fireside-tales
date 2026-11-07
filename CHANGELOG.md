@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0
+
+- 81 new stories, for 488 in all. Moonglade, Deadwind Pass, Mount Hyjal, the Riverglades, and Shen'dralas have stories for the first time, Dalaran has three under Alterac Mountains, and 36 other zones each get a new one.
+- New stories for races, classes, every theme, and telling to someone by name.
+- Removed 16 stories that repeated others.
+- Emotes now all work while sitting at any fire, with no feet, boots, snow, or moon required.
+- Fixed lore for Forever: Dalaran's dome is down, Skyborne glide rather than fly, and a few places and creatures are where they belong.
+
 ## 1.0.1
 
 - Added the game's own sounds for opening and closing windows, picking a story, and using sections, filters, favorites, and the list for tonight.

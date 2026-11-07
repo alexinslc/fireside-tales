@@ -53,7 +53,7 @@ ns.RaceStories = {
 			mood = "wise",
 			lines = {
 				{ kind = "say", text = "When your people live as long as mine, you stop saying long ago. You say, when I was younger." },
-				{ kind = "emote", text = "looks up at the moon for a long, quiet moment." },
+				{ kind = "emote", text = "looks above the firelight for a long, quiet moment." },
 				{ kind = "say", text = "There are trees I've watched grow from seed. I've outlived some of them. That does something to you." },
 				{ kind = "say", text = "The young races are always in such a hurry. I used to pity them. Now, I think they might have noticed something we forgot." },
 			},
@@ -98,7 +98,7 @@ ns.RaceStories = {
 			lines = {
 				{ kind = "say", text = "Durotar is a hard land. Red dust, thin water, and everything with teeth. It suits us." },
 				{ kind = "emote", text = "scoops up a handful of dirt and lets it sift through their fingers." },
-				{ kind = "say", text = "My elders remember greener places. They speak about them softly. I never knew them. This dust is the only home I've had." },
+				{ kind = "say", text = "My elders remember greener places. They speak about them softly. I only remember the camps. This dust is the first home that was ever ours." },
 				{ kind = "say", text = "We built it from nothing, with our own hands, and no one gave it to us. That is worth more than green." },
 			},
 		},

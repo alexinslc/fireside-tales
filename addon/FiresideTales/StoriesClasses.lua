@@ -177,7 +177,7 @@ ns.ClassStories = {
 				{ kind = "say", text = "That's how they get you. It's never power that they offer, not at the start. It's that something finally listened." },
 				{ kind = "emote", text = "tilts their head slightly, as though hearing something faint." },
 				{ kind = "say", text = "I keep it talking. It keeps me company. Each of us believes we're the one holding the leash." },
-				{ kind = "emote", text = "sits very still. Behind them, their shadow seems a moment late in doing the same." },
+				{ kind = "emote", text = "holds still, then glances toward their own shadow and quickly back to the fire." },
 			},
 		},
 	},

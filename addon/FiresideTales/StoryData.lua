@@ -59,4 +59,9 @@ ns.ZoneTerms = {
 	["Un'Goro Crater"] = { "un'goro" },
 	["Tanaris"] = { "gadgetzan" },
 	["Zephras Isle"] = { "zephras" },
+	["Alterac Mountains"] = { "alterac", "dalaran" },
+	["Deadwind Pass"] = { "deadwind", "karazhan" },
+	["Moonglade"] = { "nighthaven", "elune'ara" },
+	["Mount Hyjal"] = { "hyjal" },
+	["The Riverglades"] = { "riverglades" },
 }

@@ -55,25 +55,12 @@ ns.AddStories("shared", nil, {
 		title = "The Size of a Fire",
 		mood = "wise",
 		lines = {
-			{ kind = "emote", text = "nudges a burning branch back toward the center with one foot." },
+			{ kind = "emote", text = "draws the coals closer with a short stick and watches the smaller glow." },
 			{ kind = "say", text = "My first night out with an old shepherd, I built a blaze you could see from three valleys. I was very proud of it." },
 			{ kind = "say", text = "He kicked it apart without a word and left me a heap no bigger than a hat." },
 			{ kind = "say", text = "He said a big fire, everyone stands back from. A small one, they have to sit close." },
-			{ kind = "emote", text = "shuffles a little nearer to the flames and holds out both hands." },
+			{ kind = "emote", text = "holds both hands close together above the warmth." },
 			{ kind = "say", text = "It took me years to work out that he wasn't only talking about fires." },
-		},
-	},
-	{
-		theme = "Campfire Tales",
-		title = "The Miller's Thumb",
-		mood = "dark",
-		lines = {
-			{ kind = "say", text = "The miller in my mother's village kept his thumb on the scale. Everyone knew it. A handful short, every sack, for forty years." },
-			{ kind = "say", text = "Then a famine winter came, and he shut his door like everyone else. Three children were buried within sight of it." },
-			{ kind = "say", text = "When he died they opened his cellar. All those short handfuls, saved up in sacks to the ceiling. Black with rot." },
-			{ kind = "emote", text = "goes still, watching the fire instead of anyone's face." },
-			{ kind = "say", text = "He never sold it. He never ate it. He only liked to know it was there." },
-			{ kind = "say", text = "To this day, I can't stand to watch anyone weigh anything." },
 		},
 	},
 	{
@@ -129,32 +116,6 @@ ns.AddStories("shared", nil, {
 	},
 	{
 		theme = "Road Stories",
-		title = "Crossing on the Ice",
-		mood = "action",
-		lines = {
-			{ kind = "say", text = "Four wagons and one frozen river, and a late thaw that had come a week before anyone promised." },
-			{ kind = "say", text = "I was driving the last wagon. Halfway over, the ice behind me made a sound like a giant cracking his knuckles." },
-			{ kind = "emote", text = "grips an invisible set of reins and leans hard forward." },
-			{ kind = "say", text = "You can't gallop a loaded wagon on ice. You can't stop one, either. I stood up and yelled at those horses like they owed me money." },
-			{ kind = "say", text = "The back wheels hit the bank as the river opened up behind them. Black water, right where I'd been." },
-			{ kind = "emote", text = "holds both hands out to the fire, fingers still half curled." },
-			{ kind = "say", text = "My hands didn't uncurl until supper. Someone had to feed me." },
-		},
-	},
-	{
-		theme = "Road Stories",
-		title = "The Vinegar Wagon",
-		mood = "action",
-		lines = {
-			{ kind = "say", text = "Thieves stopped us at the top of a long hill. Six of them, spread out across the road below, feeling very clever." },
-			{ kind = "say", text = "What they hadn't asked was what we were hauling. Forty barrels of pickling vinegar." },
-			{ kind = "emote", text = "draws a knife from an imaginary sheath and mimes slashing through a rope." },
-			{ kind = "say", text = "Those barrels came down that hill like a stampede. Bouncing. Bursting. The ones they didn't flatten, they soaked." },
-			{ kind = "say", text = "You've never seen anyone run so fast with their eyes shut. We lost the whole cargo, and I smelled like a jar of onions for two years." },
-		},
-	},
-	{
-		theme = "Road Stories",
 		title = "The Smallest Toll",
 		mood = "wise",
 		lines = {
@@ -198,7 +159,7 @@ ns.AddStories("shared", nil, {
 		lines = {
 			{ kind = "say", text = "Never take a shortcut from someone who's smiling. A nice fellow at a crossroads told me about a path through the hills that would save me a day." },
 			{ kind = "say", text = "It took four days. There was a bog. There was another bog inside the first bog." },
-			{ kind = "emote", text = "lifts one foot and stares at it as if it's still wet." },
+			{ kind = "emote", text = "mimes peeling something wet from their sleeve, with growing disgust." },
 			{ kind = "say", text = "I staggered into town at last, and there he was on a porch, eating a pie. He looked at me and asked how the shortcut was." },
 			{ kind = "say", text = "He told me the whole town sends strangers that way at harvest. It keeps the inn from filling up." },
 		},
@@ -460,21 +421,9 @@ ns.AddStories("shared", nil, {
 		lines = {
 			{ kind = "say", text = "I had a dog as a child. Ugly thing, one ear. She slept across my feet every night of her life, and she died when I was twelve." },
 			{ kind = "say", text = "I'm a long way from there now. Colder places than I'd like. But some nights, when I'm camped alone and the wind's up, I feel a weight settle on my ankles." },
-			{ kind = "emote", text = "shifts their boots a little to one side, making room." },
+			{ kind = "emote", text = "lets one hand hang low, palm open, and leaves it there." },
 			{ kind = "say", text = "Warm, it is. It stays till morning. I don't look. I've never once looked." },
 			{ kind = "say", text = "I don't suppose it's anything you could prove." },
-		},
-	},
-	{
-		theme = "Ghost Stories",
-		title = "The Knocking Seam",
-		mood = "dark",
-		lines = {
-			{ kind = "say", text = "A mine I worked near lost a gallery when I was young. Nine men behind the fall, and you could hear them knocking. Three knocks, then a wait." },
-			{ kind = "emote", text = "raps three times on a length of firewood, then waits, listening." },
-			{ kind = "say", text = "They dug for four days. Then the owner called it off. Said no one could last that long down there, and the digging was costing him." },
-			{ kind = "say", text = "He was probably right. That's the trouble. Because the knocking went on for eleven years." },
-			{ kind = "say", text = "He moved to a big house forty miles off, with thick walls. His servants say that he slept on the roof, and that he never slept much." },
 		},
 	},
 	{
@@ -548,7 +497,7 @@ ns.AddStories("shared", nil, {
 			{ kind = "emote", text = "peers suspiciously into an imaginary bowl and stirs it with one finger." },
 			{ kind = "say", text = "I found a spoon in mine. A big, old iron one. The keeper was thrilled. They'd been looking for it since before he was born." },
 			{ kind = "say", text = "Then he leaned over, very quietly, and asked if I'd come across a small gray cat." },
-			{ kind = "emote", text = "looks around the circle, waiting to see who has stopped eating." },
+			{ kind = "emote", text = "pauses with an imaginary spoon halfway to their mouth." },
 			{ kind = "say", text = "I'd already had two bowls. I thought it over. It was a cold night, so I had a third." },
 		},
 	},
@@ -608,7 +557,7 @@ ns.AddStories("shared", nil, {
 		lines = {
 			{ kind = "say", text = "Stayed late at a roadside place once. At closing, the keeper calls out \"last call,\" the way they all do." },
 			{ kind = "say", text = "And from under the floor, very faint, somebody says, \"One more.\"" },
-			{ kind = "emote", text = "taps a boot heel against the ground, and listens." },
+			{ kind = "emote", text = "taps one knuckle against a piece of firewood and listens." },
 			{ kind = "say", text = "Nobody at the bar so much as looked up. The keeper poured a full mug, carried it to the cellar door, set it on the top step, and shut the door." },
 			{ kind = "say", text = "I asked what would happen if he didn't. He said he couldn't say. The fellow who could was the one who used to run the place." },
 		},
@@ -623,7 +572,7 @@ ns.AddStories("shared", nil, {
 			{ kind = "emote", text = "looks down into their cup for a moment, smiling a little." },
 			{ kind = "say", text = "He's been gone for four winters now. Somebody has to keep it up." },
 			{ kind = "say", text = "What did the bucket say to the well? Nothing. It's a bucket." },
-			{ kind = "emote", text = "looks hopefully from face to face, waiting for a laugh that does not come." },
+			{ kind = "emote", text = "smiles a little into their cup and lets the joke stand." },
 		},
 	},
 	{
@@ -689,18 +638,6 @@ ns.AddStories("shared", nil, {
 	},
 	{
 		theme = "Quiet Moments",
-		title = "The Hookless Line",
-		mood = "funny",
-		lines = {
-			{ kind = "say", text = "An old fellow told me fishing was the way to find peace. Said he'd show me. Lent me a rod and sat me on his favorite bank." },
-			{ kind = "say", text = "Four days I sat there. Not a nibble. I've never been so calm, or so hungry." },
-			{ kind = "emote", text = "reels in an imaginary line and inspects the end of it." },
-			{ kind = "say", text = "On the fifth day I pulled it in to check. There was no hook on it. There had never been a hook." },
-			{ kind = "say", text = "I went storming back to ask him why. He said, \"Well, I didn't want anything interrupting you.\"" },
-		},
-	},
-	{
-		theme = "Quiet Moments",
 		title = "My Father's Knot",
 		mood = "heartfelt",
 		lines = {
@@ -746,6 +683,78 @@ ns.AddStories("shared", nil, {
 			{ kind = "emote", text = "holds out one arm, very still, and looks along it." },
 			{ kind = "say", text = "Two thousand people watched that bird scratch itself. Then the horns went, and I ran, screaming, into the worst day of my life." },
 			{ kind = "say", text = "I can't tell you a thing about that day. I could draw you that crow." },
+		},
+	},
+	{
+		theme = "Campfire Tales",
+		title = "A Very Reliable Monster",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "I once told a camp I'd seen a monster as tall as three trees, just past the firelight. I only wanted someone else to take the night watch." },
+			{ kind = "say", text = "It worked too well. A hunter asked about the tracks, so I drew some in the dirt. Big ones. With far too many toes." },
+			{ kind = "emote", text = "spreads their hands wider and wider, then slowly draws them back into their lap." },
+			{ kind = "say", text = "By supper they'd made me guide of the hunting party, on account of being the only one who'd seen it." },
+			{ kind = "say", text = "We hunted it for three days. I'm proud to say I led them nowhere near it." },
+		},
+	},
+	{
+		theme = "Road Stories",
+		title = "The Word for Tomorrow",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "I once traveled with someone whose language I barely knew. Between us we had words for water, danger, and splitting the bill. We managed fine." },
+			{ kind = "say", text = "At a crossroads I tried to ask which road she wanted. She heard it as me asking whether she'd rather go on alone." },
+			{ kind = "emote", text = "turns one open hand toward the other, leaving a little space between them." },
+			{ kind = "say", text = "It took all morning to sort out, with a lot of pointing, and one of us close to tears. I won't say which." },
+			{ kind = "say", text = "By noon we'd learned the word for tomorrow. It turned out to be the only one we really needed." },
+		},
+	},
+	{
+		theme = "Old Battles",
+		title = "The Seam Down the Banner",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "Our banner snagged on a burning beam during a retreat. The bearer went back for it, of course, and he could barely walk." },
+			{ kind = "say", text = "I went after him and cut the cloth off the pole while he shouted at me for ruining it." },
+			{ kind = "emote", text = "draws both hands in close, as if wrapping something tight around a pair of shoulders." },
+			{ kind = "say", text = "I wrapped it round him and dragged him out. The banner came home with a tear down the middle, and so did he." },
+			{ kind = "say", text = "He mended it himself, with big ugly stitches. When anyone asks about that war, he shows them the stitches first." },
+		},
+	},
+	{
+		theme = "Ghost Stories",
+		title = "The Turn in the Tune",
+		mood = "spooky",
+		lines = {
+			{ kind = "say", text = "There was a locked courtyard I passed every evening, where someone practiced the flute. They always stumbled on the same note." },
+			{ kind = "say", text = "After a week of it, I started humming the right note as I went by. One night, they played it clean. I clapped." },
+			{ kind = "emote", text = "brings their hands together once, very softly, then lets them part." },
+			{ kind = "say", text = "The music stopped, and an old wooden flute rolled out under the gate. The innkeeper said that courtyard had been empty since he was a boy." },
+			{ kind = "say", text = "I've learned the tune since. I still stumble on that note. I practice it outside, in case somebody's listening." },
+		},
+	},
+	{
+		theme = "Tavern Jokes",
+		title = "The Champion's Apron",
+		mood = "funny",
+		lines = {
+			{ kind = "say", text = "An inn I stayed at had a stew-eating champion, and a sign. Beat him, it said, and win a week of meals on the house." },
+			{ kind = "say", text = "I was hungry and foolish, which is the best way to enter a contest. I won by one spoonful." },
+			{ kind = "emote", text = "pauses with an invisible spoon halfway to their mouth, then slowly lowers it." },
+			{ kind = "say", text = "The champion shook my hand, took off his apron, and tied it around me. Meals on the house, he said. You're the house now." },
+			{ kind = "say", text = "I cooked for a week. On the last night, a very hungry stranger read the sign. I've never been so happy to lose." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "Too Good to Wear",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "I saved for months for a new shirt, then kept it wrapped up in my pack. I was waiting for a day clean enough to deserve it." },
+			{ kind = "say", text = "A fellow traveler asked why I was still wearing the torn one. I told him about the dust. He asked if I was waiting for someone to wash the roads." },
+			{ kind = "emote", text = "smooths down the front of their shirt with a small, pleased smile." },
+			{ kind = "say", text = "I put it on at the next stream. I spilled supper down it that same evening." },
+			{ kind = "say", text = "It's still a very good shirt. I've had a lot of good days in it now." },
 		},
 	},
 })
