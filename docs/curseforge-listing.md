@@ -7,7 +7,7 @@ Everything the project form asks for. Paste the description in Markdown mode.
 | Game | World of Warcraft |
 | Class | Addons |
 | Name | Fireside Tales |
-| Summary | Tell stories at the campfire, one line at a time: 400+ tales for every race, class, and zone, plus your own character's. |
+| Summary | Tell stories at the campfire, one line at a time: 500+ tales for every race, class, and zone, plus your own character's. |
 | Main category | Roleplay |
 | Additional categories | Chat & Communication, if it's offered |
 | Allow comments | On |
@@ -19,7 +19,23 @@ Everything the project form asks for. Paste the description in Markdown mode.
 
 ![Fireside Tales](https://raw.githubusercontent.com/alexinslc/fireside-tales/main/art/banner.png)
 
-**Sit down at the fire and tell a story.** Fireside Tales gives you more than 400 short tales to share with whoever's nearby, one line at a time, in `/say` and `/e`. Everyone around the fire just sees you telling a story, and they don't need the addon to enjoy it.
+**You light a fire, someone sits down beside you, and nobody says a word.** Fireside Tales gives you something to say. Press a button and tell one of more than 500 short tales, one line at a time, in `/say` and `/e`. Everyone around the fire just sees you telling a story, and they don't need the addon to enjoy it.
+
+### What it looks like at the fire
+
+This is "The Last Honest Merchant," one of the built-in stories, as everyone nearby sees it:
+
+> **Brenna says:** Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.
+>
+> **Brenna says:** Bites, he said. Kicks. Lies down in rivers. Will outlive you purely out of spite.
+>
+> **Brenna says:** I bought it anyway, because a man that truthful surely had to be joking.
+>
+> *Brenna rolls up one sleeve to show an old, crescent-shaped scar.*
+>
+> **Brenna says:** He was not joking.
+>
+> **Brenna says:** Best mule I ever owned. Carried me through two winters and bit everyone who tried to rob me.
 
 ### Stories for everyone
 
@@ -37,6 +53,8 @@ Everything the project form asks for. Paste the description in Markdown mode.
 1. Click the book on the minimap, or type `/tales`.
 2. Pick a story, or press **Tell a Tale** and let the fire choose.
 3. Press **Speak** for each line.
+
+**Tell a Tale** picks a story you haven't told yet, about the zone you're in if it can. Press it again for another.
 
 Sit by a campfire and the teller bar offers a story, once per fire. It's easy to take, easy to ignore, and `/tales fire` turns it off.
 

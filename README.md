@@ -13,7 +13,7 @@ If you're working on this project, whether you're a person or an AI, these are t
 - **The addon stays stupid simple.** Pick a story and press Speak. A new feature has to earn its place, and it shouldn't make that any harder.
 - **Delight the players.** Favor whatever makes someone at the fire smile, lean in, or want to tell one of their own.
 
-For now, all the stories ship in this one addon. Text is small, so it doesn't need separate story packs, and it isn't on CurseForge yet.
+For now, all the stories ship in this one addon. Text is small, so it doesn't need separate story packs. It's published on [CurseForge](https://www.curseforge.com/wow/addons/fireside-tales).
 
 ## What it is
 
