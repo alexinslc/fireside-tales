@@ -4,6 +4,9 @@ local ADDON, ns = ...
 
 local CHAT_TYPE = { say = "SAY", emote = "EMOTE" }
 
+local getMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
+ns.Version = getMetadata and getMetadata(ADDON, "Version") or nil
+
 local db, char, charKey
 
 local function say(msg)
@@ -242,7 +245,8 @@ BINDING_NAME_FIRESIDETALES_SPEAK = "Speak the next line"
 BINDING_NAME_FIRESIDETALES_STORIES = "Open or close the story menu"
 
 local function showStatus()
-	say(("%s the %s %s: %d stories for you, %d pasted in across all characters."):format(
+	say(("version %s. %s the %s %s: %d stories for you, %d pasted in across all characters."):format(
+		ns.Version or "unknown",
 		charKey,
 		UnitRace("player"),
 		UnitClass("player"),

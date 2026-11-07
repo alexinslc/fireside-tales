@@ -987,6 +987,13 @@ local function buildWindow()
 	ns.PlaceFrame(window, "storyPosition", "CENTER", UIParent, "CENTER", 0, 40)
 	table.insert(UISpecialFrames, "FiresideTalesStoryFrame") -- Escape closes it.
 
+	-- A small, quiet version number in the title bar, left of the close button.
+	if ns.Version then
+		local version = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+		version:SetPoint("TOPRIGHT", -30, -6)
+		version:SetText("v" .. ns.Version)
+	end
+
 	local writeStory = ns.MakeFlatButton(window, "Write My Story", 104)
 	writeStory:SetPoint("BOTTOMLEFT", INSET_LEFT, 7)
 	writeStory:SetScript("OnClick", ns.Import.Toggle)

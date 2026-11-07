@@ -80,6 +80,18 @@ ns.AddStories("race", "Human", {
 			{ kind = "say", text = "I've been that tree a few times in my life. Useless, as far as anyone could see. I've been very grateful for the people who remembered the bees." },
 		},
 	},
+	{
+		title = "A Rail in the Wheel",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "Harvest day at a mill, a boy chasing a ball slipped into the millrace. The water was carrying him straight toward the wheel." },
+			{ kind = "say", text = "I couldn't outrun that water, and I couldn't swim it. But there was a fence along the bank, and fence rails come loose if you want them badly enough." },
+			{ kind = "emote", text = "wrenches an invisible rail free with both hands and drives it forward and down." },
+			{ kind = "say", text = "I jammed it between the spokes. The whole wheel groaned and stopped, and the boy fetched up against it like a leaf against a stick." },
+			{ kind = "say", text = "The miller pulled him out. Then he looked at his broken spokes, looked at me, and said the rail was his too." },
+			{ kind = "say", text = "I paid for both. Cheapest thing I've ever bought." },
+		},
+	},
 })
 
 ns.AddStories("race", "Dwarf", {
@@ -183,6 +195,18 @@ ns.AddStories("race", "Dwarf", {
 			{ kind = "say", text = "She charged me for the measuring cup. Fair enough. I'd used it the most." },
 		},
 	},
+	{
+		title = "Sand on the Floor",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "We were pouring bronze in a big forge in Ironforge when the chain on the crucible snapped, and a whole lip of molten metal came sliding toward the apprentices." },
+			{ kind = "say", text = "Water would blow the place apart. Every dwarf knows that before they know their letters. What you want is sand, and the sand was across the room." },
+			{ kind = "emote", text = "hoists an invisible sack onto one shoulder, sways under it, then heaves it forward." },
+			{ kind = "say", text = "I didn't carry it over. I split it with my knife and swung it round by the neck, spraying a line across the floor like sowing seed." },
+			{ kind = "say", text = "The bronze ran right up to that line and stopped. Two apprentices were standing on the far side of it, still holding their tongs." },
+			{ kind = "say", text = "The master made me sweep up the sand myself. He kept the lump, though. Says it's the best thing that forge ever cast." },
+		},
+	},
 })
 
 ns.AddStories("race", "NightElf", {
@@ -274,6 +298,18 @@ ns.AddStories("race", "NightElf", {
 			{ kind = "say", text = "When at last I stood at her door and spoke it, she looked at me kindly, and with great puzzlement. She had no memory of it at all." },
 			{ kind = "say", text = "She asked me to stay for supper. We could have had three hundred years of those." },
 			{ kind = "emote", text = "tosses a dry twig into the flames and watches how quickly it is gone." },
+		},
+	},
+	{
+		title = "Holding Still",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "My people can vanish into the shadows if we keep perfectly still. Children learn it as a game. Nobody tells you how hard it is with a satyr standing on your hand." },
+			{ kind = "say", text = "I'd followed a raiding party in Ashenvale to get back a satchel of seeds they'd stolen. Then the whole party stopped right on top of me to argue." },
+			{ kind = "emote", text = "goes completely still, one hand flat at their side, eyes fixed on nothing." },
+			{ kind = "say", text = "One of them leaned his whole weight on my fingers. I counted my breaths. I counted his. He had more patience than I'd have liked." },
+			{ kind = "say", text = "When they finally moved on, they left the satchel on the ground beside me. It was heavy, and they were tired of carrying it." },
+			{ kind = "say", text = "Those seeds are tall trees now. I still can't make a fist on a cold morning without thinking of them." },
 		},
 	},
 })
@@ -380,6 +416,17 @@ ns.AddStories("race", "Gnome", {
 			{ kind = "say", text = "They're still on his ore carts. Never let go once. Best thing I've ever made by accident, and I've made a lot of things by accident." },
 		},
 	},
+	{
+		title = "Small Enough",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A sluice gate jammed in a flooding tunnel, with a dozen workers on the wrong side of it. The gearbox that opens it is the size of a bread oven, and somebody had to get inside." },
+			{ kind = "say", text = "Everyone looked at me. I'd like to say I volunteered. Mostly I was the only one who fit." },
+			{ kind = "emote", text = "tucks their elbows in tight and works both hands in a small space, feeling for something." },
+			{ kind = "say", text = "Water up to my chin, and there it was. A pebble wedged in the main cog. One pebble. I hooked it out with a hairpin." },
+			{ kind = "say", text = "The gate swung, the water went, and twelve very wet people walked out past me. I stayed in the box a while. It was the warmest place in the tunnel." },
+		},
+	},
 })
 
 ns.AddStories("race", "Orc", {
@@ -471,6 +518,18 @@ ns.AddStories("race", "Orc", {
 			{ kind = "emote", text = "holds one forearm close against their chest, and reaches carefully up with the other." },
 			{ kind = "say", text = "I said a lower drum wouldn't carry as far. She said a drum nobody can reach doesn't carry at all." },
 			{ kind = "say", text = "We moved it down to shoulder height. A lot of tired, hurt people have beaten that drum since." },
+		},
+	},
+	{
+		title = "The Roof Beam",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "We were raising the first longhouse of a new camp in Durotar when the ropes on the ridge beam gave. A great timber, swinging straight for the cook fire and the young ones around it." },
+			{ kind = "say", text = "There was no catching it. Nobody is that strong, whatever my uncle says. But there was a post, and I had the end of a rope." },
+			{ kind = "emote", text = "whips an invisible rope around something twice and leans back hard with both hands." },
+			{ kind = "say", text = "Two turns around the post, and I sat down on the rope with all my weight. It burned through my palms like a brand." },
+			{ kind = "say", text = "The beam stopped an arm's length above the fire. The young ones went on eating. Not one of them looked up." },
+			{ kind = "say", text = "My hands still have the rope's pattern in them. I show them to the young ones when they won't listen about knots." },
 		},
 	},
 })
@@ -574,6 +633,17 @@ ns.AddStories("race", "Scourge", {
 			{ kind = "say", text = "He put one candle on it. Then he charged me for three, because three was the smallest box he sold." },
 			{ kind = "say", text = "I argued until he gave me the other two. We ended up eating the cake together, behind his counter." },
 			{ kind = "say", text = "I've booked the next two years with him. I hate to waste good candles." },
+		},
+	},
+	{
+		title = "No Need to Breathe",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A cart went off a bridge in Tirisfal, horse and driver and all, into deep black water. Everyone on the bank was pulling off their boots and counting how long they could hold their breath." },
+			{ kind = "say", text = "I didn't need to count. It's one of the few advantages of my condition, so I like to make the most of it." },
+			{ kind = "emote", text = "lowers their head and sinks their shoulders slowly, like something going under." },
+			{ kind = "say", text = "Down at the bottom I cut the horse loose first, because it was kicking. Then I found the driver, stuck under the seat and very surprised to see me." },
+			{ kind = "say", text = "I walked him out along the riverbed and up the bank. He thanked me twice. The second time was after he'd had a proper look at me, which I appreciated." },
 		},
 	},
 })
@@ -680,6 +750,18 @@ ns.AddStories("race", "Tauren", {
 			{ kind = "say", text = "The next stool she made me, I can actually sit on. I still use the little one more." },
 		},
 	},
+	{
+		title = "Shoulder to the Wagon",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A trader's wagon got stuck in a ford in the Barrens with the river rising fast. Six of us pushing, and the wheels only sank deeper." },
+			{ kind = "say", text = "The trader's daughter was still up on the seat holding the reins, because nobody had told her she could let go." },
+			{ kind = "emote", text = "sets one shoulder low and pushes slowly forward, jaw tight." },
+			{ kind = "say", text = "So I stopped pushing, got down in the water, and put my shoulders under the back axle. My mother always said I was built like a hill. I was glad she was right." },
+			{ kind = "say", text = "The wheels came up out of the mud, and the wagon rolled onto the bank with me still underneath it, plodding along like a slow, wet kodo." },
+			{ kind = "say", text = "The girl finally let go of the reins. Then she climbed down and patted me on the head, the way you would a good kodo. I let her." },
+		},
+	},
 })
 
 ns.AddStories("race", "Troll", {
@@ -783,6 +865,18 @@ ns.AddStories("race", "Troll", {
 			{ kind = "say", text = "They ask me back every year now. The parents have stopped saying friendly. Now they just say smaller." },
 		},
 	},
+	{
+		title = "Across the Gap",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "There was a rope bridge in the jungle, mon, rotten through, and an old herb woman halfway across when the ropes on her end started to go." },
+			{ kind = "say", text = "She froze, the way you do. I was on the far side with a coil of vine and no time to be clever about it." },
+			{ kind = "emote", text = "swings one arm in a wide loop over their head and lets something fly." },
+			{ kind = "say", text = "I threw the vine. First throw, it caught a branch above her. Second throw, she caught it, which is the part that matters." },
+			{ kind = "say", text = "The bridge dropped out from under her, and she swung across that gap holding on with both hands and cursing my whole family by name." },
+			{ kind = "say", text = "She knew every name, too. She'd delivered most of us. She still sends me a pot of salve every year, with the bill attached." },
+		},
+	},
 })
 
 ns.AddStories("race", "Skyborne", {
@@ -874,6 +968,18 @@ ns.AddStories("race", "Skyborne", {
 			{ kind = "emote", text = "lets go of their own sleeves and settles both hands in their lap." },
 			{ kind = "say", text = "We sat in a hollow where she could see solid ground all round. After a while, she pointed at a cloud and asked what it meant." },
 			{ kind = "say", text = "I'd walked past that hollow for years. It has the best view of the sky on the whole island. I'd never once sat down in it." },
+		},
+	},
+	{
+		title = "Ten Breaths Down",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "Our glide lasts about ten breaths, and it only goes down. Down is very useful when the thing you need is below you." },
+			{ kind = "say", text = "On Zephras Isle a shepherd's boy slid off the cliff path onto a ledge far below, and it crumbled a little more every time he moved. No path down. No time to fetch rope." },
+			{ kind = "emote", text = "holds both arms out wide and lets them sink slowly, counting with small nods." },
+			{ kind = "say", text = "So I stepped off. Ten breaths of falling slow, steering for that ledge, and I landed with one to spare." },
+			{ kind = "say", text = "Then came the part nobody plans for. The glide doesn't go back up. We sat very still on what was left of that ledge until his father came with a rope." },
+			{ kind = "say", text = "The boy said I should have thought of that. I told him I had, around breath four, and decided I didn't care." },
 		},
 	},
 })

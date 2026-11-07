@@ -34,6 +34,28 @@ ns.AddStories("zone", "Elwynn Forest", {
 			{ kind = "say", text = "At the top stood one bent, ugly old tree that nobody had ever wanted. I've thought about that tree more than I'd like to admit." },
 		},
 	},
+	{
+		title = "The Wagon on Goldshire Hill",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I was walking up the hill out of Goldshire when a farm wagon came down it backward. No driver, no horse, and a load of pumpkins piled higher than my head." },
+			{ kind = "say", text = "At the bottom of the hill, three children were playing in the road. They hadn't seen it. They were busy arguing over a stick." },
+			{ kind = "emote", text = "grabs at the air with both hands, then wrenches them sharply to one side." },
+			{ kind = "say", text = "I couldn't stop a wagon that size. But I could turn it. I caught the tongue as it swung past, threw my whole weight on it, and steered it into the ditch." },
+			{ kind = "say", text = "Pumpkins everywhere. The children cheered. The farmer came running, looked at his pumpkins, looked at the children, and decided to cheer as well." },
+		},
+	},
+	{
+		title = "The Woodcutter's Pile",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "Near the Eastvale camp in Elwynn, I watched an old woodcutter stack logs. She put the crooked ones on the bottom and the straight ones on top." },
+			{ kind = "say", text = "I told her she had it backward. Surely the good straight wood should go where it's safe and dry, at the bottom." },
+			{ kind = "emote", text = "lays one hand flat, then sets the other on top of it, very carefully." },
+			{ kind = "say", text = "She said the straight logs are easy to stack. Anyone can stack straight logs. The crooked ones are what hold the pile together, if you take the time to fit them." },
+			{ kind = "say", text = "I helped her finish it. It took all afternoon. That pile was still standing a year later, when the neat ones around it had all come down." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Stormwind City", {
@@ -68,6 +90,28 @@ ns.AddStories("zone", "Stormwind City", {
 			{ kind = "emote", text = "lifts one finger and gives a tiny invisible bell a single tap." },
 			{ kind = "say", text = "I asked the baker next door. She said the old clockmaker who had it never once missed opening, and he wasn't about to start now." },
 			{ kind = "say", text = "She leaves a loaf on his step every morning. By noon, it's gone." },
+		},
+	},
+	{
+		title = "The Canal Barrel",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A boy fell into the canal in Stormwind, by the Trade District, where the water runs deep and fast toward the harbor. He couldn't swim. Neither could I." },
+			{ kind = "say", text = "There was a fish seller nearby with an empty barrel. I didn't ask. I tipped it out, fish and all, and rolled it into the water." },
+			{ kind = "emote", text = "shoves something round forward with both hands, then grips the air tight." },
+			{ kind = "say", text = "The barrel floated down to him, and he grabbed it and held on. We ran along the bank and fished him out at the next bridge with a mop handle." },
+			{ kind = "say", text = "The fish seller was furious about the fish. Then the boy's mother turned out to be his best customer. He gave me a free herring." },
+		},
+	},
+	{
+		title = "The Cathedral Stone",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "I once watched a mason in Stormwind spend a whole day carving one stone for the Cathedral. Leaves, vines, a tiny bird. It was beautiful." },
+			{ kind = "say", text = "Then she set it in the wall facing inward, carving and all, where no one would ever see it again." },
+			{ kind = "emote", text = "turns one hand over slowly, palm down, and lays it flat." },
+			{ kind = "say", text = "I asked what the point was. She said the stone knows. And so does the next mason who takes that wall apart, a hundred years from now." },
+			{ kind = "say", text = "I've done a lot of work since that nobody saw. I don't mind it the way I used to. I like to think somebody will find it, eventually." },
 		},
 	},
 })
@@ -343,6 +387,28 @@ ns.AddStories("zone", "Ironforge", {
 			{ kind = "say", text = "Before that, he said, it only ever answered with three. He looked at the floor, and he kept his voice very low all the way back up." },
 		},
 	},
+	{
+		title = "The Lift Rope",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I was riding a supply lift down from the high forge in Ironforge when the rope started to fray. I could hear it, strand by strand, like someone tearing cloth slowly." },
+			{ kind = "say", text = "There was a smith on the lift with me, and a crate of fresh blades between us. Far too heavy. We were going to come down fast." },
+			{ kind = "emote", text = "braces both hands against an invisible rail and looks sharply down." },
+			{ kind = "say", text = "The smith didn't hesitate. He kicked the crate off the edge. It fell past the forges and landed in the cooling trough with a hiss you could hear from the gates." },
+			{ kind = "say", text = "The lift slowed, the rope held, and we stepped off at the bottom. He sighed and said that was a whole week of blades. Then he went to fish them out." },
+		},
+	},
+	{
+		title = "Tempered Twice",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "An old smith in Ironforge let me watch her temper a blade. She heated it, quenched it, and then, to my surprise, heated it again, very gently." },
+			{ kind = "say", text = "I asked why. Wasn't once enough? She said once makes it hard. Twice makes it hard and keeps it from shattering." },
+			{ kind = "emote", text = "holds up one hand and slowly closes it into a loose fist, not a tight one." },
+			{ kind = "say", text = "I asked how she knew when it was right. She tapped it against the anvil and listened. A good blade rings. A brittle one clicks." },
+			{ kind = "say", text = "I've met a lot of people since who were only tempered once. You can hear it when they get knocked." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Loch Modan", {
@@ -427,6 +493,28 @@ ns.AddStories("zone", "Wetlands", {
 			{ kind = "say", text = "I let go and ran. It kept the pack and my rations. I'd say it earned them. Nothing else in that marsh has ever done me such a favor." },
 		},
 	},
+	{
+		title = "The Boat at Menethil",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "At Menethil Harbor, in the Wetlands, a fishing boat broke loose in a storm and started drifting out with a sleeping man aboard. We could hear him snoring from the dock." },
+			{ kind = "say", text = "Nobody could reach him. The boat was moving too fast, and the water was too rough for swimming." },
+			{ kind = "emote", text = "winds up and throws something hard and high, then holds very still, watching." },
+			{ kind = "say", text = "So I threw a coil of rope at the boat with a boot tied to the end for weight. It landed square on his chest." },
+			{ kind = "say", text = "He woke up, caught the rope, and tied it off half asleep. We hauled him in. He swore he'd had a dream about a flying boot." },
+		},
+	},
+	{
+		title = "Two Kinds of Mud",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "In the Wetlands I walked with a guide who could tell, just by looking, which mud would hold you and which would swallow you to the waist." },
+			{ kind = "say", text = "I asked how. They all looked the same to me. Gray, wet, and very discouraging." },
+			{ kind = "emote", text = "points at two spots on their open palm, one and then the other." },
+			{ kind = "say", text = "She said the safe mud has tracks in it. Frogs, birds, rats. The bad mud is smooth. Nothing walks there, so nothing leaves a mark." },
+			{ kind = "say", text = "I've used that more than I'd expect, far from any swamp. When a path is too smooth, I go around it." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Teldrassil", {
@@ -461,6 +549,28 @@ ns.AddStories("zone", "Teldrassil", {
 			{ kind = "say", text = "And you can. One long slow breath, in and out, so slow you could fall asleep between them. It's the most peaceful thing I've ever heard." },
 			{ kind = "say", text = "I told a sentinel about it. She smiled and said yes, that's the tree, it's a thing visitors love to do." },
 			{ kind = "say", text = "So I asked her about the second one. The faster one, lower down. She stopped smiling and asked me which root I'd been listening to." },
+		},
+	},
+	{
+		title = "The Owl in the Lamp",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "Near Dolanaar in Teldrassil, a young owl flew into a lantern at dusk and knocked it into the dry leaves. In a moment there was fire all along the path." },
+			{ kind = "say", text = "I didn't have water. I had a cloak, and the sentinel beside me had a shield. That would have to do." },
+			{ kind = "emote", text = "beats down hard at the air with both hands, one after the other, quickly." },
+			{ kind = "say", text = "We beat out the flames while the owl sat on a branch above us, watching, very interested. By the time help came, it was only smoke." },
+			{ kind = "say", text = "My cloak was ruined. The sentinel's shield was black. The owl, I'm told, now visits that lantern every evening, to make sure it's behaving." },
+		},
+	},
+	{
+		title = "The Patient Branch",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "In Teldrassil I asked an old druid to teach me how to grow a tree. She gave me a seed and told me to come back when it had a branch." },
+			{ kind = "say", text = "I came back every day. I watered it, talked to it, moved it into the sun. It didn't grow any faster for any of it." },
+			{ kind = "emote", text = "holds one finger very still above an open palm, waiting." },
+			{ kind = "say", text = "After a month I asked what I was doing wrong. She said nothing. I was doing it right. It was the tree that was taking its time." },
+			{ kind = "say", text = "I've got that tree still. It has six branches now. I've stopped asking it to hurry, and it seems happier for it." },
 		},
 	},
 })
@@ -884,6 +994,28 @@ ns.AddStories("zone", "Stonetalon Mountains", {
 			{ kind = "say", text = "It was, in fact, a fine shortcut. To a very narrow, very personal understanding of the word winder." },
 		},
 	},
+	{
+		title = "Down the Chute",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I was helping a logger in the Stonetalon Mountains when the brake gave out on a log chute. A whole trunk came screaming down the slide toward the river." },
+			{ kind = "say", text = "At the bottom, a woman was filling buckets. She had her back to the chute, and she couldn't hear it over the water." },
+			{ kind = "emote", text = "shoves both hands sideways through the air, hard." },
+			{ kind = "say", text = "I couldn't reach her. But I could reach the lever that switched the chute to the other track. I pulled it with both hands and my whole body." },
+			{ kind = "say", text = "The log jumped tracks and went into the river twenty feet from her. She turned round soaked from head to toe, and asked if we'd done that on purpose." },
+		},
+	},
+	{
+		title = "The Seedling Basket",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "In the Stonetalon Mountains I met a woman planting saplings in a valley that had been cut bare. One at a time, by hand, from a single basket." },
+			{ kind = "say", text = "I did the sums out loud. At her pace, she would never see that valley green again. Not in her whole life." },
+			{ kind = "emote", text = "cups both hands together, as if holding something very small." },
+			{ kind = "say", text = "She said she knew. She said someone had done the same for the forest she'd grown up in, and she'd never met them either." },
+			{ kind = "say", text = "I planted a row with her before I left. I don't know what came of it. I hope someone sits under it one day and wonders who." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Thousand Needles", {
@@ -1286,6 +1418,28 @@ ns.AddStories("zone", "The Hinterlands", {
 			{ kind = "say", text = "I asked why not. The guide looked over at that lovely clear line and said, they know who lives there. We kept to the trail." },
 		},
 	},
+	{
+		title = "The Gryphon and the Kite",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "At Aerie Peak in the Hinterlands, a young gryphon chased a child's kite right off the edge of the cliff. The child was still holding the string." },
+			{ kind = "say", text = "She went over the edge after it. Just like that. The gryphon was already halfway down the gorge, very pleased with itself." },
+			{ kind = "emote", text = "lunges forward and snaps one hand shut, then hauls it back." },
+			{ kind = "say", text = "I got her ankle. Barely. I pulled her up, and she was furious with me, because she'd let go of the string." },
+			{ kind = "say", text = "The gryphon came back an hour later with the kite in its beak, a little chewed. It dropped it at her feet. They've been friends ever since." },
+		},
+	},
+	{
+		title = "The Trapper's Knot",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "An old trapper in the Hinterlands showed me how to tie a snare. Twist, loop, pull. I got it on the third try and was very proud." },
+			{ kind = "say", text = "Then she made me untie it. That took twenty minutes, and I broke a nail. She watched the whole time and said nothing." },
+			{ kind = "emote", text = "picks at an invisible knot with their fingertips, frowning." },
+			{ kind = "say", text = "When I finally had it loose, she said a knot you can't undo is only half a knot. Then she tied it again, the right way, and it came apart with one pull." },
+			{ kind = "say", text = "I think about that knot a good deal. Most things I've tied in my life, I tied the first way." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Badlands", {
@@ -1414,6 +1568,28 @@ ns.AddStories("zone", "Searing Gorge", {
 			{ kind = "emote", text = "hunches low, grips an invisible rim, and leans hard into a turn." },
 			{ kind = "say", text = "Down we went. One wheel on the rail, then none. Sparks to my shoulders. The thing came down the slope behind me, burning along the ties." },
 			{ kind = "say", text = "The track ran out over a slag pile, and I flew further than I've ever flown. I still have a scar in the shape of that cart's handle. I got off lightly." },
+		},
+	},
+	{
+		title = "The Bucket Line at Thorium Point",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A cart of lamp oil caught fire at Thorium Point, in the Searing Gorge, right beside the crates of blasting powder. Everyone there knew what that meant." },
+			{ kind = "say", text = "There was one water barrel and twelve of us. Somebody started shouting orders. Nobody listened, because everybody was running." },
+			{ kind = "emote", text = "passes something heavy from one hand to the other, again and again, quickly." },
+			{ kind = "say", text = "So I just grabbed a bucket, filled it, and handed it to the person beside me. She handed it on. Then the next one did. In a moment, the line was there." },
+			{ kind = "say", text = "We put it out with half a barrel to spare. Afterward we argued about who'd been in charge. Nobody had. That's why it worked." },
+		},
+	},
+	{
+		title = "Cold Tea in the Gorge",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "I spent a week mining in the Searing Gorge, where the air is hot enough to cook your breakfast. Every morning, the old miner beside me drank a cup of hot tea." },
+			{ kind = "say", text = "I thought she was mad. I was drinking cold water by the barrel and sweating it out as fast as I could pour it in." },
+			{ kind = "emote", text = "lifts an invisible cup, blows across it, and sips with great care." },
+			{ kind = "say", text = "By midweek, I was dizzy and miserable, and she was still swinging her pick like it was spring. She handed me a cup." },
+			{ kind = "say", text = "I drank it. I sweated, the way she did, and I felt cooler for it. I still don't understand it. I just drink the tea now." },
 		},
 	},
 })
@@ -1929,6 +2105,28 @@ ns.AddStories("zone", "Winterspring", {
 			{ kind = "say", text = "It went out while I watched. Then it came on again, at the next window down, and the next one. Something in there was coming downstairs. Or going to the door." },
 		},
 	},
+	{
+		title = "The Sled Dogs at Everlook",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "Outside Everlook, in Winterspring, a sled team bolted when a bear came out of the trees. The sled tipped, and the driver was dragged behind, tangled in the reins." },
+			{ kind = "say", text = "The dogs were running straight for a ridge. Over that ridge was a long, steep drop." },
+			{ kind = "emote", text = "draws a quick blade across the air and pulls one hand sharply free." },
+			{ kind = "say", text = "I ran alongside and cut the reins with my knife. The driver came loose and rolled into a drift. The dogs went on and stopped at the ridge on their own." },
+			{ kind = "say", text = "She was angry about the reins for exactly one breath. Then she looked over the ridge, sat down, and asked if I'd like to stay for supper." },
+		},
+	},
+	{
+		title = "Two Pairs of Gloves",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "A trader in Winterspring sold me a pair of fine thick gloves. Then she pressed a second, thinner pair into my hands and told me to wear those underneath." },
+			{ kind = "say", text = "I said one good pair was enough. She just smiled and wouldn't take them back." },
+			{ kind = "emote", text = "pulls on one invisible glove, then another over it, flexing their fingers." },
+			{ kind = "say", text = "A week later I had to take off the thick ones to fix a buckle. My bare hands would have frozen to it. The thin pair saved my fingers." },
+			{ kind = "say", text = "I asked her, when I came back through, why she hadn't explained. She said people don't believe you until they've needed it." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Azshara", {
@@ -2010,6 +2208,28 @@ ns.AddStories("zone", "Silithus", {
 			{ kind = "say", text = "I found sand in my bread last month. Baked into the bread, at an inn on the far side of the world. Nobody else there had any. I checked." },
 			{ kind = "say", text = "I had my ears cleaned, and the fellow held up the cloth and asked where I'd been. I cracked an egg, and I'm not joking. There was sand in the egg." },
 			{ kind = "say", text = "I'm beginning to think it isn't left over. I think it's following me. I'd go back and apologize, if I knew what for." },
+		},
+	},
+	{
+		title = "The Spare Waterskin",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I was crossing Silithus with a trader when a sandstorm caught us in the open. We tied a rope between our belts so we wouldn't lose each other." },
+			{ kind = "say", text = "By the time it passed, we'd lost the camels, the trail, and all the water but one skin. Cenarion Hold was a day's walk off, at least." },
+			{ kind = "emote", text = "holds up an invisible waterskin and shakes it, listening closely." },
+			{ kind = "say", text = "We took a mouthful each, every hour, on the hour, no matter how much we wanted more. We walked by the stars, and slept through the worst of the heat." },
+			{ kind = "say", text = "We reached the Hold with one mouthful left. We drank it at the gate, together. Then we drank a great deal more." },
+		},
+	},
+	{
+		title = "Sand in the Lock",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "At Cenarion Hold in Silithus I watched a quartermaster spend an hour every morning brushing sand out of the door locks. Every morning, the same locks." },
+			{ kind = "say", text = "I asked why he bothered. The sand would just blow back in by noon. He agreed it would." },
+			{ kind = "emote", text = "brushes one thumb in short, patient strokes across the palm of the other hand." },
+			{ kind = "say", text = "He said if he stopped for a week, the locks would seize, and then it would take a smith and a hammer to open them." },
+			{ kind = "say", text = "So he brushes, and they open. I thought it was the dullest job I'd ever seen. Now I think about it every time something sticks." },
 		},
 	},
 })
@@ -2237,6 +2457,28 @@ ns.AddStories("zone", "The Riverglades", {
 			{ kind = "say", text = "He thought about that for a long time. Then he agreed, and charged me for the potatoes." },
 		},
 	},
+	{
+		title = "Rope Across the Ford",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I was crossing a ford in the Riverglades with a peddler when the river rose in a rush, brown and fast. Rain upstream, he said. We were halfway over." },
+			{ kind = "say", text = "His cart was stuck in the mud. His pony was panicking. And the water was already over the wheels." },
+			{ kind = "emote", text = "hauls hand over hand on an invisible rope, leaning back." },
+			{ kind = "say", text = "I cut the pony loose and swam it to the far bank with the rope. Then we tied it to a tree and hauled the cart across, one heave at a time." },
+			{ kind = "say", text = "We got it out just as the water reached the bed. The peddler checked his goods, and found the only thing ruined was a crate of umbrellas." },
+		},
+	},
+	{
+		title = "The Ferryman's Pole",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "A ferryman in the Riverglades let me try his pole. I pushed as hard as I could. The ferry spun in a circle in the middle of the river." },
+			{ kind = "say", text = "He took the pole back without a word and leaned on it gently. The ferry slid forward, straight as a road." },
+			{ kind = "emote", text = "leans lightly on an invisible pole, barely pressing." },
+			{ kind = "say", text = "I asked how he did it. He said I was pushing against the river. He was pushing against the bottom. The river was going where he wanted anyway." },
+			{ kind = "say", text = "I still get it wrong, more often than I'd like. But I've started checking which way the river's going before I push." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Shen'dralas", {
@@ -2271,6 +2513,28 @@ ns.AddStories("zone", "Shen'dralas", {
 			{ kind = "emote", text = "turns one hand palm up, then palm down, and stares at it." },
 			{ kind = "say", text = "The second scholar said it was backward too. So did the third. I checked every time, and every time I'd gotten it wrong again." },
 			{ kind = "say", text = "I burned the copies in the end. I can draw that mark perfectly now, but only with my eyes closed." },
+		},
+	},
+	{
+		title = "The Fallen Archway",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I was helping a scholar sketch a carved archway in Shen'dralas when one of the old columns started to lean. She was standing right beneath it, drawing." },
+			{ kind = "say", text = "There wasn't time to explain. I grabbed the back of her collar and pulled her clean off her stool, sketchbook and all." },
+			{ kind = "emote", text = "yanks one hand sharply backward, then stares at the empty space in front of them." },
+			{ kind = "say", text = "The column came down where she'd been sitting and broke into three pieces. Dust everywhere. We lay there coughing for a while." },
+			{ kind = "say", text = "When she could speak, the first thing she said was that the carving on the broken side was much better than the front. She drew that instead." },
+		},
+	},
+	{
+		title = "The Missing Stair",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "There's a long staircase in the ruins of Shen'dralas with one step missing, about halfway up. Everyone who climbs it steps over the gap without thinking." },
+			{ kind = "say", text = "A scholar there told me the step was never broken. It was left out on purpose, by whoever built the place." },
+			{ kind = "emote", text = "lifts one hand slowly, as if stepping over something, then lets it settle." },
+			{ kind = "say", text = "I asked why anyone would do that. She said it was the only place on those stairs where people looked down at their feet." },
+			{ kind = "say", text = "I've climbed a lot of stairs since. I still look for the missing one. It's surprising how often there is one, if you watch." },
 		},
 	},
 })

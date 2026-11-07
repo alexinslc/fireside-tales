@@ -106,6 +106,18 @@ ns.AddStories("class", "WARRIOR", {
 			{ kind = "say", text = "Then he sold me the advanced model, for twice the price. I've beaten a lot of armed opponents since. That man is still undefeated." },
 		},
 	},
+	{
+		title = "Under the Shield",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A rockfall came down on a mountain road while I was walking it with a family of tinkers. Stones the size of fists, and bigger ones behind." },
+			{ kind = "say", text = "There's no running from a rockfall. There's only being small and being covered. I had a big shield and a lot of practice hiding behind it." },
+			{ kind = "emote", text = "raises one arm overhead at an angle, bracing it with the other hand, and winces at each blow." },
+			{ kind = "say", text = "Three children, two adults and a goat, all of us under one shield. It rang like a bell for a long minute, and my arm went numb to the shoulder." },
+			{ kind = "say", text = "When it stopped, the goat got out first and walked off without a word. The tinkers hammered the dents out of my shield that night, for free." },
+			{ kind = "say", text = "Best work anyone ever did on it. Some days I miss the dents." },
+		},
+	},
 })
 
 ns.AddStories("class", "PALADIN", {
@@ -188,6 +200,18 @@ ns.AddStories("class", "PALADIN", {
 			{ kind = "say", text = "I called it down and walked in. Up the ladder, a child under each arm, down again, and out, saying the words the whole way. I reached the last line at the door." },
 			{ kind = "say", text = "They said there was a third. The shelter doesn't come twice that quickly. So I tied a wet sack round my head and went back in on just the words." },
 			{ kind = "say", text = "The scars are on the left, if you're curious. I have learned to pray very, very slowly." },
+		},
+	},
+	{
+		title = "Judging the Pies",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "At a harvest fair, a prize bull broke out of its pen and went straight down the row of pie tables, with a crowd of children at the end of it." },
+			{ kind = "say", text = "I'd been asked to judge the pies. I had crumbs on my tabard and nothing in my hand but a fork. So I did what I was trained for." },
+			{ kind = "emote", text = "lifts one fist and brings it down sharply, as if striking with a hammer of light." },
+			{ kind = "say", text = "A hammer of Light, right between the horns. Not to hurt him. Just to give him a moment to reconsider." },
+			{ kind = "say", text = "He sat down in the middle of the lane like a big, confused dog. The farmer came running, far more worried about the bull than about any of us." },
+			{ kind = "say", text = "The bull won his ribbon that afternoon. I was never asked back to judge the pies. I'm told the crumbs were held against me." },
 		},
 	},
 })
@@ -287,6 +311,18 @@ ns.AddStories("class", "HUNTER", {
 			{ kind = "say", text = "I've started cutting a stave every spring, though I can't work wood to save my life. They're for somebody." },
 		},
 	},
+	{
+		title = "Playing Dead",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "Two ogres ran me down in a ravine once. Big ones, with clubs, and my companion was off chasing a rabbit, as companions do." },
+			{ kind = "say", text = "There's a trick every hunter learns. You fall down, very convincingly, and you stay down. It works on most things that can't count." },
+			{ kind = "emote", text = "slumps sideways with their tongue out and eyes rolled up, perfectly still." },
+			{ kind = "say", text = "The ogres poked me, argued about whether I was dead, and then argued about which of them had killed me. It got loud." },
+			{ kind = "say", text = "While they were shoving each other, my companion came back with the rabbit, saw the ogres, dropped it, and bit the bigger one somewhere tender." },
+			{ kind = "say", text = "I got up, and we left, and the ogres went on arguing. I like to think they're still at it. I never did find out what happened to the rabbit." },
+		},
+	},
 })
 
 ns.AddStories("class", "ROGUE", {
@@ -380,6 +416,18 @@ ns.AddStories("class", "ROGUE", {
 			{ kind = "emote", text = "rests their fingertips lightly over one pocket." },
 			{ kind = "say", text = "He'd asked her to, she said. His hand still went looking for that pocket all day long. He liked it to find a flower instead." },
 			{ kind = "say", text = "I kept the flower. It's been through three coats now." },
+		},
+	},
+	{
+		title = "Between the Ruts",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I once had to open a prison wagon from the outside while it was moving. Bumpy road, six guards, and a friend inside who owed me money." },
+			{ kind = "say", text = "You don't pick a lock on a rough road. You pick it between bumps. I counted the ruts, and every time the wheels ran smooth, I got one pin." },
+			{ kind = "emote", text = "holds two fingers very still, then twitches them a hair to one side, timing something." },
+			{ kind = "say", text = "Five pins, five smooth stretches of road. The last one came right as we passed the guardhouse, which I'd hoped to avoid." },
+			{ kind = "say", text = "The door swung open, my friend rolled out into a ditch, and I rolled in after him. The wagon went on to town carrying nobody at all." },
+			{ kind = "say", text = "He paid me back that week, every copper. He said it seemed only fair, given what I'd been willing to do to collect." },
 		},
 	},
 })
@@ -490,6 +538,17 @@ ns.AddStories("class", "PRIEST", {
 			{ kind = "say", text = "I wrote it down, with her blessing. I've left room under it for the next one somebody teaches me." },
 		},
 	},
+	{
+		title = "Light as a Feather",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "I was walking under the scaffolding of a chapel being mended when a mason lost his footing on the top boards. A long way up." },
+			{ kind = "say", text = "There's a prayer that makes a body light as a feather. Most of us use it to cross water and impress people. I had about one breath to say it properly." },
+			{ kind = "emote", text = "raises one open hand quickly, fingers spread, and holds it there." },
+			{ kind = "say", text = "I got the words out with him halfway down. He slowed like a leaf, still shouting, and drifted the rest of the way into a hay cart." },
+			{ kind = "say", text = "He was furious. He'd dropped his trowel, and he wanted to know why I hadn't caught that too." },
+		},
+	},
 })
 
 ns.AddStories("class", "SHAMAN", {
@@ -593,6 +652,17 @@ ns.AddStories("class", "SHAMAN", {
 			{ kind = "emote", text = "traces a line across their palm with one finger, then taps it with a knuckle." },
 			{ kind = "say", text = "One blow, and the rock split clean in two. I thanked the earth, though I was a little annoyed about doing the lifting." },
 			{ kind = "say", text = "The miner asked who I thought had put that seam there. I carried his hammer for the rest of the day." },
+		},
+	},
+	{
+		title = "Walking on the Flood",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A flood took out a ford while a herder's boy was still halfway across with his family's goats. The water was too fast to swim and too wide to throw a rope." },
+			{ kind = "say", text = "There's a blessing the water spirits sometimes allow, if you ask with respect. It lets you walk on the surface. It doesn't make it any less frightening." },
+			{ kind = "emote", text = "steps their hands forward through the air, one flat palm after the other, testing each one." },
+			{ kind = "say", text = "I walked out to him on top of the flood. The water bucked under my feet like a nervous horse. He climbed on my back with a goat under each arm." },
+			{ kind = "say", text = "The spirits held. We came back to the bank with the boy, his two goats, and a third goat I'm fairly sure belonged to someone else." },
 		},
 	},
 })
@@ -700,6 +770,18 @@ ns.AddStories("class", "MAGE", {
 			{ kind = "emote", text = "straightens their own collar, then straightens it again, more carefully." },
 			{ kind = "say", text = "Then it was his hair. Then his posture. Then a stain on his sleeve. By suppertime he looked splendid." },
 			{ kind = "say", text = "He paid me, thanked me, and walked off without the portrait. I'm told he's courting now." },
+		},
+	},
+	{
+		title = "One Sheep, Briefly",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A bear came out of the trees at a woodcutters' camp while I was there for supper. A big one, hungry, heading straight for the cook pot and the cook." },
+			{ kind = "say", text = "I know a spell that turns a creature into a sheep for a short while. The important words there are short while." },
+			{ kind = "emote", text = "twirls one finger in a tight little circle, then points sharply." },
+			{ kind = "say", text = "So we had a sheep. A very angry sheep, standing in the camp, and perhaps half a minute before it went back to being a bear." },
+			{ kind = "say", text = "The woodcutters didn't waste a breath. They picked it up, carried it at a run to the edge of the clearing, and set it down facing the other way." },
+			{ kind = "say", text = "It turned back into a bear halfway down the hill, still walking. I think it was too confused to come back up." },
 		},
 	},
 })
@@ -812,6 +894,18 @@ ns.AddStories("class", "WARLOCK", {
 			{ kind = "say", text = "Three days of silence left. Honestly, the silence is worse." },
 		},
 	},
+	{
+		title = "Nothing Round It",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "Bandits stopped the coach I was riding in, on a narrow road with a cliff on one side. Six of them, and a driver who'd already decided to faint." },
+			{ kind = "say", text = "My voidwalker doesn't say much. What it does very well is stand in a place, so that nothing else can." },
+			{ kind = "emote", text = "plants both hands flat on their knees and sets their shoulders, immovable." },
+			{ kind = "say", text = "I called it up in the middle of the road. It filled the road. The bandits shot at it, then tried to walk round it, and found out there wasn't any round." },
+			{ kind = "say", text = "I took the reins and backed the coach two miles to the last village, with the voidwalker walking backward in front of us the whole way." },
+			{ kind = "say", text = "The driver woke up at the inn and asked if he'd missed anything. I told him only the scenery." },
+		},
+	},
 })
 
 ns.AddStories("class", "DRUID", {
@@ -918,6 +1012,18 @@ ns.AddStories("class", "DRUID", {
 			{ kind = "emote", text = "opens their mouth to answer, then thoughtfully closes it." },
 			{ kind = "say", text = "I said the handsome one would have been a safe guess. He took the coat off and handed it back without a word." },
 			{ kind = "say", text = "I found out later he'd spent the whole afternoon on the bank, watching the water, looking for the handsome one." },
+		},
+	},
+	{
+		title = "The Fastest Shape",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "A woodcutter cut his leg badly, far out in the hills, and the nearest healer was half a day's walk away. Nobody had a horse." },
+			{ kind = "say", text = "I have a shape for exactly that. Long legs, light bones, and no room in its head for anything but running." },
+			{ kind = "emote", text = "leans forward and pats their hands quickly against their knees, like feet on hard ground." },
+			{ kind = "say", text = "I made it in an hour. The trouble is, you arrive as a big spotted cat panting in the healer's doorway, and you can't explain a thing until you change back." },
+			{ kind = "say", text = "She threw a pot at me. Then I changed, and she listened, and she was on her way while I was still catching my breath." },
+			{ kind = "say", text = "The woodcutter kept his leg. The healer kept the pot. She says I still owe her a new lid." },
 		},
 	},
 })

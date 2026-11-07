@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+- 46 new action and wise stories, for 534 in all. Every zone now has at least four, and every race and class has a new action story built on its own abilities.
+- The story menu shows the addon's version in its title bar, and `/tales status` includes it.
+
 ## 1.1.1
 
 - Removed the pop-up that offered a line after quests, level-ups, new zones, and deaths, along with its Skip key binding and the `/tales on`, `off`, `cooldown`, and `test` commands. Stories, the teller bar, and its reading cue are unchanged.
