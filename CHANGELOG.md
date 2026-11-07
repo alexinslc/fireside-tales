@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+- **Tell a Tale** picks a story for you: one you haven't told yet, about where you are if it can. Press it again for another.
+- **By the fire:** settle by a campfire and the teller bar offers a story, with **Speak**, **Another**, and a close button. It asks once per fire, at most every 10 minutes, never in combat or mid-story, and goes away by itself after 30 seconds. `/tales fire` turns it off.
+- The reader shows roughly how long each story takes to tell.
+- The story count moved to the title bar, next to the version.
+- Restart the game once after updating, since a file was added.
+
 ## 1.2.0
 
 - 46 new action and wise stories, for 534 in all. Every zone now has at least four, and every race and class has a new action story built on its own abilities.

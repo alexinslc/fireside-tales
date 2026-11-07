@@ -42,8 +42,14 @@ The addon never sends chat by itself. The game requires a key press or click for
 ## Telling a story
 
 1. Click the book icon on the minimap, or type `/tales stories`. Drag the icon to move it around the minimap's edge.
-2. Narrow the list with the filters, then pick a story to preview it. Scroll either pane with the mouse wheel.
+2. Narrow the list with the filters, then pick a story to preview it. Scroll either pane with the mouse wheel. The reader shows each story's mood and roughly how long it takes to tell.
 3. Press **Speak** to send the first line. The menu shrinks to the teller bar, so you can see the fire again. Keep pressing **Speak** for each line.
+
+Can't decide? **Tell a Tale** picks one for you: a story you haven't told yet, about where you are if it can, then one for your character, race, or class, then any other. Press it again for a different one.
+
+### By the fire
+
+When you settle by a campfire with its Cozy Fire buff and stand still for a few seconds, the teller bar offers a story: "By the fire. Tell a tale?" Press **Speak** to begin, **Another** for a different story, or close it. It asks once per fire, at most once every 10 minutes, never in combat, and not while the menu is open or a story is half told. If nobody takes the offer, it goes away after 30 seconds or when you leave the fire. `/tales fire` turns these offers off or back on.
 
 ### The teller bar
 
@@ -115,6 +121,7 @@ The addon's `prompts` folder has more prompts for a race or class, a zone, every
 | `/tales` or `/tales stories` | Open or close the story menu |
 | `/tales help` | List the commands |
 | `/tales add` | Open or close the Write My Story window |
+| `/tales fire` | Turn the offers by the fire off or back on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show who the addon thinks you are, and your story counts |
 

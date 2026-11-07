@@ -52,6 +52,12 @@ local sectionOpen = {} -- Section title to whether you've opened or closed it.
 local currentStory
 local nextLine = 1
 local storyTarget -- The name a {target} story is being told to, once it has begun.
+local offered = {} -- Story keys Tell a Tale has picked this session, so Another moves on.
+local offering = false -- The teller bar is offering a story because you sat by a fire.
+local offerGeneration = 0
+local OFFER_SECONDS = 30 -- An offer nobody takes quietly goes away.
+local FIRE_HINT = "By the fire. Tell a tale?"
+local buildWindow -- Defined last, once everything it uses exists.
 
 ns.Story = {}
 
@@ -196,6 +202,15 @@ local function nextOnTonight()
 	return nil
 end
 
+-- Roughly how long a story takes to tell, giving people time to read each line.
+local function storySeconds(story)
+	local seconds = 0
+	for _, line in ipairs(story.lines) do
+		seconds = seconds + ns.Teller.ReadSeconds(fillTarget(line.text, "Somebodyname"))
+	end
+	return math.max(10, math.floor(seconds / 5 + 0.5) * 5)
+end
+
 local function toldText(toldAt)
 	local days = math.floor((time() - toldAt) / 86400)
 	if days < 1 then return "told today" end
@@ -224,7 +239,7 @@ local function refreshReader()
 		readerTitle:SetText("")
 		readerMeta:SetText("")
 		readerRule:Hide()
-		readerText:SetText(COLOR_META .. "Choose a story from the list.|r")
+		readerText:SetText(COLOR_META .. "Choose a story from the list, or press Tell a Tale and let the fire choose.|r")
 		status:SetText("")
 		speakButton:SetText("Speak")
 		speakButton:Disable()
@@ -251,7 +266,9 @@ local function refreshReader()
 	local total = #currentStory.lines
 	readerTitle:SetText(currentStory.title)
 	local mood = currentStory.mood or ""
+	local seconds = storySeconds(currentStory)
 	local meta = (MOOD_DOTS[mood] or "") .. COLOR_META .. mood:gsub("^%l", string.upper) .. "|r"
+		.. COLOR_META .. ("  -  about %d seconds|r"):format(seconds)
 	if currentStory.kind then
 		meta = meta .. COLOR_META .. "  -  |r" .. COLOR_ADDED .. "added by you|r"
 	end
@@ -277,7 +294,7 @@ local function refreshReader()
 	readerText:SetText(table.concat(parts, "\n\n"))
 	readerContent:SetHeight(readerTitle:GetStringHeight() + readerMeta:GetStringHeight() + readerText:GetStringHeight() + 30)
 
-	local statusText, canSpeak, speakLabel, barText
+	local statusText, canSpeak, speakLabel, barText, barStatus
 	local following = nextLine > total and nextOnTonight()
 	if nextLine > total then
 		statusText = "The end."
@@ -295,15 +312,21 @@ local function refreshReader()
 			canSpeak = false
 		end
 	end
+	-- Before the first line, the bar says how long the story is instead.
+	if nextLine == 1 and canSpeak then
+		barStatus = ("about %d sec"):format(seconds)
+	end
 	status:SetText(statusText)
 	speakButton:SetText(speakLabel)
 	speakButton:SetEnabled(canSpeak)
 	ns.Teller.Update({
 		title = currentStory.title .. (storyTarget and (", to " .. storyTarget) or ""),
 		text = barText,
-		status = statusText,
+		status = barStatus or statusText,
 		speakLabel = speakLabel,
 		canSpeak = canSpeak,
+		canPick = nextLine == 1,
+		hint = nextLine == 1 and offering and FIRE_HINT or nil,
 	})
 
 	-- Keep the next line in view in a long story.
@@ -339,6 +362,7 @@ function ns.Story.SpeakNext()
 	if not ns.SendLine(text, ns.ChatType[line.kind]) then return end
 
 	storyTarget = name
+	offering = false
 	nextLine = nextLine + 1
 	if nextLine > total then
 		ns.CharData().told[currentStory.key] = time()
@@ -647,9 +671,101 @@ local function clearTonight()
 	refreshReader()
 end
 
+-------------------------------------------------------------------------------
+-- Tell a Tale: the fire picks a story for you
+-------------------------------------------------------------------------------
+
+-- Prefers a story you haven't told, about where you are, then one of your own,
+-- your race's, or your class's, then any shared one. Stories that need a
+-- target are left out, since you may not have anyone targeted.
+local function pickTale()
+	local _, here = getHereStories()
+	local tiers = { here, {}, {} }
+	for _, section in ipairs(getSections()) do
+		local tier = (section.source == "mine" or section.source == "race" or section.source == "class") and tiers[2]
+			or section.source == "shared" and tiers[3]
+		if tier then
+			for _, story in ipairs(section.stories) do
+				tier[#tier + 1] = story
+			end
+		end
+	end
+
+	local told = ns.CharData().told
+	local function choose(fits)
+		for _, tier in ipairs(tiers) do
+			local pool = {}
+			for _, story in ipairs(tier) do
+				if story ~= currentStory and not story.needsTarget and fits(story) then
+					pool[#pool + 1] = story
+				end
+			end
+			if #pool > 0 then return pool[math.random(#pool)] end
+		end
+	end
+	local story = choose(function(s) return not told[s.key] and not offered[s.key] end)
+		or choose(function(s) return not offered[s.key] end)
+	if not story then
+		wipe(offered) -- Every story has had its turn, so start over.
+		story = choose(function() return true end)
+	end
+	if story then offered[story.key] = true end
+	return story
+end
+
+-- An offer by the fire goes away by itself if nobody takes it.
+local function armOfferTimeout()
+	offerGeneration = offerGeneration + 1
+	local generation = offerGeneration
+	C_Timer.After(OFFER_SECONDS, function()
+		if generation == offerGeneration then ns.Story.EndOffer() end
+	end)
+end
+
+function ns.Story.TellATale()
+	local story = pickTale()
+	if not story then return end
+	ns.PlayUISound("IG_ABILITY_PAGE_TURN")
+	selectStory(story)
+	if offering then armOfferTimeout() end
+end
+
+-- Offers a story on the teller bar. A story you chose but haven't begun is kept.
+-- Returns whether anything was offered.
+function ns.Story.Offer()
+	if not window then buildWindow() end
+	if window:IsShown() or ns.Teller.IsShown() then return false end
+	if currentStory and nextLine > 1 and nextLine <= #currentStory.lines then return false end
+	if not currentStory or nextLine > 1 then
+		local story = pickTale()
+		if not story then return false end
+		selectStory(story)
+	end
+	offering = true
+	refreshReader()
+	ns.Teller.Show()
+	armOfferTimeout()
+	return true
+end
+
+function ns.Story.IsOffering()
+	return offering and nextLine == 1 and ns.Teller.IsShown()
+end
+
+function ns.Story.EndOffer()
+	if ns.Story.IsOffering() then ns.Teller.Hide() end
+	offering = false
+end
+
+function ns.Story.TellerClosed()
+	offering = false
+	offerGeneration = offerGeneration + 1
+end
+
 -- Rebuilds the menu after stories are pasted in or deleted.
 function ns.Story.StoriesChanged()
 	sections = nil
+	wipe(offered)
 	wipe(storyByKey)
 	hereZone, hereList, hereSet = nil, nil, nil
 	if not window then return end
@@ -980,26 +1096,33 @@ local function buildReader()
 	end)
 end
 
-local function buildWindow()
+function buildWindow()
 	window = ns.NewWindow("FiresideTalesStoryFrame", "Fireside Tales", "Interface\\AddOns\\FiresideTales\\Textures\\Icon",
 		LIST_WIDTH + READER_WIDTH + 58, 540)
 	ns.MakeDraggable(window, "storyPosition")
 	ns.PlaceFrame(window, "storyPosition", "CENTER", UIParent, "CENTER", 0, 40)
 	table.insert(UISpecialFrames, "FiresideTalesStoryFrame") -- Escape closes it.
 
-	-- A small, quiet version number in the title bar, left of the close button.
+	-- The story count and a small version number sit quietly in the title bar,
+	-- left of the close button.
+	countLabel = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	if ns.Version then
 		local version = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 		version:SetPoint("TOPRIGHT", -30, -6)
 		version:SetText("v" .. ns.Version)
+		countLabel:SetPoint("RIGHT", version, "LEFT", -10, 0)
+	else
+		countLabel:SetPoint("TOPRIGHT", -30, -6)
 	end
 
-	local writeStory = ns.MakeFlatButton(window, "Write My Story", 104)
-	writeStory:SetPoint("BOTTOMLEFT", INSET_LEFT, 7)
-	writeStory:SetScript("OnClick", ns.Import.Toggle)
+	local tellATale = ns.MakeFlatButton(window, "Tell a Tale", 84)
+	tellATale:SetPoint("BOTTOMLEFT", INSET_LEFT, 7)
+	tellATale:SetScript("OnClick", ns.Story.TellATale)
+	ns.SetFlatButtonOn(tellATale, true) -- Gold, so it's easy to find.
 
-	countLabel = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	countLabel:SetPoint("LEFT", writeStory, "RIGHT", 8, 0)
+	local writeStory = ns.MakeFlatButton(window, "Write My Story", 104)
+	writeStory:SetPoint("LEFT", tellATale, "RIGHT", 4, 0)
+	writeStory:SetScript("OnClick", ns.Import.Toggle)
 
 	buildList()
 	buildReader()

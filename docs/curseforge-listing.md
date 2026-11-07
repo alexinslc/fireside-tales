@@ -35,8 +35,10 @@ Everything the project form asks for. Paste the description in Markdown mode.
 ### Easy at the fire
 
 1. Click the book on the minimap, or type `/tales`.
-2. Pick a story.
+2. Pick a story, or press **Tell a Tale** and let the fire choose.
 3. Press **Speak** for each line.
+
+Sit by a campfire and the teller bar offers a story, once per fire. It's easy to take, easy to ignore, and `/tales fire` turns it off.
 
 A small bar shows the next line and a cue for when people have had time to read, along with what's being said nearby. You can search, filter by mood, star your favorites, and line up stories for tonight.
 
@@ -48,6 +50,7 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 | --- | --- |
 | `/tales stories` | Open or close the story menu |
 | `/tales add` | Open or close Write My Story |
+| `/tales fire` | Turn the offers by the fire off or on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show your story counts |
 

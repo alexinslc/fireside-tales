@@ -18,13 +18,18 @@ local COLOR_THEME = "|cffd4af37"
 local COLOR_FEED = "|cffa0a0a0"
 local COLOR_ALERT = "|cffffd100"
 
-local bar, titleLabel, progressLabel, lineLabel, divider, cueBar, cueLabel, speakButton
+local bar, titleLabel, progressLabel, lineLabel, divider, cueBar, cueLabel, speakButton, anotherButton
 local feedLabels = {}
 local feed = {}
 local view
 local cueStart, cueLength
 
 ns.Teller = {}
+
+-- How long to give people to read a line, which also says how long a story takes.
+function ns.Teller.ReadSeconds(text)
+	return math.max(CUE_MIN_SECONDS, math.min(CUE_MAX_SECONDS, 3 + #text / READ_CHARS_PER_SECOND))
+end
 
 -------------------------------------------------------------------------------
 -- Showing the story
@@ -47,10 +52,13 @@ local function applyView()
 	lineLabel:SetText(view.text)
 	speakButton:SetText(view.speakLabel)
 	speakButton:SetEnabled(view.canSpeak)
+	anotherButton:SetShown(view.canPick and true or false)
+	if view.hint then cueLabel:SetText(view.hint) end
 	fitHeight()
 end
 
--- view is { title, text, status, speakLabel, canSpeak }.
+-- view is { title, text, status, speakLabel, canSpeak, canPick, hint }. canPick
+-- offers a different story, and hint fills the cue's spot before the first line.
 function ns.Teller.Update(newView)
 	view = newView
 	applyView()
@@ -81,7 +89,7 @@ end
 function ns.Teller.StartCue(text)
 	if not bar then return end
 	cueStart = GetTime()
-	cueLength = math.max(CUE_MIN_SECONDS, math.min(CUE_MAX_SECONDS, 3 + #text / READ_CHARS_PER_SECOND))
+	cueLength = ns.Teller.ReadSeconds(text)
 	cueBar:SetValue(1)
 	cueBar:Show()
 	cueLabel:SetText("Let them read...")
@@ -200,6 +208,7 @@ local function build()
 	bar:SetScript("OnHide", function()
 		stopListening()
 		stopCue()
+		ns.Story.TellerClosed()
 	end)
 
 	titleLabel = bar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -246,6 +255,10 @@ local function build()
 	cueLabel:SetPoint("BOTTOMLEFT", 12, 16)
 
 	speakButton = makeButton("Speak", -76, ns.Story.SpeakNext)
+	anotherButton = ns.MakeFlatButton(bar, "Another", 64)
+	anotherButton:SetPoint("RIGHT", speakButton, "LEFT", -4, 0)
+	anotherButton:SetScript("OnClick", ns.Story.TellATale)
+	anotherButton:Hide()
 	local menu = ns.MakeFlatButton(bar, "Menu", 60)
 	menu:SetPoint("BOTTOMRIGHT", -12, 10)
 	menu:SetScript("OnClick", ns.Story.Toggle)

@@ -264,9 +264,15 @@ SlashCmdList.FIRESIDETALES = function(input)
 		ns.Import.Toggle()
 	elseif command == "minimap" then
 		ns.ToggleMinimapButton()
+	elseif command == "fire" then
+		if ns.Campfire.Toggle() then
+			say("I'll offer a tale when you settle by a campfire.")
+		else
+			say("no more offers by the fire. /tales fire turns them back on.")
+		end
 	elseif command == "status" then
 		showStatus()
 	else
-		say("/tales stories | add | minimap | status")
+		say("/tales stories | add | fire | minimap | status")
 	end
 end
