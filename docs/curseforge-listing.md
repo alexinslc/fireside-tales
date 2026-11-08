@@ -76,6 +76,6 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 
 ### Good to know
 
-The built-in stories are original tales written with AI help and chosen by hand, and the logo and banner are AI-assisted art. Screenshots are from the real game. The stories are fan fiction set in Azeroth, not official lore. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
+The built-in stories are written with AI help and chosen by hand, and the logo and banner are AI-assisted art. Screenshots are from the real game. Most stories are fan fiction set in Azeroth. The legends retell Warcraft's own quests in new words, so their names and events come from the game. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
 
 Found a bug, or a story that doesn't sit right? Leave a comment, or open an issue on [GitHub](https://github.com/alexinslc/fireside-tales).
