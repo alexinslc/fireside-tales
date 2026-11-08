@@ -18,7 +18,7 @@ local COLOR_THEME = "|cffd4af37"
 local COLOR_FEED = "|cffa0a0a0"
 local COLOR_ALERT = "|cffffd100"
 
-local bar, titleLabel, progressLabel, lineLabel, divider, cueBar, cueLabel, speakButton, anotherButton
+local bar, titleLabel, progressLabel, lineLabel, divider, cueBar, cueLabel, speakButton, anotherButton, framingButton
 local feedLabels = {}
 local feed = {}
 local view
@@ -53,12 +53,20 @@ local function applyView()
 	speakButton:SetText(view.speakLabel)
 	speakButton:SetEnabled(view.canSpeak)
 	anotherButton:SetShown(view.canPick and true or false)
+	-- The opener or closer sits just left of the other buttons.
+	framingButton:SetShown(view.framingLabel ~= nil)
+	if view.framingLabel then
+		framingButton:SetText(view.framingLabel)
+		framingButton:ClearAllPoints()
+		framingButton:SetPoint("RIGHT", view.canPick and anotherButton or speakButton, "LEFT", -4, 0)
+	end
 	if view.hint then cueLabel:SetText(view.hint) end
 	fitHeight()
 end
 
--- view is { title, text, status, speakLabel, canSpeak, canPick, hint }. canPick
--- offers a different story, and hint fills the cue's spot before the first line.
+-- view is { title, text, status, speakLabel, canSpeak, canPick, hint, framingLabel }.
+-- canPick offers a different story, hint fills the cue's spot before the first line,
+-- and framingLabel names the opener or closer button, when there is one.
 function ns.Teller.Update(newView)
 	view = newView
 	applyView()
@@ -259,6 +267,11 @@ local function build()
 	anotherButton:SetPoint("RIGHT", speakButton, "LEFT", -4, 0)
 	anotherButton:SetScript("OnClick", ns.Story.TellATale)
 	anotherButton:Hide()
+	framingButton = ns.MakeFlatButton(bar, "Opener", 60)
+	framingButton:SetScript("OnClick", ns.Story.SayFraming)
+	framingButton:HookScript("OnEnter", ns.Story.ShowFramingTooltip)
+	framingButton:HookScript("OnLeave", function() GameTooltip:Hide() end)
+	framingButton:Hide()
 	local menu = ns.MakeFlatButton(bar, "Menu", 60)
 	menu:SetPoint("BOTTOMRIGHT", -12, 10)
 	menu:SetScript("OnClick", ns.Story.Toggle)

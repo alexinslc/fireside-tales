@@ -43,17 +43,30 @@ The addon never sends chat by itself. The game requires a key press or click for
 
 1. Click the book icon on the minimap, or type `/tales stories`. Drag the icon to move it around the minimap's edge.
 2. Narrow the list with the filters, then pick a story to preview it. Scroll either pane with the mouse wheel. The reader shows each story's mood and roughly how long it takes to tell.
-3. Press **Speak** to send the first line. The menu shrinks to the teller bar, so you can see the fire again. Keep pressing **Speak** for each line.
+3. Press **Tell**. The menu shrinks to the teller bar, so you can see the fire again, and nothing is said yet. Press **Opener** to gather people first if you like, then **Speak** for each line.
 
 Can't decide? **Tell a Tale** picks one for you: a story you haven't told yet, for a festival that's on, then about where you are, then one for your character, race, or class, then any other. At night in the game it reaches for spooky and dark tales first, and gentler ones by day. Press it again for a different one.
 
+### The tabs
+
+Tabs down the right side of the menu, like the character window's, sort the stories:
+
+- **Your Tales**, with your character's portrait: only your character's own stories.
+- **Stories**: everything else, described below.
+- **Legends**: Warcraft's own stories, told in parts, with the one where you're standing first. Each part takes under a minute. When one ends, Speak becomes **Next part**, so you can stop for the night or keep going. Tell a Tale and the campfire prompt never start you partway through a legend.
+- **Rumors and Whispers**: short things people swear they heard, with rumors about where you are first. Tell a Tale picks these too.
+
+### Openers and closers
+
+On the teller bar, before the first line, an **Opener** button gathers people with one line, like "Gather round, everyone. I've got one for you." When a story ends, **Closer** sends it off, matched to the story's mood. Hover either one to see exactly what it will say. Each is said only when you press it, once per story, and closers wait until the end of a legend rather than between its parts. They're in `Openers.lua`.
+
 ### Festivals
 
-The Darkmoon Faire, Lunar Festival, Love is in the Air, Noblegarden, Children's Week, Midsummer, the Harvest Festival, Hallow's End, and Winter Veil each have their own stories, under **From: Festivals** all year. While one is on, an **On now** section opens at the top of the list and the fire's offer mentions it. The addon reads the game's calendar, and if it can't, it knows the Darkmoon Faire opens the Monday after the first Friday of each month for a week, and the dates of Midsummer, Hallow's End, and Winter Veil.
+The Darkmoon Faire, Lunar Festival, Love is in the Air, Noblegarden, Children's Week, Midsummer, the Harvest Festival, Hallow's End, and Winter Veil each have their own stories, under **From: Festivals** all year. While one is on, an **On now** section opens at the top of the list and the campfire prompt mentions it. The addon reads the game's calendar, and if it can't, it knows the Darkmoon Faire opens the Monday after the first Friday of each month for a week, and the dates of Midsummer, Hallow's End, and Winter Veil.
 
-### By the fire
+### The campfire prompt
 
-When you settle by a campfire, with its Welcoming Campfire or Cozy Fire buff, and stay still for a few seconds, the teller bar offers a story: "By the fire. Tell a tale?" Press **Speak** to begin, **Another** for a different story, or close it. It asks once per fire, at most once every 5 minutes, never in combat, and not while the menu is open or a story is half told. If nobody takes the offer, it goes away after 30 seconds or when you leave the fire. `/tales fire` turns these offers off or back on.
+Sit down at a campfire and a small prompt pops up on the teller bar asking if you'd like to tell a story ("By the fire. Tell a tale?"). Press **Speak** to start it, **Another** for a different story, or close it. It appears once you have the fire's Welcoming Campfire or Cozy Fire buff and have stayed still for a few seconds. It asks once per fire, at most once every 5 minutes, never in combat, and not while the menu is open or a story is half told. If nobody takes the offer, it goes away after 30 seconds or when you leave the fire. `/tales fire` turns these offers off or back on.
 
 ### The teller bar
 
@@ -75,7 +88,7 @@ These are saved separately for each character.
 
 ### Filters
 
-Each story in the list has a colored square for its mood, matching the **Mood** filter, and its number of lines on the right. In the reader, emotes are orange and speech is white.
+Each story in the list has a colored square for its mood, matching the **Mood** filter, and roughly how many seconds it takes to tell on the right. Hover a story to see its mood, length, and when you last told it. In the reader, emotes are orange and speech is white.
 
 Sections start closed, except Tonight, your current zone, and your character's own, so click a section's name to open or close it. Any filter opens every section that has a match.
 
@@ -92,7 +105,7 @@ The filters sit in one row above the list. They combine, and the count at the to
 
 ### What's in the list
 
-The list is built for whoever you're logged in as, in this order:
+The Stories tab's list is built for whoever you're logged in as, in this order:
 
 1. **Tonight**, if you've added any
 2. **On now**, for a festival that's running
@@ -114,7 +127,7 @@ To teach a zone new place names, add them to `ns.ZoneTerms` in `StoryData.lua`.
 3. Press **Select Prompt**, copy it with Cmd+C or Ctrl+C, and paste it into any AI. Your character's name, race, class, and zone are already filled in.
 4. Paste the AI's answer into the bottom box and press **Add**. It's fine to paste the whole reply.
 
-Your stories appear under **`<name>`'s Tales**, near the top of the list. Anything you've added has a small note icon and says "added by you", and **Show: Added by me** lists just those. The window says how many it added, and why it skipped any. Read them before you tell them, since you're the one saying them out loud.
+Your stories appear under **`<name>`'s Tales**, near the top of the list. Anything you've added has a green-tinted title and says "added by you", and **Show: Added by me** lists just those. The window says how many it added, and why it skipped any. Read them before you tell them, since you're the one saying them out loud.
 
 Pasted stories are saved with your account, outside the addon's folder, so updating the addon doesn't remove them. **Delete** in the menu removes a pasted story.
 
@@ -127,7 +140,7 @@ The addon's `prompts` folder has more prompts for a race or class, a zone, every
 | `/tales` or `/tales stories` | Open or close the story menu |
 | `/tales help` | List the commands |
 | `/tales add` | Open or close the Write My Story window |
-| `/tales fire` | Turn the offers by the fire off or back on |
+| `/tales fire` | Turn the campfire prompt off or back on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show who the addon thinks you are, and your story counts |
 
@@ -147,6 +160,8 @@ Built-in stories are in `addon/FiresideTales/`:
 - **Starter stories told to a target:** `StoriesTargeted.lua`. Write `{target}` where the name goes, and describe only what the teller does, never what the listener does or feels.
 - **Race, class, and zone stories:** `StoriesRaces.lua`, `MoreRaces.lua`, `StoriesClasses.lua`, `MoreClasses.lua`, and `MoreZones.lua`.
 - **Festival stories:** `StoriesFestivals.lua`. Each list's name matches a festival in `Seasons.lua`, which also holds how each festival is recognized.
+- **Legends:** `Legends.lua`. Each legend has a zone, a title, a one-line `summary`, and its `parts`, which are stories in order. Keep them true to the game's own lore, list your sources above each one, and retell rather than quote.
+- **Rumors:** shared stories with the theme `Rumors and Whispers` get their own tab. Keep them to about three lines.
 
 Each story needs a `title`, a `mood` (`funny`, `heartfelt`, `dark`, `action`, `spooky`, or `wise`), and `lines`. Shared stories also need a `theme`.
 

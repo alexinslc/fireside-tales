@@ -30,7 +30,7 @@ ns.ClassStories = {
 			title = "The Weight of the Light",
 			mood = "dark",
 			lines = {
-				{ kind = "say", text = "Folk think the Light makes everything simple. You know what's right, and you strike it down. Very tidy." },
+				{ kind = "say", text = "Folk think the Light makes everything simple. You know what's wrong, and you strike it down. Very tidy." },
 				{ kind = "emote", text = "lowers their head and rests both hands on their weapon." },
 				{ kind = "say", text = "It's the opposite, friend. The Light shows you everything. Including all the things you'd prefer not to see." },
 				{ kind = "say", text = "Armor's the lighter burden. I'd wear twice as much, if I could only stop seeing clearly." },

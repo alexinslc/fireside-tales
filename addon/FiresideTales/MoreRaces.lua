@@ -201,7 +201,7 @@ ns.AddStories("race", "Dwarf", {
 		lines = {
 			{ kind = "say", text = "We were pouring bronze in a big forge in Ironforge when the chain on the crucible snapped, and a whole lip of molten metal came sliding toward the apprentices." },
 			{ kind = "say", text = "Water would blow the place apart. Every dwarf knows that before they know their letters. What you want is sand, and the sand was across the room." },
-			{ kind = "emote", text = "hoists an invisible sack onto one shoulder, sways under it, then heaves it forward." },
+			{ kind = "emote", text = "grips an invisible sack by the neck and swings it round in a wide, low arc." },
 			{ kind = "say", text = "I didn't carry it over. I split it with my knife and swung it round by the neck, spraying a line across the floor like sowing seed." },
 			{ kind = "say", text = "The bronze ran right up to that line and stopped. Two apprentices were standing on the far side of it, still holding their tongs." },
 			{ kind = "say", text = "The master made me sweep up the sand myself. He kept the lump, though. Says it's the best thing that forge ever cast." },
@@ -439,7 +439,7 @@ ns.AddStories("race", "Orc", {
 			{ kind = "emote", text = "narrows their eyes and shifts their weight, as if sizing someone up." },
 			{ kind = "say", text = "Turns out it's only manners. You're meant to say \"fine.\" So I practiced. I've said \"fine\" with a spear through my shoulder." },
 			{ kind = "emote", text = "looks around the circle and nods once at each listener, as if daring one of them to ask." },
-			{ kind = "say", text = "He seemed less reassured than you would think." },
+			{ kind = "say", text = "The healer who asked me that day seemed less reassured than you would think." },
 		},
 	},
 	{
@@ -553,7 +553,7 @@ ns.AddStories("race", "Scourge", {
 			{ kind = "say", text = "A young man came all the way out to Tirisfal to find me, carrying a satchel. His grandfather, it seems, once loaned me forty silver." },
 			{ kind = "say", text = "I explained I had died. He had a look in his papers, nodded, and read it out to me. Repayable over the term of the borrower's life." },
 			{ kind = "emote", text = "spreads their hands in a gesture of complete and final innocence." },
-			{ kind = "say", text = "\"There you are,\" I said. \"Term's up.\" He looked at me for a while, standing there talking to him. \"It doesn't say which one,\" he said." },
+			{ kind = "say", text = "\"There you are,\" I said. \"Term's up.\" He looked at me for a while, a dead man sitting there chatting with him. \"It doesn't say which one,\" he said." },
 			{ kind = "say", text = "I've been paying three silver a month. Honestly, it's nice having someone out there who still expects to hear from me." },
 		},
 	},
@@ -896,7 +896,7 @@ ns.AddStories("race", "Skyborne", {
 		title = "The One Who Stands Behind",
 		mood = "heartfelt",
 		lines = {
-			{ kind = "say", text = "The first time any child of ours goes off the high ledge, an elder stands behind them. Not to push. Just to say the same three words. \"The wind's got you.\"" },
+			{ kind = "say", text = "The first time any child of ours goes off the high ledge, an elder stands behind them. Not to push. Just to say the same four words. \"The wind's got you.\"" },
 			{ kind = "say", text = "Mine was an old woman with a voice like a dry branch. She said it to me as if it were the plainest fact in the world. So I believed her, and I stepped." },
 			{ kind = "emote", text = "looks out at some high, distant point and takes a slow breath." },
 			{ kind = "say", text = "It wasn't until I was grown that I saw her do it again, from the side, where the child couldn't see." },

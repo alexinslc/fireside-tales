@@ -56,6 +56,17 @@ ns.AddStories("zone", "Elwynn Forest", {
 			{ kind = "say", text = "I helped her finish it. It took all afternoon. That pile was still standing a year later, when the neat ones around it had all come down." },
 		},
 	},
+	{
+		title = "One Lamp Too Many",
+		mood = "spooky",
+		lines = {
+			{ kind = "say", text = "Walking into Goldshire after dark, I passed the lamplighter on his round. I counted his lamps as I went, the way you do when the road is long." },
+			{ kind = "say", text = "Eleven lamps on that road. I'm sure of it. But down past the last farm, toward Crystal Lake, there was a twelfth one, burning in the trees where no post stands." },
+			{ kind = "emote", text = "glances over one shoulder, then turns back to the fire a little too quickly." },
+			{ kind = "say", text = "Every time I looked, it had moved along the road with me. Never closer. Never farther off. Just keeping pace, about a field away." },
+			{ kind = "say", text = "At the inn they said not to worry. It only walks with people who are alone, and it always stops at the edge of town. They said it like that was the comforting part." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Stormwind City", {
@@ -621,6 +632,17 @@ ns.AddStories("zone", "Darnassus", {
 			{ kind = "say", text = "When I finally got to the front, the clerk asked if my friend would be needing anything too." },
 		},
 	},
+	{
+		title = "Company in the Moonwell",
+		mood = "spooky",
+		lines = {
+			{ kind = "say", text = "In Darnassus there's a moonwell in the Temple of the Moon, so still it's like a mirror. I leaned over it one night to see my own face in the silver." },
+			{ kind = "say", text = "I saw myself, all right. And beside me, close enough to touch, someone sitting with their head on my shoulder. Someone I had never seen before in my life." },
+			{ kind = "emote", text = "turns their head toward the empty air beside them, and holds very still." },
+			{ kind = "say", text = "There was nobody there, of course. I asked a priestess about it. She smiled and said the well only shows you who is with you. She didn't say when." },
+			{ kind = "say", text = "I think about that face more than I should. Whoever they are, I hope I meet them. And I hope I'm glad when I do." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Darkshore", {
@@ -663,9 +685,9 @@ ns.AddStories("zone", "Darkshore", {
 		mood = "heartfelt",
 		lines = {
 			{ kind = "say", text = "At the inn in Auberdine there was a woman drying five coats by the hearth. It rains a lot on Darkshore, so I wasn't surprised. Then she told me only one was hers." },
-			{ kind = "say", text = "The rest belonged to travelers who'd come through soaked to the bone. She'd lent each of them her own spare and promised theirs would be dry by morning." },
+			{ kind = "say", text = "The rest belonged to travelers who'd come through soaked to the bone. She'd lent each of them a dry coat off her pegs, and promised theirs would be ready by morning." },
 			{ kind = "emote", text = "holds out both hands as if warming a coat before a fire, turning it slowly." },
-			{ kind = "say", text = "I asked how she ever got her own coat back. She said she didn't. It's been going up and down the coast for two years now." },
+			{ kind = "say", text = "I asked if she always got her coats back. Nearly always, she said. But her favorite never came back. It's been going up and down the coast for two years now." },
 			{ kind = "say", text = "Every so often she hears about it. Somebody's wearing it in Ashenvale. Somebody's wearing it on a boat. She says it's seen more of the world than she has." },
 		},
 	},
@@ -765,6 +787,17 @@ ns.AddStories("zone", "Durotar", {
 			{ kind = "say", text = "He told me it was his. Its name was Tiny. It does that to everyone, he said. It likes the company." },
 		},
 	},
+	{
+		title = "One Short at Razor Hill",
+		mood = "dark",
+		lines = {
+			{ kind = "say", text = "There's an old guard on the wall at Razor Hill who counts the riders in at dusk. Out loud, every one, until the last of them is through the gate." },
+			{ kind = "say", text = "One evening a patrol went out toward the coast. Seven of them. That night he counted to six, and waited, and kept waiting until the sun came up." },
+			{ kind = "emote", text = "counts slowly on their fingers, and stops with one finger still raised." },
+			{ kind = "say", text = "They found what was left in the spring, out among the red rocks. There was nothing to bring home but a broken spear and a name." },
+			{ kind = "say", text = "He still counts every night. He still stops at six, and stands there a while with the torch, before he lets them close the gate." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Orgrimmar", {
@@ -806,7 +839,7 @@ ns.AddStories("zone", "Orgrimmar", {
 		title = "The Loudest Drum",
 		mood = "action",
 		lines = {
-			{ kind = "say", text = "I was helping carry a big drum through the Valley of Strength in Orgrimmar when a runaway cart pinned its owner against a wall." },
+			{ kind = "say", text = "I was helping a drummer carry his big drum through the Valley of Strength in Orgrimmar when a cart rolled into him and pinned him against a wall." },
 			{ kind = "say", text = "We shouted for the driver. Nobody could hear a thing over the market, and the cart kept grinding forward." },
 			{ kind = "emote", text = "raises both fists and brings them down hard on an invisible drum, once, twice." },
 			{ kind = "say", text = "So I beat the drum. Every head in the valley turned at once, and the driver was so startled he hauled his beast to a stop." },
@@ -942,7 +975,7 @@ ns.AddStories("zone", "Thunder Bluff", {
 			{ kind = "say", text = "A friend of mine told me about the Pools of Vision, down in the caves beneath Thunder Bluff. I've never gone. This is why." },
 			{ kind = "say", text = "It's dark and quiet down there, and the water glows faintly. They knelt at the edge and looked in, as you do, and their reflection looked back. Older, they said." },
 			{ kind = "emote", text = "leans forward, raises one hand, and waits, watching the ground." },
-			{ kind = "say", text = "So they raised a hand to see. The water didn't. The reflection just went on looking, and it looked sad, or maybe sorry." },
+			{ kind = "say", text = "So they raised a hand to see. The reflection didn't. It just went on looking up at them, and it looked sad, or maybe sorry." },
 			{ kind = "say", text = "My friend's stopped looking into water, even a washbasin. I saw them last spring, and I'll tell you, they're starting to look like someone they described." },
 		},
 	},
@@ -1038,7 +1071,7 @@ ns.AddStories("zone", "Thousand Needles", {
 			{ kind = "say", text = "You know what it was, and I knew too. I walked toward it anyway, because at that point you need something to walk toward." },
 			{ kind = "emote", text = "gazes through the heat shimmer above the fire, as though something blue might lie on the other side." },
 			{ kind = "say", text = "It stayed just as far off all afternoon. But by evening it had led me straight into a camp of salt cutters, and they gave me water and asked no questions." },
-			{ kind = "say", text = "I asked if they'd seen the lake. Oh, yes, one of them said. That's why we came out here, twenty years back. Then she handed me more soup." },
+			{ kind = "say", text = "I asked if they'd seen the lake. Oh, yes, one of them said. That's why we came out here, twenty years back. Then she poured me more water." },
 		},
 	},
 	{
@@ -1048,7 +1081,7 @@ ns.AddStories("zone", "Thousand Needles", {
 			{ kind = "say", text = "All the walkways up at Freewind Post are rope, slung between the needles, a long way above anything soft. There's an old ropemaker who tends them." },
 			{ kind = "say", text = "I noticed one bridge had rope twice as thick as the others. Three times the knots. It only went out to a small empty ledge, too, and no one had any use for it." },
 			{ kind = "emote", text = "tests a knot with both hands, then tests it again." },
-			{ kind = "say", text = "I asked about it down at the fire. Somebody told me, in a low voice, that he'd built it after his son. It wasn't that bridge the boy fell from. It was the old one." },
+			{ kind = "say", text = "I asked about it down at the fire. Somebody told me, in a low voice, that his son fell from the old bridge that used to hang there. He built this one the spring after." },
 			{ kind = "say", text = "Every evening he walks out and back, slowly, checking each knot. Not one person has ever fallen from it. Nobody's ever needed to cross it, either." },
 		},
 	},
@@ -1180,7 +1213,7 @@ ns.AddStories("zone", "Silverpine Forest", {
 			{ kind = "say", text = "You can row out to Fenris Isle from the Silverpine shore, if you've a mind to. I'd heard there was an old village out there and thought there might be something worth taking." },
 			{ kind = "say", text = "Every house was closed up tight, with heavy boards over the doors and windows. People do that when they leave. You board up against thieves." },
 			{ kind = "emote", text = "runs a thumb over a board, then stops at something and looks closer." },
-			{ kind = "say", text = "It took me a while to see what was wrong. Those weren't the houses of folk who had left. Every board was nailed on from outside, and the doors had bars across them too." },
+			{ kind = "say", text = "It took me a while to see what was wrong. You board up to keep thieves out. These doors had heavy bars across them on the outside, the kind you use to keep something in." },
 			{ kind = "say", text = "I pried a corner off the nearest door. I looked at the marks on the inside of it. Then I hammered that board back on and went home with nothing." },
 		},
 	},
@@ -1265,7 +1298,7 @@ ns.AddStories("zone", "Alterac Mountains", {
 			{ kind = "say", text = "I dug this out of the snow in the ruins of Alterac. Old silver coin with a crowned head on it. I thought my luck had finally turned." },
 			{ kind = "say", text = "I took it to a money changer, and he laughed so hard he had to sit down. There's nothing that coin can buy. There's no one left to honor it." },
 			{ kind = "say", text = "They say that whole kingdom sold itself, one bargain at a time, and thought it was getting a good price." },
-			{ kind = "say", text = "I could've melted it down. I keep it instead. Whenever someone offers me a very good deal, I take it out and have a look at his face." },
+			{ kind = "say", text = "I could've melted it down. I keep it instead. Whenever someone offers me a very good deal, I take it out and have a long look at that old king's face." },
 		},
 	},
 	{
@@ -1877,6 +1910,17 @@ ns.AddStories("zone", "Feralas", {
 			{ kind = "say", text = "I like to think it's still trying to go places." },
 		},
 	},
+	{
+		title = "The Warm Camp",
+		mood = "spooky",
+		lines = {
+			{ kind = "say", text = "Deep under the big trees of Feralas, I walked into a camp with nobody in it. A pot over the coals, still warm. Two packs. A bedroll still in the shape of a sleeper." },
+			{ kind = "say", text = "I called out, quite a few times. The jungle doesn't echo. It just takes your voice and keeps it. So I sat down to wait, and found a journal by the fire." },
+			{ kind = "emote", text = "turns an invisible page, slowly, then stops and does not turn the next one." },
+			{ kind = "say", text = "The last page was written that very evening. It said, someone is walking up the path. We can hear them. We'll go and have a look. That was all." },
+			{ kind = "say", text = "I'd come up that path. Nobody had come down it to look. I didn't stay for supper, and I didn't follow the path back the way I came." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Desolace", {
@@ -2020,6 +2064,17 @@ ns.AddStories("zone", "Un'Goro Crater", {
 			{ kind = "say", text = "He said that was definitely worth two silver. I've never seen anyone so happy to be bleeding." },
 		},
 	},
+	{
+		title = "What the Tar Keeps",
+		mood = "dark",
+		lines = {
+			{ kind = "say", text = "There's a scholar at Marshal's Refuge who pulls old bones out of the tar pits in Un'Goro. He labels every one with great care, and keeps a ledger thick as a door." },
+			{ kind = "say", text = "He showed me his newest find. Not a beast. A boot, a good leather one, with a buckle, and a little of the traveler still in it." },
+			{ kind = "emote", text = "wipes their hands slowly on their knees, as if they can't quite get them clean." },
+			{ kind = "say", text = "He wrote it in the ledger just the same as the old bones. Name unknown. Came a long way. He said the tar doesn't care what age you come from." },
+			{ kind = "say", text = "Then he asked my name, and wrote it in the back, in case. I've been meaning to ask him to cross it out." },
+		},
+	},
 })
 
 ns.AddStories("zone", "Felwood", {
@@ -2112,7 +2167,7 @@ ns.AddStories("zone", "Winterspring", {
 			{ kind = "say", text = "Outside Everlook, in Winterspring, a sled team bolted when a bear came out of the trees. The sled tipped, and the driver was dragged behind, tangled in the reins." },
 			{ kind = "say", text = "The dogs were running straight for a ridge. Over that ridge was a long, steep drop." },
 			{ kind = "emote", text = "draws a quick blade across the air and pulls one hand sharply free." },
-			{ kind = "say", text = "I ran alongside and cut the reins with my knife. The driver came loose and rolled into a drift. The dogs went on and stopped at the ridge on their own." },
+			{ kind = "say", text = "I ran alongside and cut the reins with my knife. The driver came loose and rolled into a drift. The dogs pulled up at the very edge, but the empty sled went right on over." },
 			{ kind = "say", text = "She was angry about the reins for exactly one breath. Then she looked over the ridge, sat down, and asked if I'd like to stay for supper." },
 		},
 	},
@@ -2265,7 +2320,7 @@ ns.AddStories("zone", "Zephras Isle", {
 			{ kind = "say", text = "There's one rule on the cliffs of Zephras Isle, and they'll tell you the first day. If the wind ever drops, you get away from the edge. Fast. It doesn't drop for long." },
 			{ kind = "say", text = "I was out on a high ledge, leaning on the gale like you'd lean on a wall. Everyone does it. It's a wonderful feeling. And then, all at once, there was nothing to lean on." },
 			{ kind = "emote", text = "pitches forward with arms spread wide, then jerks upward as if yanked by the collar." },
-			{ kind = "say", text = "I was over the edge with the sea coming up. Then it came back, from underneath, and it threw me. Up past the cliff, past the gulls, higher than I've ever been." },
+			{ kind = "say", text = "I was over the edge with the sea coming up. Then the wind came back, from underneath, and it threw me. Up past the cliff, past the gulls, higher than I've ever been." },
 			{ kind = "say", text = "For one breath I could see water on every side of the world. It was silent. Then I came down in a thorn bush, and I've never once complained about that bush." },
 		},
 	},
@@ -2278,6 +2333,17 @@ ns.AddStories("zone", "Zephras Isle", {
 			{ kind = "emote", text = "licks a fingertip, holds it up gravely, and nods as if it has told them something important." },
 			{ kind = "say", text = "It blew a gale by noon. The old fisher found me holding onto a fence post with both arms." },
 			{ kind = "say", text = "She said the finger isn't how you tell. You watch the gulls. The finger's just there so visitors feel included." },
+		},
+	},
+	{
+		title = "The Ropes on the Cliff",
+		mood = "dark",
+		lines = {
+			{ kind = "say", text = "Along the high cliffs of Zephras Isle there's a row of posts, sunk deep in the rock. Each one has a rope tied to it, running out to the edge, and stopping there." },
+			{ kind = "say", text = "I thought they were for climbing. Then I saw the ends. Not cut. Frayed out, long ago, and the knots at the posts still tied tight." },
+			{ kind = "emote", text = "pulls a knot tight in an invisible rope, and keeps both hands on it." },
+			{ kind = "say", text = "Every rope was somebody who trusted the wind one day too long. The islanders never untie them. They say the wind should have something to hold, besides the people." },
+			{ kind = "say", text = "There's an empty post at the end of the row. Nobody will tell you who it's for. They just look at the sky, and check their own knots." },
 		},
 	},
 })
@@ -2519,7 +2585,7 @@ ns.AddStories("zone", "Shen'dralas", {
 		title = "The Fallen Archway",
 		mood = "action",
 		lines = {
-			{ kind = "say", text = "I was helping a scholar sketch a carved archway in Shen'dralas when one of the old columns started to lean. She was standing right beneath it, drawing." },
+			{ kind = "say", text = "I was helping a scholar sketch a carved archway in Shen'dralas when one of the old columns started to lean. She was sitting right beneath it, drawing." },
 			{ kind = "say", text = "There wasn't time to explain. I grabbed the back of her collar and pulled her clean off her stool, sketchbook and all." },
 			{ kind = "emote", text = "yanks one hand sharply backward, then stares at the empty space in front of them." },
 			{ kind = "say", text = "The column came down where she'd been sitting and broke into three pieces. Dust everywhere. We lay there coughing for a while." },

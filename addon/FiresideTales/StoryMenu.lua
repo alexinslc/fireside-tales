@@ -39,7 +39,8 @@ local MOODS = {
 }
 
 local window, reader, readerContent, readerTitle, readerMeta, readerRule, readerText, status, speakButton, restartButton
-local favoriteButton, tonightButton, deleteButton, clearFiltersButton
+local favoriteButton, tonightButton, deleteButton, clearFiltersButton, fromButton, moodButton
+local tabButtons = {}
 local confirmingDelete = false
 local list, listContent, countLabel, emptyLabel, searchBox
 local rows, headers = {}, {}
@@ -59,6 +60,17 @@ local OFFER_SECONDS = 30 -- An offer nobody takes quietly goes away.
 local FIRE_HINT = "By the fire. Tell a tale?"
 local NIGHT_HINT = "A dark night by the fire. Tell a tale?"
 local buildWindow -- Defined last, once everything it uses exists.
+local RUMORS_THEME = "Rumors and Whispers" -- These shared stories get a tab of their own.
+
+-- The tabs down the window's right edge. Stories holds everything except legends and
+-- rumors, which have their own tabs. Your Tales shows only your character's own.
+local currentTab = "stories"
+local TAB_SOURCES = { mine = { mine = true }, legends = { legend = true }, rumors = { rumors = true } }
+local function inTab(source)
+	local only = TAB_SOURCES[currentTab]
+	if only then return only[source] or false end
+	return source ~= "legend" and source ~= "rumors"
+end
 
 -- What the teller bar says when the fire offers a story.
 local function fireHint()
@@ -125,13 +137,22 @@ local function getSections()
 	for _, story in ipairs(withPasted(ns.Stories, "shared")) do
 		if not themes[story.theme] then
 			themes[story.theme] = {}
-			sections[#sections + 1] = { source = "shared", header = story.theme, stories = themes[story.theme] }
+			local source = story.theme == RUMORS_THEME and "rumors" or "shared"
+			sections[#sections + 1] = { source = source, header = story.theme, stories = themes[story.theme] }
 		end
 		table.insert(themes[story.theme], story)
 	end
 
 	for _, festival in ipairs(ns.Season.Festivals) do
 		add("festival", festival.name, ns.FestivalStories[festival.name])
+	end
+
+	-- Each legend is a section of its parts, in order.
+	for _, legend in ipairs(ns.Legends) do
+		for index, part in ipairs(legend.parts) do
+			part.legend, part.part = legend, index
+		end
+		add("legend", legend.title, legend.parts)
 	end
 
 	local zoneNames = {}
@@ -214,6 +235,74 @@ local function nextOnTonight()
 	return nil
 end
 
+-- The part after this one, when it's a legend that has more.
+local function nextPart(story)
+	return story.legend and story.legend.parts[story.part + 1] or nil
+end
+
+-- What Speak loads once this story ends: a legend's next part, or Tonight's next story.
+local function followingStory()
+	return nextPart(currentStory) or nextOnTonight()
+end
+
+-------------------------------------------------------------------------------
+-- Openers and closers: one line before a story, and one after it
+-------------------------------------------------------------------------------
+
+local framingSaid = {} -- Which of the two you've said for this story.
+local framingNext = {} -- The line each button will say, so its tooltip can show it.
+local framingUsed = {} -- Lines said this session, so they don't come round again soon.
+
+local function framingPool(which)
+	local groups = (which == "opener" and ns.Openers or ns.Closers) or {}
+	local pool = {}
+	local function add(key)
+		for _, line in ipairs(groups[key] or {}) do pool[#pool + 1] = line end
+	end
+	add("any")
+	if ns.Season.IsNight() then add("night") end
+	if which == "closer" and currentStory then add(currentStory.mood) end
+	return pool
+end
+
+-- Which button to offer now: an opener before the first line, or a closer once a
+-- story ends with nothing after it. Each is said at most once per story.
+local function framingNow()
+	if not currentStory then return nil end
+	if nextLine == 1 and not framingSaid.opener then return "opener" end
+	if nextLine > #currentStory.lines and not framingSaid.closer and not followingStory() then return "closer" end
+	return nil
+end
+
+local function framingLine(which)
+	if not framingNext[which] then
+		local pool, fresh = framingPool(which), {}
+		for _, line in ipairs(pool) do
+			if not framingUsed[line] then fresh[#fresh + 1] = line end
+		end
+		if #fresh == 0 then
+			for _, line in ipairs(pool) do framingUsed[line] = nil end
+			fresh = pool
+		end
+		framingNext[which] = fresh[1] and fresh[math.random(#fresh)] or nil
+	end
+	return framingNext[which]
+end
+
+local function framingLabel()
+	local which = framingNow()
+	if not which or not framingLine(which) then return nil end
+	return which == "opener" and "Opener" or "Closer"
+end
+
+-- The line the button would say, as people will see it, for its tooltip.
+function ns.Story.PeekFraming()
+	local which = framingNow()
+	local line = which and framingLine(which)
+	if not line then return nil end
+	return line.kind == "emote" and (ns.PlayerName() .. " " .. line.text) or line.text
+end
+
 -- Roughly how long a story takes to tell, giving people time to read each line.
 local function storySeconds(story)
 	local seconds = 0
@@ -240,8 +329,7 @@ local function refreshRowColors()
 				or (story.kind and COLOR_ADDED or COLOR_SAY_NEXT)
 			row:SetText((MOOD_DOTS[story.mood] or "") .. color .. story.title .. "|r")
 			row.star:SetShown(char.favorites[story.key] and true or false)
-			row.noteIcon:SetShown(story.kind ~= nil)
-			row.count:SetText(#story.lines)
+			row.count:SetText(storySeconds(story) .. "s") -- Roughly how long it takes to tell.
 		end
 	end
 end
@@ -253,7 +341,7 @@ local function refreshReader()
 		readerRule:Hide()
 		readerText:SetText(COLOR_META .. "Choose a story from the list, or press Tell a Tale and let the fire choose.|r")
 		status:SetText("")
-		speakButton:SetText("Speak")
+		speakButton:SetText("Tell")
 		speakButton:Disable()
 		restartButton:Disable()
 		favoriteButton:Disable()
@@ -281,6 +369,9 @@ local function refreshReader()
 	local seconds = storySeconds(currentStory)
 	local meta = (MOOD_DOTS[mood] or "") .. COLOR_META .. mood:gsub("^%l", string.upper) .. "|r"
 		.. COLOR_META .. ("  -  about %d seconds|r"):format(seconds)
+	if currentStory.legend then
+		meta = meta .. COLOR_META .. ("  -  %s, part %d of %d|r"):format(currentStory.legend.zone, currentStory.part, #currentStory.legend.parts)
+	end
 	if currentStory.kind then
 		meta = meta .. COLOR_META .. "  -  |r" .. COLOR_ADDED .. "added by you|r"
 	end
@@ -307,12 +398,13 @@ local function refreshReader()
 	readerContent:SetHeight(readerTitle:GetStringHeight() + readerMeta:GetStringHeight() + readerText:GetStringHeight() + 30)
 
 	local statusText, canSpeak, speakLabel, barText, barStatus
-	local following = nextLine > total and nextOnTonight()
+	local following = nextLine > total and followingStory()
 	if nextLine > total then
-		statusText = "The end."
+		local isPart = following and following == nextPart(currentStory)
+		statusText = isPart and "End of this part." or "The end."
 		canSpeak = following and true or false
-		speakLabel = following and "Next story" or "Speak"
-		barText = following and ("Next tonight: " .. following.title) or "The end."
+		speakLabel = following and (isPart and "Next part" or "Next story") or "Speak"
+		barText = following and ((isPart and "Next part: " or "Next tonight: ") .. following.title) or "The end."
 	else
 		statusText = ("Line %d of %d"):format(nextLine, total)
 		canSpeak = true
@@ -329,9 +421,13 @@ local function refreshReader()
 		barStatus = ("about %d sec"):format(seconds)
 	end
 	status:SetText(statusText)
-	speakButton:SetText(speakLabel)
+	-- Before the first line, the menu's button hands the story to the teller bar
+	-- without saying anything, so there's time for an opener.
+	speakButton:SetText(nextLine == 1 and "Tell" or speakLabel)
 	speakButton:SetEnabled(canSpeak)
+	local framing = framingLabel()
 	ns.Teller.Update({
+		framingLabel = framing,
 		title = currentStory.title .. (storyTarget and (", to " .. storyTarget) or ""),
 		text = barText,
 		status = barStatus or statusText,
@@ -351,18 +447,21 @@ local function selectStory(story)
 	nextLine = 1
 	storyTarget = nil
 	confirmingDelete = false
+	wipe(framingSaid)
+	wipe(framingNext)
 	ns.Teller.StopCue()
 	refreshRowColors()
 	refreshReader()
 end
 
 -- Speaks the next line and shrinks the menu to the teller bar. At the end of a
--- story, it loads the next one on Tonight's list without saying anything.
+-- story, it loads a legend's next part, or the next one on Tonight's list,
+-- without saying anything.
 function ns.Story.SpeakNext()
 	if not currentStory then return end
 	local total = #currentStory.lines
 	if nextLine > total then
-		local following = nextOnTonight()
+		local following = followingStory()
 		if following then selectStory(following) end
 		return
 	end
@@ -393,6 +492,42 @@ function ns.Story.SpeakNext()
 	end
 end
 
+-- Moves the chosen story to the teller bar, ready to tell, without saying anything.
+function ns.Story.Ready()
+	if not currentStory then return end
+	ns.PlayUISound("IG_ABILITY_PAGE_TURN")
+	refreshReader()
+	ns.Teller.Show()
+	window:Hide()
+end
+
+-- Says the opener or closer the teller bar is showing, with a cue, as Speak does.
+function ns.Story.SayFraming()
+	local which = framingNow()
+	local line = which and framingLine(which)
+	if not line or not ns.SendLine(line.text, ns.ChatType[line.kind]) then return end
+	framingUsed[line] = true
+	framingNext[which] = nil
+	framingSaid[which] = true
+	offering = false
+	refreshReader()
+	if window:IsShown() then
+		ns.Teller.Show()
+		window:Hide()
+	end
+	ns.Teller.StartCue(line.text)
+end
+
+-- The button's tooltip shows exactly what it will say.
+function ns.Story.ShowFramingTooltip(owner)
+	local text = ns.Story.PeekFraming()
+	if not text then return end
+	GameTooltip:SetOwner(owner, "ANCHOR_TOP")
+	GameTooltip:SetText(framingNow() == "opener" and "Say an opener" or "Say a closer")
+	GameTooltip:AddLine(text, 1, 1, 1, true)
+	GameTooltip:Show()
+end
+
 -------------------------------------------------------------------------------
 -- Filtering the list
 -------------------------------------------------------------------------------
@@ -408,6 +543,23 @@ local function textOf(story)
 	return searchText[story]
 end
 
+-- The words that mean a zone: its name and the places in it.
+local function zoneTerms(zone)
+	local terms = { zone:lower() }
+	for _, term in ipairs(ns.ZoneTerms[zone] or {}) do
+		terms[#terms + 1] = term
+	end
+	return terms
+end
+
+local function mentionsAny(story, terms)
+	local text = textOf(story)
+	for _, term in ipairs(terms) do
+		if text:find(term, 1, true) then return true end
+	end
+	return false
+end
+
 -- Stories about the zone you're standing in: those written for it, then any
 -- other story of yours that mentions it. Returns a list and a lookup set.
 local hereZone, hereList, hereSet
@@ -421,10 +573,7 @@ local function getHereStories()
 		return hereZone, hereList, hereSet
 	end
 
-	local terms = { zone:lower() }
-	for _, term in ipairs(ns.ZoneTerms[zone] or {}) do
-		terms[#terms + 1] = term
-	end
+	local terms = zoneTerms(zone)
 	local function addStory(story)
 		if not hereSet[story] then
 			hereSet[story] = true
@@ -441,8 +590,10 @@ local function getHereStories()
 	end
 	for _, section in ipairs(getSections()) do
 		-- Tales of other places stay put even if they mention this one in passing.
-		-- Stories told to a target, and festival stories, also keep to their own.
-		if section.source ~= "places" and section.source ~= "target" and section.source ~= "festival" then
+		-- Stories told to a target, festival stories, legends, and rumors also keep
+		-- to their own.
+		local own = { places = true, target = true, festival = true, legend = true, rumors = true }
+		if not own[section.source] then
 			for _, story in ipairs(section.stories) do
 				local text = textOf(story)
 				for _, term in ipairs(terms) do
@@ -491,21 +642,30 @@ local function getRow(index)
 		local label = row:GetFontString()
 		label:ClearAllPoints()
 		label:SetPoint("LEFT", 18, 0)
-		label:SetPoint("RIGHT", -38, 0)
+		label:SetPoint("RIGHT", -34, 0)
 		label:SetJustifyH("LEFT")
 		label:SetWordWrap(false)
 		row.count = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 		row.count:SetPoint("RIGHT", -6, 0)
-		-- These have fixed spots, so titles line up whichever ones a story has.
+		-- A fixed spot, so titles line up whether or not a story is a favorite.
 		row.star = row:CreateTexture(nil, "OVERLAY")
 		row.star:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_1")
 		row.star:SetSize(12, 12)
 		row.star:SetPoint("LEFT", 3, 0)
-		row.noteIcon = row:CreateTexture(nil, "OVERLAY")
-		row.noteIcon:SetTexture("Interface\\Icons\\INV_Misc_Note_01")
-		row.noteIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-		row.noteIcon:SetSize(13, 13)
-		row.noteIcon:SetPoint("RIGHT", -22, 0)
+		-- Hovering a story says what the row's marks mean.
+		row:SetScript("OnEnter", function(self)
+			local story = self.story
+			local char = ns.CharData()
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText(story.title)
+			local mood = (story.mood or ""):gsub("^%l", string.upper)
+			GameTooltip:AddLine(("%s, about %d seconds to tell, %d lines"):format(mood, storySeconds(story), #story.lines), 1, 1, 1)
+			if story.kind then GameTooltip:AddLine("Added by you", 0.73, 0.9, 0.79) end
+			if char.favorites[story.key] then GameTooltip:AddLine("A favorite", 1, 0.82, 0) end
+			if char.told[story.key] then GameTooltip:AddLine("You " .. toldText(char.told[story.key]):gsub("^told", "told it"), 0.6, 0.6, 0.6) end
+			GameTooltip:Show()
+		end)
+		row:SetScript("OnLeave", function() GameTooltip:Hide() end)
 		row:SetScript("OnClick", function(self)
 			ns.PlayUISound("IG_ABILITY_PAGE_TURN")
 			selectStory(self.story)
@@ -633,30 +793,61 @@ local function renderList(keepScroll)
 			skip[story] = true
 		end
 	end
-	if filters.show == "tonight" or not filters.source then
-		local stories = tonightStories()
-		showSection("Tonight", stories, nil, true)
-		moveUp(stories)
+	local tabTotal = 0
+	for _, section in ipairs(getSections()) do
+		if inTab(section.source) then tabTotal = tabTotal + #section.stories end
 	end
-	if filters.show ~= "tonight" then
-		if not filters.source then
-			for _, stories in ipairs(festivalStoriesNow()) do
-				showSection("On now: " .. stories.festival.name, stories, skip, true)
-				moveUp(stories)
-			end
-		end
-		if not filters.source or filters.source == "here" then
-			local zone, stories = getHereStories()
-			if zone then
-				showSection("Here in " .. zone, stories, skip, true)
-				moveUp(stories)
-			end
-		end
-		if filters.source ~= "here" then
+
+	if currentTab ~= "stories" then
+		-- The other tabs are short, so their sections start open. Rumors and legends
+		-- about where you're standing come first.
+		local zone = ns.CurrentZone()
+		if currentTab == "rumors" and zone then
+			local terms, stories = zoneTerms(zone), {}
 			for _, section in ipairs(getSections()) do
-				if not filters.source or section.source == filters.source then
-					local isMine = section.source == "mine"
-					showSection(section.label or section.header, section.stories, not isMine and skip or nil, isMine)
+				if section.source == "rumors" then
+					for _, story in ipairs(section.stories) do
+						if mentionsAny(story, terms) then stories[#stories + 1] = story end
+					end
+				end
+			end
+			showSection("Here in " .. zone, stories, nil, true)
+			moveUp(stories)
+		end
+		for pass = 1, 2 do
+			for _, section in ipairs(getSections()) do
+				local isHere = section.source == "legend" and section.stories[1].legend.zone == zone
+				if inTab(section.source) and (pass == 1) == isHere then
+					showSection(section.label or section.header, section.stories, skip, true)
+				end
+			end
+		end
+	else
+		if filters.show == "tonight" or not filters.source then
+			local stories = tonightStories()
+			showSection("Tonight", stories, nil, true)
+			moveUp(stories)
+		end
+		if filters.show ~= "tonight" then
+			if not filters.source then
+				for _, stories in ipairs(festivalStoriesNow()) do
+					showSection("On now: " .. stories.festival.name, stories, skip, true)
+					moveUp(stories)
+				end
+			end
+			if not filters.source or filters.source == "here" then
+				local zone, stories = getHereStories()
+				if zone then
+					showSection("Here in " .. zone, stories, skip, true)
+					moveUp(stories)
+				end
+			end
+			if filters.source ~= "here" then
+				for _, section in ipairs(getSections()) do
+					if inTab(section.source) and (not filters.source or section.source == filters.source) then
+						local isMine = section.source == "mine"
+						showSection(section.label or section.header, section.stories, not isMine and skip or nil, isMine)
+					end
 				end
 			end
 		end
@@ -665,7 +856,12 @@ local function renderList(keepScroll)
 	listContent:SetHeight(math.max(-y + 4, 1))
 	list:SetVerticalScroll(keepScroll and scroll or 0)
 	clearFiltersButton:SetShown(isFiltering() and true or false)
-	countLabel:SetText(("%d of %d stories"):format(shown, ns.Story.Count()))
+	countLabel:SetText(("%d of %d %s"):format(shown, tabTotal, currentTab == "legends" and "parts" or "stories"))
+	if currentTab == "mine" and tabTotal == 0 then
+		emptyLabel:SetText("No tales of your own yet.\nPress Write My Story to add some.")
+	else
+		emptyLabel:SetText("No stories match these filters.")
+	end
 	emptyLabel:SetShown(headerIndex == 0)
 	refreshRowColors()
 end
@@ -714,7 +910,7 @@ end
 -- you are, then one of your own, your race's, or your class's, then any shared
 -- one. Within each, spooky and dark tales come first at night, and the others by
 -- day. Stories that need a target are left out, since you may not have anyone
--- targeted.
+-- targeted, and so are legends, which start at Part 1 from their own tab.
 local function pickTale()
 	local festival = {}
 	for _, stories in ipairs(festivalStoriesNow()) do
@@ -726,7 +922,7 @@ local function pickTale()
 	local tiers = { festival, here, {}, {} }
 	for _, section in ipairs(getSections()) do
 		local tier = (section.source == "mine" or section.source == "race" or section.source == "class") and tiers[3]
-			or section.source == "shared" and tiers[4]
+			or (section.source == "shared" or section.source == "rumors") and tiers[4]
 		if tier then
 			for _, story in ipairs(section.stories) do
 				tier[#tier + 1] = story
@@ -999,21 +1195,21 @@ local function buildFilters()
 		local grouped = { shared = "Everyone", places = "Places", target = "Target", festival = "Festivals" }
 		local seen = {}
 		for _, section in ipairs(getSections()) do
-			if not seen[section.source] then
+			if not seen[section.source] and inTab(section.source) then
 				seen[section.source] = true
 				sources[#sources + 1] = { key = section.source, label = grouped[section.source] or section.header }
 			end
 		end
 		return sources
 	end
-	local fromButton = buildSelector("From", "source", getSources, 118)
+	fromButton = buildSelector("From", "source", getSources, 118)
 	fromButton:SetPoint("LEFT", searchBox, "RIGHT", 6, 0)
 
 	local moods = { { key = nil, label = "All" } }
 	for _, mood in ipairs(MOODS) do
 		moods[#moods + 1] = mood
 	end
-	local moodButton = buildSelector("Mood", "mood", function() return moods end, 112)
+	moodButton = buildSelector("Mood", "mood", function() return moods end, 112)
 	moodButton:SetPoint("LEFT", fromButton, "RIGHT", 4, 0)
 
 	local showChoices = {
@@ -1034,6 +1230,128 @@ local function buildFilters()
 	clearFiltersButton = ns.MakeFlatButton(window, "Clear", 46)
 	clearFiltersButton:SetPoint("LEFT", showButton, "RIGHT", 4, 0)
 	clearFiltersButton:SetScript("OnClick", clearFilters)
+end
+
+-- From only makes sense on the Stories tab. Elsewhere, Mood moves over into its place.
+local function refreshFilterBar()
+	local onStories = currentTab == "stories"
+	fromButton:SetShown(onStories)
+	moodButton:ClearAllPoints()
+	moodButton:SetPoint("LEFT", onStories and fromButton or searchBox, "RIGHT", onStories and 4 or 6, 0)
+end
+
+-------------------------------------------------------------------------------
+-- The tabs down the window's right edge, like the spellbook's
+-------------------------------------------------------------------------------
+
+local TABS = {
+	{ key = "mine", tooltip = "Your Tales", detail = "Your character's own stories.", portrait = true },
+	{ key = "stories", tooltip = "Stories", detail = "Tales for every race, class, and zone.",
+		icons = { "Interface\\Icons\\INV_Misc_Note_01", "Interface\\Icons\\INV_Misc_Book_09" } },
+	{ key = "legends", tooltip = "Legends", detail = "Warcraft's own stories, told in parts.",
+		icons = { "Interface\\Icons\\INV_Misc_Book_07", "Interface\\Icons\\INV_Misc_Book_11" } },
+	{ key = "rumors", tooltip = RUMORS_THEME, detail = "Short things people swear they heard.",
+		icons = { "Interface\\Icons\\INV_Drink_05", "Interface\\Icons\\INV_Letter_09" } },
+}
+
+-- The first icon the client has. SetTexture says when a file is missing.
+local function setFirstTexture(texture, paths)
+	for _, path in ipairs(paths) do
+		if texture:SetTexture(path) ~= false then return end
+	end
+end
+
+local setTab -- Defined below, after the tabs it switches between.
+
+local function refreshTabs()
+	for _, tab in ipairs(tabButtons) do
+		tab.selected:SetShown(tab.key == currentTab)
+		if tab.portrait and SetPortraitTexture then
+			SetPortraitTexture(tab.icon, "player")
+		end
+	end
+end
+
+local function hasAtlas(name)
+	return C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(name) ~= nil
+end
+
+-- The square tabs on the right of the character window, where the client has them.
+-- Otherwise, the spellbook's smaller tabs.
+local function makeTab(info, sideTabs)
+	local tab = CreateFrame("Button", nil, window)
+	tab.icon = tab:CreateTexture(nil, "ARTWORK")
+	tab.selected = tab:CreateTexture(nil, "OVERLAY")
+	local hover = tab:CreateTexture(nil, "HIGHLIGHT")
+	if sideTabs then
+		tab:SetSize(55, 55)
+		local frame = tab:CreateTexture(nil, "BACKGROUND")
+		frame:SetAtlas("common-sidetab")
+		frame:SetSize(55, 60)
+		frame:SetPoint("CENTER")
+		tab.icon:SetSize(34, 34)
+		tab.icon:SetPoint("CENTER", -2, 0)
+		for _, art in ipairs({ { tab.selected, "common-sidetab-selected" }, { hover, "common-sidetab-hover" } }) do
+			art[1]:SetAtlas(art[2])
+			art[1]:SetSize(55, 60)
+			art[1]:SetPoint("CENTER")
+		end
+	else
+		tab:SetSize(32, 32)
+		local frame = tab:CreateTexture(nil, "BACKGROUND")
+		frame:SetTexture("Interface\\SpellBook\\SpellBook-SkillLineTab")
+		frame:SetSize(64, 64)
+		frame:SetPoint("TOPLEFT", -3, 11)
+		tab.icon:SetAllPoints()
+		for _, art in ipairs({ { tab.selected, "Interface\\Buttons\\CheckButtonHilight" }, { hover, "Interface\\Buttons\\ButtonHilight-Square" } }) do
+			art[1]:SetTexture(art[2])
+			art[1]:SetBlendMode("ADD")
+			art[1]:SetAllPoints()
+		end
+	end
+	if not info.portrait then
+		setFirstTexture(tab.icon, info.icons)
+		tab.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92) -- Trims the icon's own border.
+	end
+	tab.selected:Hide()
+	tab:SetScript("OnClick", function() setTab(info.key) end)
+	tab:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText(info.tooltip)
+		GameTooltip:AddLine(info.detail, 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	tab:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	tab.key, tab.portrait = info.key, info.portrait
+	return tab
+end
+
+function setTab(key)
+	if key ~= currentTab then
+		ns.PlayUISound("IG_CHARACTER_INFO_TAB")
+		currentTab = key
+		filters.source = nil
+		hidePopup()
+		refreshFilterBar()
+		refreshSelectors()
+		renderList()
+	end
+	refreshTabs()
+end
+
+local function buildTabs()
+	local sideTabs = hasAtlas("common-sidetab") and hasAtlas("common-sidetab-selected")
+	for index, info in ipairs(TABS) do
+		local tab = makeTab(info, sideTabs)
+		if index == 1 then
+			-- Flush with the window's edge, as the character window's tabs sit.
+			tab:SetPoint("TOPLEFT", window, "TOPRIGHT", sideTabs and -3 or 0, sideTabs and -40 or -36)
+		else
+			tab:SetPoint("TOPLEFT", tabButtons[index - 1], "BOTTOMLEFT", 0, sideTabs and -4 or -17)
+		end
+		tabButtons[index] = tab
+	end
+	refreshTabs()
 end
 
 local INSET_TOP, INSET_BOTTOM = -60, 34
@@ -1133,8 +1451,14 @@ local function buildReader()
 	speakButton = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
 	speakButton:SetSize(90, 22)
 	speakButton:SetPoint("BOTTOMRIGHT", inset, "BOTTOMRIGHT", 0, -27)
-	speakButton:SetText("Speak")
-	speakButton:SetScript("OnClick", ns.Story.SpeakNext)
+	speakButton:SetText("Tell")
+	speakButton:SetScript("OnClick", function()
+		if currentStory and nextLine == 1 then
+			ns.Story.Ready()
+		else
+			ns.Story.SpeakNext()
+		end
+	end)
 
 	restartButton = ns.MakeFlatButton(window, "Restart", 56)
 	restartButton:SetPoint("RIGHT", speakButton, "LEFT", -4, 0)
@@ -1144,6 +1468,7 @@ local function buildReader()
 			selectStory(currentStory)
 		end
 	end)
+
 end
 
 function buildWindow()
@@ -1177,6 +1502,7 @@ function buildWindow()
 	buildList()
 	buildReader()
 	buildFilters()
+	buildTabs()
 	renderList()
 	refreshReader()
 	window:Hide()
@@ -1197,6 +1523,7 @@ function ns.Story.Toggle()
 	else
 		ns.Teller.Hide()
 		renderList() -- You may have changed zones since it was last open.
+		refreshTabs() -- And your portrait may have changed.
 		window:Show()
 	end
 end

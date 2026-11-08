@@ -30,7 +30,7 @@ ns.AddStories("class", "WARRIOR", {
 		lines = {
 			{ kind = "say", text = "I held a footbridge for four hours once. Me, a cracked shield, and just enough width for one thing at a time to come at me." },
 			{ kind = "emote", text = "squares their shoulders and raises one arm, as if a shield still hung from it." },
-			{ kind = "say", text = "They came in twos, then in ones, then over each other. Behind me the captain kept shouting that the carts were nearly clear, and that I must not give way." },
+			{ kind = "say", text = "They came one at a time, then two at once, then over each other. Behind me the captain kept shouting that the carts were nearly clear, and that I must not give way." },
 			{ kind = "say", text = "When it was over, I couldn't open my hand. They had to pry the shield off. I asked what was in those carts that was worth all that." },
 			{ kind = "say", text = "Turnips. Forty carts of turnips." },
 			{ kind = "emote", text = "is quiet for a moment, then nods slowly." },
@@ -183,7 +183,7 @@ ns.AddStories("class", "PALADIN", {
 		title = "Nine Days",
 		mood = "dark",
 		lines = {
-			{ kind = "say", text = "It went out, once. I don't tell many people that. I put my hands on a wounded man, and called, and nothing came." },
+			{ kind = "say", text = "The Light went out of me, once. I don't tell many people that. I put my hands on a wounded man, and called, and nothing came." },
 			{ kind = "emote", text = "holds both palms toward the fire for a long moment, as if checking that they still feel it." },
 			{ kind = "say", text = "It had to do with something I'd done that week, under orders. I'd thought the orders would be enough." },
 			{ kind = "say", text = "Nine days. I kept walking. I said all the words and polished the armor, and people thanked me for a comfort I could not feel." },
@@ -248,7 +248,7 @@ ns.AddStories("class", "HUNTER", {
 			{ kind = "emote", text = "pats their thigh twice, softly, and looks down." },
 			{ kind = "say", text = "When I've brought something down, I drag it around in a wide circle and leave it upwind of him. Then I go and stand a little way off." },
 			{ kind = "say", text = "He wakes up, and he finds it. And he looks at me like, did you see that? Did you see what I found?" },
-			{ kind = "say", text = "I always saw. I make a great fuss. I'll keep making it for as long as there's a morning." },
+			{ kind = "say", text = "I always did. I make a great fuss. I'll keep making it for as long as there's a morning." },
 			{ kind = "emote", text = "sets a scrap of jerky down beside them, where an old dog might find it." },
 		},
 	},
@@ -404,7 +404,7 @@ ns.AddStories("class", "ROGUE", {
 			{ kind = "emote", text = "slides half of an invisible stack of coins toward themselves, leaving the rest." },
 			{ kind = "say", text = "He tells himself he miscounted. A few nights later, he starts to wonder about the cook. About his brother, who came to dinner and looked at the spoons." },
 			{ kind = "say", text = "Thirty years I've worked by that rule, and I have never once been hunted. Very wise. I taught it to two apprentices." },
-			{ kind = "say", text = "I happened through one of those towns last year. Those two brothers still don't speak. Nobody ever taught me how to count that." },
+			{ kind = "say", text = "I passed through a town I'd worked, years back. The man I robbed and his brother still don't speak. Nobody ever taught me how to count that." },
 		},
 	},
 	{
@@ -471,7 +471,7 @@ ns.AddStories("class", "PRIEST", {
 		title = "The Chained Book",
 		mood = "dark",
 		lines = {
-			{ kind = "say", text = "There's a second book in the old temple library where I studied. At the back, on a short chain, with no name on its spine. Novices dare each other to touch it." },
+			{ kind = "say", text = "There's a book in the old temple library where I studied. At the back, on a short chain, with no name on its spine. Novices dare each other to touch it." },
 			{ kind = "say", text = "My teacher said I could read it when I stopped wanting to. A fine riddle, I thought. Later I lost someone, and stopped wanting anything, and I read it." },
 			{ kind = "emote", text = "lets their eyes drift past the firelight into the dark, and keeps them there a little too long." },
 			{ kind = "say", text = "You'd think it would be wicked. Most of it is only honest. It explains what a mind is, and where it's fastened on." },
@@ -819,7 +819,7 @@ ns.AddStories("class", "WARLOCK", {
 			{ kind = "say", text = "I had a little brother with a cough that wouldn't stop. The healers had all been very kind, and they'd all stopped coming. So I went to the old books." },
 			{ kind = "emote", text = "looks away and runs a thumb slowly along the edge of their sleeve." },
 			{ kind = "say", text = "The cough stopped that same night. He got up and ate like a horse. When he found out how, he never spoke to me again." },
-			{ kind = "say", text = "He's an old man now, with a bad knee and more grandchildren than he can name. One day each year, I go to his town and buy something, from across the square." },
+			{ kind = "say", text = "He's an old man now, with a bad knee and more grandchildren than he can name. One day each year, I go to his town and buy something at the stall across the square from his door, so I can see him." },
 			{ kind = "say", text = "I've never been sorry. I want that understood. The price was exactly what they told me it would be." },
 		},
 	},

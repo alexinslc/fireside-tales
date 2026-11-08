@@ -268,7 +268,7 @@ SlashCmdList.FIRESIDETALES = function(input)
 		if ns.Campfire.Toggle() then
 			say("I'll offer a tale when you settle by a campfire.")
 		else
-			say("no more offers by the fire. /tales fire turns them back on.")
+			say("no more campfire prompts. /tales fire turns them back on.")
 		end
 	elseif command == "status" then
 		showStatus()

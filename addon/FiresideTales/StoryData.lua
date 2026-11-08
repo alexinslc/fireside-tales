@@ -38,6 +38,15 @@ function ns.AddStories(kind, key, stories)
 	append(list[key], stories)
 end
 
+-- Legends are real Warcraft stories told in parts, each part one sitting at the
+-- fire. zone is where it happens, as the game names it.
+ns.Legends = {}
+
+function ns.AddLegend(zone, title, legend)
+	legend.zone, legend.title = zone, title
+	ns.Legends[#ns.Legends + 1] = legend
+end
+
 -- A story counts as being about a zone if its text mentions the zone's full name
 -- or one of these words. Lowercase only. Add places within a zone here too.
 ns.ZoneTerms = {

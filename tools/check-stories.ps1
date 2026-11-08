@@ -23,6 +23,7 @@ $lineRow = '^\s*\{ kind = "(say|emote)", text = "((?:[^"\\]|\\.)*)" \},$'
 $structural = @(
     '^\s*$', '^\s*--', '^local _, ns = \.\.\.$', '^ns\.\w+ = \{$', '^\}$', '^\}\)$',
     '^ns\.AddStories\("(character|race|class)", "\w+", \{$', '^ns\.AddStories\("(zone|festival)", "[\w'' -]+", \{$', '^ns\.AddStories\("shared", nil, \{$',
+    '^ns\.AddLegend\("[\w'' -]+", "[^"\\]+", \{$', '^\s*summary = "(?:[^"\\]|\\.)+",$',
     '^\s*\{$', '^\s*\},$', '^\s*lines = \{$', '^\s*theme = "[^"\\]+",$',
     '^\s*\["\w+"\] = \{$', '^\s*\w+ = \{$'
 )
@@ -102,6 +103,7 @@ foreach ($name in $files) {
     $key = 'unset'
     foreach ($row in Get-Content -LiteralPath (Join-Path $AddonDir $name) -Encoding utf8) {
         if ($row -match '^ns\.AddStories\("(\w+)", "?([\w'' -]+)"?, \{$') { $key = "$($Matches[1])/$($Matches[2])" }
+        elseif ($row -match '^ns\.AddLegend\("[\w'' -]+", "([^"\\]+)", \{$') { $key = "legend/$($Matches[1])" }
         elseif ($row -match '^ns\.Stories = \{$') { $key = 'shared/nil' }
         elseif ($row -match '^\t\["?(\w+)"?\] = \{$' -or $row -match '^\t(\w+) = \{$') { $key = "keyed/$($Matches[1])" }
         elseif ($row -match '^\s*title = "([^"\\]+)",$') {

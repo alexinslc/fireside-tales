@@ -433,9 +433,16 @@ scenario("all published stories obey the rules", function()
 			check(group[1] .. "/" .. key .. " has stories", #list > 0)
 		end
 	end
-	stdPrint(("   total %d: shared %d, target %d, race %d, class %d, zone %d, festival %d; longest %.0fs (%s)"):format(
-		total, perList.shared, perList.target, perList.race, perList.class, perList.zone, perList.festival, longest, longestTitle))
-	check("561 published stories", total == 561, total)
+	for _, legend in ipairs(ns.Legends) do
+		validate(legend.parts, "legend", false)
+		check("legend " .. legend.title .. " has a zone and a summary", legend.zone and legend.summary)
+		check("legend " .. legend.title .. " has 2 or more parts", #legend.parts >= 2, #legend.parts)
+	end
+	stdPrint(("   total %d: shared %d, target %d, race %d, class %d, zone %d, festival %d, legend parts %d; longest %.0fs (%s)"):format(
+		total, perList.shared, perList.target, perList.race, perList.class, perList.zone, perList.festival, perList.legend or 0,
+		longest, longestTitle))
+	check("619 published stories", total == 619, total)
+	check("5 legends", #ns.Legends == 5, #ns.Legends)
 	for _, festival in ipairs(ns.Season.Festivals) do
 		check("festival " .. festival.name .. " has stories", ns.FestivalStories[festival.name] and #ns.FestivalStories[festival.name] >= 2)
 	end
@@ -462,7 +469,7 @@ end)
 scenario("menu opens, sections expand, a story is told start to finish", function()
 	slash("stories")
 	check("menu shown", storyWindow():IsShown())
-	check("Speak disabled with nothing chosen", findButton("Speak", storyWindow())._disabled)
+	check("Tell disabled with nothing chosen", findButton("Tell", storyWindow())._disabled)
 
 	local theme = ns.Stories[1].theme
 	local story = ns.Stories[1]
@@ -525,17 +532,17 @@ scenario("targeted story needs a target and keeps the name", function()
 	search:SetText(story.title:lower())
 	click(rowFor(story.title), "target row")
 	search:SetText("")
-	local speak = findButton("Speak", storyWindow())
+	local speak = findButton("Tell", storyWindow())
 	check("Speak disabled without a target", speak._disabled)
 	local n = #sent
 	realG.FiresideTales_Speak()
 	check("key press sends nothing without a target", #sent == n)
 	W.target = W.name
 	fire("PLAYER_TARGET_CHANGED")
-	check("targeting yourself doesn't count", findButton("Speak", storyWindow())._disabled)
+	check("targeting yourself doesn't count", findButton("Tell", storyWindow())._disabled)
 	W.target = "Bjorn"
 	fire("PLAYER_TARGET_CHANGED")
-	check("Speak enabled once targeted", not findButton("Speak", storyWindow())._disabled)
+	check("Tell enabled once targeted", not findButton("Tell", storyWindow())._disabled)
 	realG.FiresideTales_Speak()
 	check("name filled in", sent[#sent].text:find("Bjorn", 1, true) and not sent[#sent].text:find("{target}", 1, true), sent[#sent].text)
 	W.target = "Someoneelse"
@@ -978,7 +985,8 @@ scenario("Write My Story round trip", function()
 	check("Here section exists", headerStartingWith("- Here in Duskwood"))
 	local shown, total = countLabel():match("^(%d+) of (%d+) stories$")
 	check("a story listed twice counts once", shown == total, countLabel())
-	check("added story has the marker", rowFor("The Last Muster").noteIcon:IsShown())
+	check("added story is tinted as yours", rowFor("The Last Muster")._text:find("b9e6c9", 1, true))
+	check("rows show telling time, not line count", rowFor("The Last Muster").count:GetText():find("^%d+s$"), rowFor("The Last Muster").count:GetText())
 	click(rowFor("The Last Muster"), "own story")
 	local readerHasTag = false
 	for _, f in ipairs(allFrames) do
@@ -1002,7 +1010,7 @@ scenario("Write My Story round trip", function()
 	for _, f in ipairs(allFrames) do if f._type == "EditBox" and f._parent == storyWindow() then search = f end end
 	search:SetText("your exact face")
 	click(rowFor("Your Exact Face"), "built-in row")
-	check("built-in story has no marker", not rowFor("Your Exact Face").noteIcon:IsShown())
+	check("built-in story isn't tinted as yours", not rowFor("Your Exact Face")._text:find("b9e6c9", 1, true))
 	check("a reused row drops the marker and star", not rowFor("Your Exact Face").star:IsShown())
 	readerHasTag = false
 	for _, f in ipairs(allFrames) do
@@ -1103,6 +1111,7 @@ local function allStories()
 	for _, group in ipairs({ ns.RaceStories, ns.ClassStories, ns.ZoneStories, ns.FestivalStories, ns.CharacterStories or {} }) do
 		for _, stories in pairs(group) do addList(stories) end
 	end
+	for _, legend in ipairs(ns.Legends or {}) do addList(legend.parts) end
 	for _, s in ipairs(realG.FiresideTalesDB.imported) do out[#out + 1] = s end
 	return out
 end
@@ -1169,7 +1178,7 @@ scenario("Tell a Tale picks a fitting story and moves on", function()
 	local title, story = readerTitle()
 	check("a story is chosen", title ~= nil)
 	check("the first pick is about where you are", story and isAboutElwynn(story), title)
-	check("Speak is ready", not findButton("Speak", storyWindow())._disabled)
+	check("Tell is ready", not findButton("Tell", storyWindow())._disabled)
 	local meta = false
 	for _, f in ipairs(allFrames) do
 		if f._type == "FontString" and plainText(f._text):find("about %d+ seconds") then meta = true end
@@ -1206,6 +1215,134 @@ scenario("Tell a Tale picks a fitting story and moves on", function()
 	clickLabel("Tell a Tale", storyWindow())
 	check("still picks when all are told", readerTitle() ~= nil)
 	storyWindow():Hide()
+end)
+
+scenario("side tabs: rumors and legends have their own, legends go part by part", function()
+	W.zone = "Duskwood"
+	ns, loaded, skipped = boot({})
+	slash("stories")
+	local tabs = {}
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") then tabs[f.key] = f end
+	end
+	check("four side tabs", tabs.mine and tabs.stories and tabs.legends and tabs.rumors)
+	local search
+	for _, f in ipairs(allFrames) do if f._type == "EditBox" then search = search or f end end
+
+	search:SetText("thirteen bells")
+	check("rumors aren't on the Stories tab", rowFor("Thirteen Bells") == nil)
+	click(tabs.rumors, "Rumors tab")
+	check("the Rumors tab has them", rowFor("Thirteen Bells") ~= nil)
+	check("From is hidden off the Stories tab", findButton("From: All", storyWindow()) == nil)
+	search:SetText("darkshire")
+	check("a rumor about this zone comes first", headerStartingWith("- Here in Duskwood") ~= nil)
+	search:SetText("")
+
+	click(tabs.legends, "Legends tab")
+	local first = rowFor("Part 1: A Name in the Dark")
+	check("the Legends tab lists the parts in order", first and rowFor("Part 4: Manor Mistmantle"))
+	click(first, "Part 1")
+	local lines, n = #first.story.lines, #sent
+	for _ = 1, lines do realG.FiresideTales_Speak() end
+	check("Part 1 is told", #sent == n + lines)
+	check("the bar offers the next part", findButton("Next part") ~= nil)
+	realG.FiresideTales_Speak()
+	local title = readerTitle()
+	check("Next part loads Part 2 without speaking", #sent == n + lines and title == "Part 2: The Tutor", title)
+	realG.FiresideTales_Speak()
+	check("Part 2 begins", sent[#sent].text == ns.Legends[1].parts[2].lines[1].text)
+
+	click(findButton("Menu", tellerBar()), "Menu")
+	local legendPicks = 0
+	for _ = 1, 40 do
+		clickLabel("Tell a Tale", storyWindow())
+		local _, story = readerTitle()
+		if story and story.legend then legendPicks = legendPicks + 1 end
+	end
+	check("Tell a Tale never hands you a legend part", legendPicks == 0, legendPicks)
+
+	click(tabs.stories, "Stories tab")
+	search:SetText("stalvan")
+	check("legends aren't on the Stories tab", rowFor("Part 1: A Name in the Dark") == nil)
+	search:SetText("")
+	check("From is back on the Stories tab", findButton("From: All", storyWindow()) ~= nil)
+
+	click(tabs.mine, "Your Tales tab")
+	local note = false
+	for _, f in ipairs(allFrames) do
+		if f._type == "FontString" and effectiveShown(f) and (f._text or ""):find("No tales of your own yet", 1, true) then note = true end
+	end
+	check("Your Tales says how to add some", note)
+	storyWindow():Hide()
+end)
+
+scenario("openers and closers frame a story, once each", function()
+	W.zone = "Elwynn Forest"
+	ns, loaded, skipped = boot({})
+	local count = 0
+	for _, groups in ipairs({ ns.Openers, ns.Closers }) do
+		for key, lines in pairs(groups) do
+			for n, line in ipairs(lines) do
+				count = count + 1
+				local id = key .. ":" .. n
+				check(id .. " kind", ns.ChatType[line.kind], line.kind)
+				check(id .. " fits chat", #line.text <= 250, #line.text)
+				check(id .. " safe text", not line.text:find("[|{}\128-\255\"]"), line.text)
+				if line.kind == "emote" then check(id .. " lowercase emote", not line.text:find("^%u"), line.text) end
+			end
+		end
+	end
+	check("openers for any time and night", #ns.Openers.any >= 8 and #ns.Openers.night >= 3)
+	for _, mood in ipairs({ "funny", "heartfelt", "dark", "action", "spooky", "wise" }) do
+		check("closers for " .. mood, ns.Closers[mood] and #ns.Closers[mood] >= 2)
+	end
+	stdPrint(("   %d opener and closer lines"):format(count))
+
+	local story = ns.Stories[1]
+	local closerTexts = {}
+	for _, key in ipairs({ "any", story.mood, "night" }) do
+		for _, line in ipairs(ns.Closers[key] or {}) do closerTexts[line.text] = true end
+	end
+	local openerTexts = {}
+	for _, key in ipairs({ "any", "night" }) do
+		for _, line in ipairs(ns.Openers[key]) do openerTexts[line.text] = true end
+	end
+	slash("stories")
+	local search
+	for _, f in ipairs(allFrames) do if f._type == "EditBox" then search = search or f end end
+	search:SetText(story.title:lower())
+	click(rowFor(story.title), "story row")
+	search:SetText("")
+	local n0 = #sent
+	check("the menu has no Opener of its own", findButton("Opener", storyWindow()) == nil)
+	clickLabel("Tell", storyWindow())
+	check("Tell opens the story on the teller bar without saying anything", tellerBar():IsShown() and not storyWindow():IsShown() and #sent == n0)
+	check("Opener offered before the first line", findButton("Opener", tellerBar()) ~= nil)
+	local n = #sent
+	clickLabel("Opener", tellerBar())
+	check("Opener says one line from the openers", #sent == n + 1 and openerTexts[sent[#sent].text], sent[#sent] and sent[#sent].text)
+	check("the story hasn't started", findButton("Opener") == nil and #sent == n + 1)
+	check("and the teller bar stays", tellerBar():IsShown() and not storyWindow():IsShown())
+	for _ = 1, #story.lines do realG.FiresideTales_Speak() end
+	check("the story is told after the opener", #sent == n + 1 + #story.lines)
+	check("Closer offered at the end", findButton("Closer", tellerBar()) ~= nil)
+	click(findButton("Closer", tellerBar()), "Closer")
+	check("Closer says a fitting line", #sent == n + 2 + #story.lines and closerTexts[sent[#sent].text], sent[#sent].text)
+	check("only one closer per story", findButton("Closer") == nil)
+
+	-- Between a legend's parts, the next part is offered instead of a closer.
+	ns.Story.Toggle()
+	local tabs = {}
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") then tabs[f.key] = f end
+	end
+	click(tabs.legends, "Legends tab")
+	local first = rowFor(ns.Legends[1].parts[1].title)
+	click(first, "Part 1")
+	for _ = 1, #first.story.lines do realG.FiresideTales_Speak() end
+	check("no closer between parts", findButton("Closer") == nil and findButton("Next part") ~= nil)
+	storyWindow():Hide()
+	tellerBar():Hide()
 end)
 
 scenario("campfire offers a tale once, gently", function()

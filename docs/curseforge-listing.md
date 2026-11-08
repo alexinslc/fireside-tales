@@ -42,6 +42,8 @@ This is "The Last Honest Merchant," one of the built-in stories, as everyone nea
 - **For your character:** tales for every race and class, chosen automatically.
 - **For where you are:** stories of all 45 zones. The ones about your current zone rise to the top.
 - **For someone nearby:** target a listener, and the story uses their name.
+- **Legends:** Warcraft's own stories, told in parts, from the Legend of Stalvan to Onyxia's masquerade in Stormwind. Stop after any part and pick it up another night.
+- **Rumors and Whispers:** short things people swear they heard, from a vault combination that ends in a sneeze to cold roses in Darkshire.
 - **Quick to tell:** every story takes about a minute or less, so nobody's stuck waiting.
 
 ### Tell your own
@@ -52,11 +54,11 @@ This is "The Last Honest Merchant," one of the built-in stories, as everyone nea
 
 1. Click the book on the minimap, or type `/tales`.
 2. Pick a story, or press **Tell a Tale** and let the fire choose.
-3. Press **Speak** for each line.
+3. Press **Tell**, then **Speak** for each line. Start with an **Opener** to gather people, and end with a **Closer** if you like.
 
 **Tell a Tale** picks a story you haven't told yet, about the zone you're in if it can. Press it again for another.
 
-Sit by a campfire and the teller bar offers a story, once per fire. It's easy to take, easy to ignore, and `/tales fire` turns it off.
+Sit down at a campfire and a small prompt asks if you'd like to tell a story, once per fire. It's easy to take, easy to ignore, and `/tales fire` turns it off.
 
 A small bar shows the next line and a cue for when people have had time to read, along with what's being said nearby. You can search, filter by mood, star your favorites, and line up stories for tonight.
 
@@ -68,7 +70,7 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 | --- | --- |
 | `/tales stories` | Open or close the story menu |
 | `/tales add` | Open or close Write My Story |
-| `/tales fire` | Turn the offers by the fire off or on |
+| `/tales fire` | Turn the campfire prompt off or on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show your story counts |
 
