@@ -23,6 +23,7 @@ local RACES = {
 
 local STORIES_PER_PROMPT = 5
 local ABOUT_MAX_LETTERS = 500
+local PROFILE_STORY_LETTERS = 700 -- How much of a Total RP 3 backstory goes in the prompt.
 
 local window, editBox, resultLabel, aboutBox, promptBox, aboutLabel, copyHint
 local currentPrompt = ""
@@ -34,19 +35,90 @@ ns.Import = {}
 -- edit box would treat it as a code when showing it.
 -------------------------------------------------------------------------------
 
+-- Plain text from a profile field: no Total RP 3 formatting tags, no vertical
+-- bars, and no runs of spaces or newlines.
+local function plain(text)
+	if type(text) ~= "string" then return "" end
+	-- A heading ends like a sentence, so it doesn't run into the text after it.
+	text = text:gsub("{/h%d}", ". "):gsub("{[^}]*}", " "):gsub("|", ""):gsub("%s+", " ")
+	text = text:gsub("([.!?:]) %.", "%1"):gsub("^[%s.]+", ""):gsub(" $", "")
+	return text
+end
+
+-- Shortens text to about limit characters, ending on a whole word.
+local function shorten(text, limit)
+	if #text <= limit then return text end
+	return (text:sub(1, limit):gsub("%s+%S*$", "")) .. "..."
+end
+
+-- The player's current Total RP 3 profile as one line for the prompt, or nil if
+-- Total RP 3 isn't running or the profile is empty.
+function ns.Import.RoleplayProfile()
+	local api = TRP3_API and TRP3_API.profile
+	if not (api and api.getPlayerCurrentProfile) then return nil end
+	local ok, profile = pcall(api.getPlayerCurrentProfile)
+	local player = ok and type(profile) == "table" and type(profile.player) == "table" and profile.player
+	if not player then return nil end
+
+	local parts = {}
+	local function add(label, value)
+		value = plain(value)
+		if value == "" then return end
+		if not value:find("[.!?]$") then value = value .. "." end
+		parts[#parts + 1] = label .. value
+	end
+	local info = type(player.characteristics) == "table" and player.characteristics or {}
+	add("Name: ", plain(info.FN) .. " " .. plain(info.LN))
+	add("Title: ", info.FT)
+	add("Age: ", info.AG)
+	add("Eyes: ", info.EC)
+	add("Height: ", info.HE)
+	add("Build: ", info.WE)
+	add("Born in: ", info.BP)
+	add("Lives in: ", info.RE)
+	local character = type(player.character) == "table" and player.character or {}
+	add("Right now: ", character.CU)
+
+	-- The About page has three layouts: one text, several frames, or three parts.
+	local about = type(player.about) == "table" and player.about or {}
+	local texts = {}
+	local function addText(section)
+		if type(section) == "table" and type(section.TX) == "string" then texts[#texts + 1] = section.TX end
+	end
+	if about.TE == 2 and type(about.T2) == "table" then
+		for _, frame in ipairs(about.T2) do addText(frame) end
+	elseif about.TE == 3 and type(about.T3) == "table" then
+		addText(about.T3.PH)
+		addText(about.T3.PS)
+		addText(about.T3.HI)
+	else
+		addText(about.T1)
+	end
+	add("Their story: ", shorten(plain(table.concat(texts, " ")), PROFILE_STORY_LETTERS))
+
+	-- A name alone means nothing has been filled in yet.
+	if #parts <= 1 then return nil end
+	return table.concat(parts, " ")
+end
+
 local function buildPrompt()
 	local name = ns.PlayerName()
+	local profile = ns.Import.RoleplayProfile()
 	local about = (ns.CharData().about or ""):gsub("|", ""):gsub("%s+", " ")
-	if about == "" then
+	if about == "" and not profile then
 		about = "Not much yet. Invent something fitting, and keep it simple."
 	end
-	return table.concat({
-		("Write %d short roleplay stories for my World of Warcraft: Forever character. They're for an addon called Fireside Tales. I tell them one line at a time, sitting at a campfire with other players, using /say and /e."):format(STORIES_PER_PROMPT),
-		"",
+	local who = {
 		"First name: " .. name,
 		("Race and class: %s %s"):format((UnitRace("player")), (UnitClass("player"))),
 		"Where they are now: " .. (ns.CurrentZone() or "on the road"),
-		"About them: " .. about,
+	}
+	if profile then who[#who + 1] = "From their roleplay profile: " .. profile end
+	if about ~= "" then who[#who + 1] = "About them: " .. about end
+	return table.concat({
+		("Write %d short roleplay stories for my World of Warcraft: Forever character. They're for an addon called Fireside Tales. I tell them one line at a time, sitting at a campfire with other players, using /say and /e."):format(STORIES_PER_PROMPT),
+		"",
+		table.concat(who, "\n"),
 		"",
 		"Output only plain text in a single code block, exactly in this form, and add nothing else:",
 		"",
@@ -354,7 +426,11 @@ function ns.Import.Toggle()
 		window:Hide()
 		return
 	end
-	aboutLabel:SetText(("1. Who is %s? A sentence or two: where they're from, how they talk. Optional."):format(ns.PlayerName()))
+	if ns.Import.RoleplayProfile() then
+		aboutLabel:SetText(("1. %s's Total RP 3 profile is in the prompt. Anything to add? Optional."):format(ns.PlayerName()))
+	else
+		aboutLabel:SetText(("1. Who is %s? A sentence or two: where they're from, how they talk. Optional."):format(ns.PlayerName()))
+	end
 	aboutBox:SetText(ns.CharData().about or "")
 	refreshPrompt() -- You may have traveled since it was last open.
 	window:Show()

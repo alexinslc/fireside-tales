@@ -22,14 +22,14 @@ $utf8 = [Text.Encoding]::UTF8
 $lineRow = '^\s*\{ kind = "(say|emote)", text = "((?:[^"\\]|\\.)*)" \},$'
 $structural = @(
     '^\s*$', '^\s*--', '^local _, ns = \.\.\.$', '^ns\.\w+ = \{$', '^\}$', '^\}\)$',
-    '^ns\.AddStories\("(character|race|class)", "\w+", \{$', '^ns\.AddStories\("zone", "[\w'' -]+", \{$', '^ns\.AddStories\("shared", nil, \{$',
+    '^ns\.AddStories\("(character|race|class)", "\w+", \{$', '^ns\.AddStories\("(zone|festival)", "[\w'' -]+", \{$', '^ns\.AddStories\("shared", nil, \{$',
     '^\s*\{$', '^\s*\},$', '^\s*lines = \{$', '^\s*theme = "[^"\\]+",$',
     '^\s*\["\w+"\] = \{$', '^\s*\w+ = \{$'
 )
 
 $files = if ($File) { @(Split-Path $File -Leaf) } else {
     Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') |
-        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton|Campfire)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
+        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton|Campfire|Seasons)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
 }
 
 # Macs can treat file names as case-sensitive, so a .toc entry must match exactly.

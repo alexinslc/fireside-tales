@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.0
+
+- **Festival stories:** 27 new tales for the Darkmoon Faire, Lunar Festival, Love is in the Air, Noblegarden, Children's Week, Midsummer, the Harvest Festival, Hallow's End, and Winter Veil, for 561 in all. You'll find them under **From: Festivals** all year.
+- While a festival is on, its stories open at the top of the list, **Tell a Tale** picks them first, and the fire's offer says so. The addon reads the game's calendar, or knows the Darkmoon Faire's week and the dates of the fixed festivals.
+- At night in the game, **Tell a Tale** and the fire reach for spooky and dark tales first, and gentler ones by day.
+- **Total RP 3:** if you use it, Write My Story puts your current profile into the prompt: name, title, appearance, where you're from, what you're doing, and your backstory. Edit your profile and the prompt follows. The box for your own words is still there for anything extra.
+- **Fixed:** the fire's offer now works at WoW Forever's campsites, which give Welcoming Campfire rather than Cozy Fire, and it notices a fire you're already sitting by when you log in. Walk away and come back, and it can offer again after 5 minutes instead of 10.
+- Restart the game once after updating, since files were added.
+
 ## 1.3.0
 
 - **Tell a Tale** picks a story for you: one you haven't told yet, about where you are if it can. Press it again for another.

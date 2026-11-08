@@ -57,7 +57,15 @@ local offering = false -- The teller bar is offering a story because you sat by 
 local offerGeneration = 0
 local OFFER_SECONDS = 30 -- An offer nobody takes quietly goes away.
 local FIRE_HINT = "By the fire. Tell a tale?"
+local NIGHT_HINT = "A dark night by the fire. Tell a tale?"
 local buildWindow -- Defined last, once everything it uses exists.
+
+-- What the teller bar says when the fire offers a story.
+local function fireHint()
+	local festival = ns.Season.Active()[1]
+	if festival then return festival.offer end
+	return ns.Season.IsNight() and NIGHT_HINT or FIRE_HINT
+end
 
 ns.Story = {}
 
@@ -120,6 +128,10 @@ local function getSections()
 			sections[#sections + 1] = { source = "shared", header = story.theme, stories = themes[story.theme] }
 		end
 		table.insert(themes[story.theme], story)
+	end
+
+	for _, festival in ipairs(ns.Season.Festivals) do
+		add("festival", festival.name, ns.FestivalStories[festival.name])
 	end
 
 	local zoneNames = {}
@@ -326,7 +338,7 @@ local function refreshReader()
 		speakLabel = speakLabel,
 		canSpeak = canSpeak,
 		canPick = nextLine == 1,
-		hint = nextLine == 1 and offering and FIRE_HINT or nil,
+		hint = nextLine == 1 and offering and fireHint() or nil,
 	})
 
 	-- Keep the next line in view in a long story.
@@ -429,8 +441,8 @@ local function getHereStories()
 	end
 	for _, section in ipairs(getSections()) do
 		-- Tales of other places stay put even if they mention this one in passing.
-		-- Stories told to a target also keep to their own section.
-		if section.source ~= "places" and section.source ~= "target" then
+		-- Stories told to a target, and festival stories, also keep to their own.
+		if section.source ~= "places" and section.source ~= "target" and section.source ~= "festival" then
 			for _, story in ipairs(section.stories) do
 				local text = textOf(story)
 				for _, term in ipairs(terms) do
@@ -527,6 +539,23 @@ local function getHeader(index)
 	return header
 end
 
+-- The stories of each festival on today, each list tagged with its festival.
+local function festivalStoriesNow()
+	local out = {}
+	for _, festival in ipairs(ns.Season.Active()) do
+		for _, section in ipairs(getSections()) do
+			if section.source == "festival" and section.header == festival.name then
+				local stories = { festival = festival }
+				for _, story in ipairs(section.stories) do
+					stories[#stories + 1] = story
+				end
+				out[#out + 1] = stories
+			end
+		end
+	end
+	return out
+end
+
 local function isFiltering()
 	return filters.source or filters.mood or filters.show or #filters.words > 0
 end
@@ -610,6 +639,12 @@ local function renderList(keepScroll)
 		moveUp(stories)
 	end
 	if filters.show ~= "tonight" then
+		if not filters.source then
+			for _, stories in ipairs(festivalStoriesNow()) do
+				showSection("On now: " .. stories.festival.name, stories, skip, true)
+				moveUp(stories)
+			end
+		end
 		if not filters.source or filters.source == "here" then
 			local zone, stories = getHereStories()
 			if zone then
@@ -675,15 +710,23 @@ end
 -- Tell a Tale: the fire picks a story for you
 -------------------------------------------------------------------------------
 
--- Prefers a story you haven't told, about where you are, then one of your own,
--- your race's, or your class's, then any shared one. Stories that need a
--- target are left out, since you may not have anyone targeted.
+-- Prefers a story you haven't told, for a festival that's on, then about where
+-- you are, then one of your own, your race's, or your class's, then any shared
+-- one. Within each, spooky and dark tales come first at night, and the others by
+-- day. Stories that need a target are left out, since you may not have anyone
+-- targeted.
 local function pickTale()
+	local festival = {}
+	for _, stories in ipairs(festivalStoriesNow()) do
+		for _, story in ipairs(stories) do
+			festival[#festival + 1] = story
+		end
+	end
 	local _, here = getHereStories()
-	local tiers = { here, {}, {} }
+	local tiers = { festival, here, {}, {} }
 	for _, section in ipairs(getSections()) do
-		local tier = (section.source == "mine" or section.source == "race" or section.source == "class") and tiers[2]
-			or section.source == "shared" and tiers[3]
+		local tier = (section.source == "mine" or section.source == "race" or section.source == "class") and tiers[3]
+			or section.source == "shared" and tiers[4]
 		if tier then
 			for _, story in ipairs(section.stories) do
 				tier[#tier + 1] = story
@@ -692,14 +735,21 @@ local function pickTale()
 	end
 
 	local told = ns.CharData().told
+	local night = ns.Season.IsNight()
+	local function suitsTheHour(story)
+		local grim = story.mood == "spooky" or story.mood == "dark"
+		return grim == night
+	end
 	local function choose(fits)
 		for _, tier in ipairs(tiers) do
-			local pool = {}
+			local pool, suited = {}, {}
 			for _, story in ipairs(tier) do
 				if story ~= currentStory and not story.needsTarget and fits(story) then
 					pool[#pool + 1] = story
+					if suitsTheHour(story) then suited[#suited + 1] = story end
 				end
 			end
+			if #suited > 0 then return suited[math.random(#suited)] end
 			if #pool > 0 then return pool[math.random(#pool)] end
 		end
 	end
@@ -946,7 +996,7 @@ local function buildFilters()
 	-- Only offer sources this character actually has stories in.
 	local function getSources()
 		local sources = { { key = nil, label = "All" }, { key = "here", label = "Here" } }
-		local grouped = { shared = "Everyone", places = "Places", target = "Target" }
+		local grouped = { shared = "Everyone", places = "Places", target = "Target", festival = "Festivals" }
 		local seen = {}
 		for _, section in ipairs(getSections()) do
 			if not seen[section.source] then

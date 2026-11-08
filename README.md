@@ -45,11 +45,15 @@ The addon never sends chat by itself. The game requires a key press or click for
 2. Narrow the list with the filters, then pick a story to preview it. Scroll either pane with the mouse wheel. The reader shows each story's mood and roughly how long it takes to tell.
 3. Press **Speak** to send the first line. The menu shrinks to the teller bar, so you can see the fire again. Keep pressing **Speak** for each line.
 
-Can't decide? **Tell a Tale** picks one for you: a story you haven't told yet, about where you are if it can, then one for your character, race, or class, then any other. Press it again for a different one.
+Can't decide? **Tell a Tale** picks one for you: a story you haven't told yet, for a festival that's on, then about where you are, then one for your character, race, or class, then any other. At night in the game it reaches for spooky and dark tales first, and gentler ones by day. Press it again for a different one.
+
+### Festivals
+
+The Darkmoon Faire, Lunar Festival, Love is in the Air, Noblegarden, Children's Week, Midsummer, the Harvest Festival, Hallow's End, and Winter Veil each have their own stories, under **From: Festivals** all year. While one is on, an **On now** section opens at the top of the list and the fire's offer mentions it. The addon reads the game's calendar, and if it can't, it knows the Darkmoon Faire opens the Monday after the first Friday of each month for a week, and the dates of Midsummer, Hallow's End, and Winter Veil.
 
 ### By the fire
 
-When you settle by a campfire with its Cozy Fire buff and stand still for a few seconds, the teller bar offers a story: "By the fire. Tell a tale?" Press **Speak** to begin, **Another** for a different story, or close it. It asks once per fire, at most once every 10 minutes, never in combat, and not while the menu is open or a story is half told. If nobody takes the offer, it goes away after 30 seconds or when you leave the fire. `/tales fire` turns these offers off or back on.
+When you settle by a campfire, with its Welcoming Campfire or Cozy Fire buff, and stay still for a few seconds, the teller bar offers a story: "By the fire. Tell a tale?" Press **Speak** to begin, **Another** for a different story, or close it. It asks once per fire, at most once every 5 minutes, never in combat, and not while the menu is open or a story is half told. If nobody takes the offer, it goes away after 30 seconds or when you leave the fire. `/tales fire` turns these offers off or back on.
 
 ### The teller bar
 
@@ -91,20 +95,22 @@ The filters sit in one row above the list. They combine, and the count at the to
 The list is built for whoever you're logged in as, in this order:
 
 1. **Tonight**, if you've added any
-2. **Here in your zone**: tales of the zone you're in, plus any of your other stories that mention it or a place in it. It updates as you travel.
-3. **Your character's tales**, matched by the character's first name. This section always lists all of them, so one that mentions your zone appears in both places.
-4. **Race stories**, chosen from what the game reports
-5. **Class stories**, chosen the same way
-6. **Target Someone First**, told to one listener
-7. **Shared stories**, available to everyone
-8. **Tales of other places**, grouped by zone
+2. **On now**, for a festival that's running
+3. **Here in your zone**: tales of the zone you're in, plus any of your other stories that mention it or a place in it. It updates as you travel.
+4. **Your character's tales**, matched by the character's first name. This section always lists all of them, so one that mentions your zone appears in both places.
+5. **Race stories**, chosen from what the game reports
+6. **Class stories**, chosen the same way
+7. **Target Someone First**, told to one listener
+8. **Shared stories**, available to everyone
+9. **Festivals**, one section each
+10. **Tales of other places**, grouped by zone
 
 To teach a zone new place names, add them to `ns.ZoneTerms` in `StoryData.lua`.
 
 ## Writing your own stories
 
 1. Press **Write My Story** in the menu, or type `/tales add`.
-2. Optionally, write a sentence or two about your character. It's saved for next time, and without it the AI invents something.
+2. Optionally, write a sentence or two about your character. It's saved for next time, and without it the AI invents something. If you use [Total RP 3](https://www.curseforge.com/wow/addons/total-rp-3), your current profile is already in the prompt: name, title, appearance, where you're from and live, what you're doing, and the start of your backstory. Use the box for anything else.
 3. Press **Select Prompt**, copy it with Cmd+C or Ctrl+C, and paste it into any AI. Your character's name, race, class, and zone are already filled in.
 4. Paste the AI's answer into the bottom box and press **Add**. It's fine to paste the whole reply.
 
@@ -140,6 +146,7 @@ Built-in stories are in `addon/FiresideTales/`:
 - **Starter stories for everyone:** `Stories.lua` and `MoreShared.lua`.
 - **Starter stories told to a target:** `StoriesTargeted.lua`. Write `{target}` where the name goes, and describe only what the teller does, never what the listener does or feels.
 - **Race, class, and zone stories:** `StoriesRaces.lua`, `MoreRaces.lua`, `StoriesClasses.lua`, `MoreClasses.lua`, and `MoreZones.lua`.
+- **Festival stories:** `StoriesFestivals.lua`. Each list's name matches a festival in `Seasons.lua`, which also holds how each festival is recognized.
 
 Each story needs a `title`, a `mood` (`funny`, `heartfelt`, `dark`, `action`, `spooky`, or `wise`), and `lines`. Shared stories also need a `theme`.
 
@@ -149,6 +156,12 @@ Edits to these files load with `/reload`. A brand-new file needs a game restart 
 
 ```powershell
 ./tools/check-stories.ps1
+```
+
+To test the whole addon outside the game, run the harness with [LuaJIT](https://luajit.org/). See [tools/harness/README.md](tools/harness/README.md).
+
+```sh
+luajit tools/harness/harness.lua
 ```
 
 ### Local stories
