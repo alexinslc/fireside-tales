@@ -326,3 +326,307 @@ ns.AddLegend("Burning Steppes", "Onyxia: The Great Masquerade", {
 		},
 	},
 })
+
+-- The legends below are retold in our own words from Warcraft history, as someone at a
+-- campfire in WoW: Forever's era would know it: Anduin the boy king, Varian missing,
+-- Sylvanas in Undercity, Thrall as Warchief.
+
+-- Sylvanas Windrunner and the fall of Quel'Thalas. Sources:
+-- https://warcraft.wiki.gg/wiki/Sylvanas_Windrunner
+-- https://warcraft.wiki.gg/wiki/Forsaken
+ns.AddLegend("Tirisfal Glades", "The Ranger-General", {
+	summary = "Before the Banshee Queen, there was a ranger in the forests of Quel'Thalas who would not give ground.",
+	parts = {
+		{
+			title = "Part 1: One More Gate",
+			mood = "action",
+			lines = {
+				{ kind = "say", text = "Before she was the Banshee Queen, Sylvanas Windrunner was the Ranger-General of Silvermoon, the high elves' city in the north." },
+				{ kind = "say", text = "When the Scourge marched on Quel'Thalas, she already knew who led it. Prince Arthas, the paladin who came home wrong." },
+				{ kind = "emote", text = "looks into the fire." },
+				{ kind = "say", text = "She could have pulled back behind the city walls and waited. She didn't. She met the dead in the forest and made them pay for every step." },
+				{ kind = "say", text = "She held each gate until it broke, and then she held the next one. She sent runners to warn Silvermoon. Not one of them got through." },
+				{ kind = "say", text = "Short of the city, Arthas finally reached her. Her bow broke on his sword, and she asked him to end it quickly." },
+			},
+		},
+		{
+			title = "Part 2: The Forsaken",
+			mood = "dark",
+			lines = {
+				{ kind = "say", text = "He refused. He was angry that she had made him bleed for every mile." },
+				{ kind = "say", text = "So he killed her, and then he tore her spirit from her body and bound it to him. She had to follow him into her own home while he finished it." },
+				{ kind = "emote", text = "closes one hand slowly into a fist." },
+				{ kind = "say", text = "Later, his grip on the dead slipped. Only for a moment. Thousands in Lordaeron woke with their own minds again, and nowhere to go." },
+				{ kind = "say", text = "She gathered them and gave them a name: the Forsaken. They are not our friends. I won't pretend they are." },
+				{ kind = "say", text = "But when you hear her name, remember the ranger in the forest, holding one more gate." },
+				{ kind = "emote", text = "bows their head." },
+			},
+		},
+	},
+})
+
+-- Anduin Wrynn, the missing King Varian, and King Llane. Sources:
+-- https://warcraft.wiki.gg/wiki/Anduin_Wrynn
+-- https://warcraft.wiki.gg/wiki/Varian_Wrynn
+-- https://warcraft.wiki.gg/wiki/Llane_Wrynn
+ns.AddLegend("Stormwind City", "Two Boy Kings", {
+	summary = "A boy king in Stormwind Keep, a father lost at sea, and the king who was once a boy in the same keep.",
+	parts = {
+		{
+			title = "Part 1: Not Yet, Your Majesty",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "There's a boy in Stormwind Keep who wears a crown. He's about ten years old. His name is Anduin, and his father is King Varian Wrynn." },
+				{ kind = "say", text = "Or was. Nobody knows which word to use anymore. The king sailed for Theramore to talk peace, and he never arrived." },
+				{ kind = "say", text = "So they put the crown on his son, and set a regent beside him to rule until the boy is grown." },
+				{ kind = "emote", text = "lowers their voice." },
+				{ kind = "say", text = "They say the boy asks every morning if there's any news from the sea. They say the answer is always the same. \"Not yet, Your Majesty.\"" },
+			},
+		},
+		{
+			title = "Part 2: The Other Boy King",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "When Varian was a boy, his father was King Llane. In the First War, with the orcs at the walls, someone Llane trusted killed him in his own keep." },
+				{ kind = "say", text = "They say Varian saw it happen. Stormwind fell that year, and he was carried north with the refugees, to grow up in someone else's kingdom." },
+				{ kind = "emote", text = "sighs." },
+				{ kind = "say", text = "He came home a man, and the city was built again, stone by stone. Varian at least knew his father was gone. This boy doesn't even get that." },
+				{ kind = "say", text = "So if you're ever in Stormwind and you see a small face at a high window in the keep, wave." },
+				{ kind = "emote", text = "lifts a hand in a small wave." },
+			},
+		},
+	},
+})
+
+-- The Battle of Mount Hyjal. Sources:
+-- https://warcraft.wiki.gg/wiki/Battle_of_Mount_Hyjal
+-- https://warcraft.wiki.gg/wiki/Archimonde
+-- https://warcraft.wiki.gg/wiki/Horn_of_Cenarius
+ns.AddLegend("Mount Hyjal", "The Night They Gave Up Forever", {
+	summary = "How the night elves traded their immortality to stop Archimonde at the World Tree.",
+	parts = {
+		{
+			title = "Part 1: Three Armies",
+			mood = "action",
+			lines = {
+				{ kind = "say", text = "Ask any night elf old enough, and they'll tell you: they were never supposed to die. For ten thousand years, the World Tree on Mount Hyjal kept them young." },
+				{ kind = "say", text = "Then the Burning Legion came back, and its general, Archimonde, climbed the mountain to take the tree for himself." },
+				{ kind = "emote", text = "looks up toward the mountains." },
+				{ kind = "say", text = "Malfurion Stormrage had a plan, but it needed time, and three armies bought it." },
+				{ kind = "say", text = "Humans who had fled across the sea, under Jaina Proudmoore. Orcs, under Thrall. Night elves, under Tyrande Whisperwind." },
+				{ kind = "say", text = "Not long before, all three had been killing each other in Ashenvale. On that mountain, each held its ground until there was nothing left to hold." },
+			},
+		},
+		{
+			title = "Part 2: The Horn",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "Archimonde reached the tree and climbed it to drink its power. And Malfurion blew the Horn of Cenarius." },
+				{ kind = "emote", text = "cups both hands together, then opens them slowly." },
+				{ kind = "say", text = "The wisps answered. Thousands of them, like stars coming down. They poured into the demon until there was nothing left of him." },
+				{ kind = "say", text = "And the kaldorei were mortal. They knew that was the price before they did it. They did it anyway." },
+				{ kind = "say", text = "They planted a new tree, Teldrassil, but it doesn't keep them young. Now they grow old. Slowly, but they do." },
+				{ kind = "say", text = "So if you see a night elf counting the years, sit with them a while. It's new to them." },
+			},
+		},
+	},
+})
+
+-- Tirion Fordring and Eitrigg, before "Tirion Fordring: In Dreams". Sources:
+-- https://warcraft.wiki.gg/wiki/Tirion_Fordring
+-- https://warcraft.wiki.gg/wiki/Eitrigg
+ns.AddLegend("Western Plaguelands", "Tirion and the Orc", {
+	summary = "Before the hermit by the river, a paladin spared an old orc and lost everything for it.",
+	parts = {
+		{
+			title = "Part 1: The Old Watchtower",
+			mood = "action",
+			lines = {
+				{ kind = "say", text = "Tirion Fordring was once a lord of Lordaeron and a paladin of the Silver Hand. One day, near Hearthglen, he found an old orc hiding in a ruined watchtower." },
+				{ kind = "say", text = "His name was Eitrigg. He was tired of war. He had walked away from it. They fought anyway." },
+				{ kind = "emote", text = "rubs their hands together by the fire." },
+				{ kind = "say", text = "In the fight, part of the old tower came down and knocked Tirion senseless. Eitrigg could have finished him." },
+				{ kind = "say", text = "Instead he pulled Tirion out, tied him to his saddle, and sent the horse home. Tirion told his people the orc had been dealt with, and kept the secret." },
+			},
+		},
+		{
+			title = "Part 2: The Trial",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "But the orc was found, and dragged off to be executed. Tirion drew his sword on his own men to stop it, and lost." },
+				{ kind = "say", text = "When orcs stormed into Stratholme, he broke the orc out in the chaos. At his trial, his own wife begged him to lie. He told the truth." },
+				{ kind = "emote", text = "presses a palm flat against their chest, then lets it fall." },
+				{ kind = "say", text = "Uther himself took the Light from him, and they sent him into exile. He had just enough time to say goodbye to his young son, Taelan." },
+				{ kind = "say", text = "The orc Tirion spared stands beside the Warchief in Orgrimmar now. What became of the boy is another story, and a sadder one." },
+			},
+		},
+	},
+})
+
+-- Grom Hellscream, Cenarius, and Mannoroth. Sources:
+-- https://warcraft.wiki.gg/wiki/Grom_Hellscream
+-- https://warcraft.wiki.gg/wiki/Mannoroth
+-- https://warcraft.wiki.gg/wiki/Demon_Fall_Canyon
+ns.AddLegend("Ashenvale", "The Last Breath of Grom Hellscream", {
+	summary = "The orc who drank the demon's blood first, and the canyon where he paid it back.",
+	parts = {
+		{
+			title = "Part 1: The First to Drink",
+			mood = "dark",
+			lines = {
+				{ kind = "say", text = "Long ago, on the orcs' own world, the warlock Gul'dan offered the chieftains the blood of a demon named Mannoroth. Drink, he said, and you will be strong." },
+				{ kind = "say", text = "Grom Hellscream of the Warsong clan drank first. The blood made the orcs strong. It also filled them with a rage that wasn't theirs." },
+				{ kind = "emote", text = "glances off toward the trees." },
+				{ kind = "say", text = "When the orcs came to Kalimdor, the Warsong went into Ashenvale to cut timber, and Cenarius himself came to drive them out." },
+				{ kind = "say", text = "Desperate, Grom found a fountain filled with the demon's blood, left waiting for them. With that blood in him, he killed Cenarius, the teacher of Malfurion." },
+			},
+		},
+		{
+			title = "Part 2: Demon Fall",
+			mood = "action",
+			lines = {
+				{ kind = "say", text = "His Warchief, Thrall, caught him, and with a human sorceress's help they burned the demon's hold out of him. Then the two of them went looking for Mannoroth." },
+				{ kind = "say", text = "They found him in a canyon in Ashenvale. Thrall was struck down, and Grom faced the demon alone." },
+				{ kind = "emote", text = "raises both hands as if gripping an axe, then brings them down hard." },
+				{ kind = "say", text = "He drove his axe into Mannoroth with everything he had left. The demon died, and the curse in the orcs' blood died with him." },
+				{ kind = "say", text = "The blast burned Grom, and he did not get up again. They say he told Thrall he was finally free of it." },
+			},
+		},
+		{
+			title = "Part 3: For Him or for Cenarius",
+			mood = "wise",
+			lines = {
+				{ kind = "say", text = "He killed Cenarius. He killed sentinels defending their own forest." },
+				{ kind = "say", text = "But every orc alive today is free because Grom Hellscream walked into that canyon." },
+				{ kind = "emote", text = "is quiet for a moment." },
+				{ kind = "say", text = "The canyon is still there. They call it Demon Fall. I stop when I pass it. I'm never sure if it's for him or for Cenarius." },
+				{ kind = "emote", text = "bows their head." },
+			},
+		},
+	},
+})
+
+-- Uther and Arthas. Sources:
+-- https://warcraft.wiki.gg/wiki/Uther_the_Lightbringer
+-- https://warcraft.wiki.gg/wiki/Uther%27s_Tomb
+ns.AddLegend("Western Plaguelands", "The Lightbringer", {
+	summary = "Uther the Lightbringer, the prince he taught, and the order he would not obey.",
+	parts = {
+		{
+			title = "The Teacher",
+			mood = "dark",
+			lines = {
+				{ kind = "say", text = "Uther the Lightbringer taught a young prince named Arthas everything he knew about the Light." },
+				{ kind = "say", text = "At Stratholme, Uther refused the prince's order to put the city to the sword, and Arthas called it treason." },
+				{ kind = "say", text = "The next time they met, Arthas carried a new sword, and Uther stood guard over his dead king's ashes." },
+				{ kind = "emote", text = "looks down at the coals." },
+				{ kind = "say", text = "Uther fell to his own student. His tomb stands in these hills, and paladins still come to it." },
+				{ kind = "emote", text = "bows their head." },
+			},
+		},
+	},
+})
+
+-- Anduin Lothar, the Lion of Azeroth. Sources:
+-- https://warcraft.wiki.gg/wiki/Anduin_Lothar
+-- https://warcraft.wiki.gg/wiki/Anduin_Wrynn
+ns.AddLegend("Stormwind City", "The Name the Boy King Carries", {
+	summary = "Anduin Lothar, the Lion of Azeroth, and why Stormwind's boy king bears his name.",
+	parts = {
+		{
+			title = "The Lion of Azeroth",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "The boy king of Stormwind is named Anduin. He was named for a man: Anduin Lothar, the Lion of Azeroth, Stormwind's champion in the First War." },
+				{ kind = "say", text = "When Stormwind fell, Lothar is the one who got its people out, by ship, north to Lordaeron. He brought the young prince Varian with them." },
+				{ kind = "emote", text = "points north with a stick from the fire." },
+				{ kind = "say", text = "In the Second War, every army of the Alliance followed him. Near the war's end, at Blackrock Spire, he was cut off from his men and met Doomhammer alone." },
+				{ kind = "say", text = "He did not come back. Lothar was the closest thing to a father Varian had left. When Varian had a son, he gave the boy that name." },
+				{ kind = "emote", text = "bows their head." },
+			},
+		},
+	},
+})
+
+-- Tyrande Whisperwind and Malfurion Stormrage. Sources:
+-- https://warcraft.wiki.gg/wiki/Tyrande_Whisperwind
+-- https://warcraft.wiki.gg/wiki/Malfurion_Stormrage
+ns.AddLegend("Teldrassil", "The Long Wait", {
+	summary = "Tyrande Whisperwind, and the ten thousand years she kept watch for Malfurion.",
+	parts = {
+		{
+			title = "Part 1: Ten Thousand Years",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "Tyrande Whisperwind leads the night elves now, from Darnassus. Ten thousand years ago, she loved a druid named Malfurion Stormrage." },
+				{ kind = "say", text = "After the first war against the Legion, he and his druids lay down to sleep in the Emerald Dream. She stayed awake. Someone had to watch over the kaldorei." },
+				{ kind = "emote", text = "looks up at the moon." },
+				{ kind = "say", text = "For ten thousand years she kept watch with the Sentinels, and waited." },
+				{ kind = "say", text = "When the Legion came back, she was the one who went down into the barrow dens and woke him. They fought side by side at Hyjal, and they won." },
+			},
+		},
+		{
+			title = "Part 2: Waiting Again",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "Not long after, he went back into the Dream. This time, he hasn't come back, and the druids won't say why." },
+				{ kind = "emote", text = "folds their hands in their lap." },
+				{ kind = "say", text = "She leads her people, and she doesn't speak of it." },
+				{ kind = "say", text = "She waited ten thousand years once. She is waiting again." },
+			},
+		},
+	},
+})
+
+-- The Skyborne (shen'dorei), told in a High Order Skyborne voice. Sources: Blizzard's
+-- "Meet the New Skyborne" (the pact with Skywall's wind spirits, the spirits vanishing,
+-- Windshapers and High Order answering differently), the BlizzCon Found Photos recap
+-- (rebels who fled Eldre'Thalas; the spirits lifted the land into Skywall), and the
+-- in-game "Rebellion In Eldre'Thalas" crystals (the ships at Eldre'narr).
+ns.AddLegend("Zephras Isle", "The Island the Wind Held", {
+	summary = "How rebel Highborne fled Eldre'Thalas and found a home the wind agreed to hold.",
+	parts = {
+		{
+			title = "Part 1: The Rebels of Eldre'Thalas",
+			mood = "action",
+			lines = {
+				{ kind = "say", text = "My people were Highborne once, in the city of Eldre'Thalas. You'd call it Dire Maul now." },
+				{ kind = "say", text = "After the Sundering, the city lost the magic of the Well, and its rulers would not let go. Our elders say the prince meant to feed that magic with a demon." },
+				{ kind = "say", text = "Our ancestors rose up against him. It cost them dearly, and then they ran." },
+				{ kind = "emote", text = "looks up at the sky." },
+				{ kind = "say", text = "They took ships at Eldre'narr on the coast and sailed west, with the prince's fleet behind them, out past the edge of the maps." },
+			},
+		},
+		{
+			title = "Part 2: The Pact",
+			mood = "wise",
+			lines = {
+				{ kind = "say", text = "Out there, they reached a land where the wind spirits lived. The elders say the spirits offered them a home, if they would keep faith with the wind." },
+				{ kind = "say", text = "They made that pact. The spirits lifted that land up out of the world and into Skywall, where no ship could follow." },
+				{ kind = "emote", text = "spreads both hands, palms up, and lifts them slowly." },
+				{ kind = "say", text = "We call it Zephras. Some of our people were given skysight there, so they could see the spirits and speak with them." },
+				{ kind = "say", text = "The spirits kept us hidden, from the prince and from everyone else. For thousands of years, we lived on air that had agreed to hold us." },
+			},
+		},
+	},
+})
+
+-- Same sources as "The Island the Wind Held".
+ns.AddLegend("Zephras Isle", "The Day the Wind Went Quiet", {
+	summary = "The morning the wind spirits left Zephras, and why the Skyborne came down to Azeroth.",
+	parts = {
+		{
+			title = "The Empty Wind",
+			mood = "heartfelt",
+			lines = {
+				{ kind = "say", text = "On Zephras, the spirits were always in the wind, and we never once thought about it." },
+				{ kind = "say", text = "My mother says she woke one morning some years ago, and the wind was empty. Nobody knows why they left." },
+				{ kind = "emote", text = "holds out a hand, as if feeling for a breeze." },
+				{ kind = "say", text = "After that the pylons started failing, and we lost word from the other islands." },
+				{ kind = "say", text = "The Windshapers came down to Azeroth to find out where the spirits went, and to bring them back." },
+				{ kind = "say", text = "Those of us in the High Order came for a different reason. Our forebears were magisters, and we had let most of what they knew slip away." },
+				{ kind = "say", text = "So we came to Dalaran to learn it again. We don't know if the spirits are ever coming back." },
+			},
+		},
+	},
+})
