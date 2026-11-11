@@ -440,13 +440,13 @@ scenario("all published stories obey the rules", function()
 	for _, legend in ipairs(ns.Legends) do
 		validate(legend.parts, "legend", false)
 		check("legend " .. legend.title .. " has a zone and a summary", legend.zone and legend.summary)
-		check("legend " .. legend.title .. " has 2 or more parts", #legend.parts >= 2, #legend.parts)
+		check("legend " .. legend.title .. " has at least one part", #legend.parts >= 1, #legend.parts)
 	end
 	stdPrint(("   total %d: shared %d, target %d, race %d, class %d, zone %d, festival %d, legend parts %d; longest %.0fs (%s)"):format(
 		total, perList.shared, perList.target, perList.race, perList.class, perList.zone, perList.festival, perList.legend or 0,
 		longest, longestTitle))
-	check("619 published stories", total == 619, total)
-	check("5 legends", #ns.Legends == 5, #ns.Legends)
+	check("637 published stories", total == 637, total)
+	check("15 legends", #ns.Legends == 15, #ns.Legends)
 	for _, festival in ipairs(ns.Season.Festivals) do
 		check("festival " .. festival.name .. " has stories", ns.FestivalStories[festival.name] and #ns.FestivalStories[festival.name] >= 2)
 	end

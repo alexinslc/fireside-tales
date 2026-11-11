@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.7.0
+
+- **Ten new legends** in the Legends tab, retold from Warcraft's own history:
+  - **The Ranger-General** (Sylvanas at Quel'Thalas, 2 parts)
+  - **Two Boy Kings** (Anduin and Varian, 2 parts)
+  - **The Night They Gave Up Forever** (the Battle of Mount Hyjal, 2 parts)
+  - **Tirion and the Orc** (Tirion and Eitrigg, 2 parts)
+  - **The Last Breath of Grom Hellscream** (Demon Fall, 3 parts)
+  - **The Lightbringer** (Uther)
+  - **The Name the Boy King Carries** (Anduin Lothar)
+  - **The Long Wait** (Tyrande Whisperwind, 2 parts)
+  - **The Island the Wind Held** and **The Day the Wind Went Quiet** (two Skyborne histories)
+- A legend told in one sitting no longer says "part 1 of 1".
+- **Community tab:** its first week starts Tuesday, November 17, with ten new tales and rumors. Share your own at firesidetales.dev.
+- 637 stories in all, counting the legends' parts.
+- **Special thanks to tmillerpdx for writing and contributing all ten new legends!**
+
 ## 1.6.0
 
 - **Community tab:** a new tab of stories from other players, new every week and credited to their authors. This week's are at the top, with recent weeks below, and **Tell a Tale** can pick from this week's too.

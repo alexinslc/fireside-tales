@@ -386,7 +386,10 @@ local function refreshReader()
 	local meta = (MOOD_DOTS[mood] or "") .. COLOR_META .. mood:gsub("^%l", string.upper) .. "|r"
 		.. COLOR_META .. ("  -  about %d seconds|r"):format(seconds)
 	if currentStory.legend then
-		meta = meta .. COLOR_META .. ("  -  %s, part %d of %d|r"):format(currentStory.legend.zone, currentStory.part, #currentStory.legend.parts)
+		-- A legend told in one sitting just says where it happened.
+		local parts = #currentStory.legend.parts
+		meta = meta .. COLOR_META .. (parts > 1 and ("  -  %s, part %d of %d|r"):format(currentStory.legend.zone, currentStory.part, parts)
+			or ("  -  %s|r"):format(currentStory.legend.zone))
 	end
 	if currentStory.kind then
 		meta = meta .. COLOR_META .. "  -  |r" .. COLOR_ADDED .. "added by you|r"

@@ -357,7 +357,7 @@ ns.AddLegend("Tirisfal Glades", "The Ranger-General", {
 				{ kind = "say", text = "So he killed her, and then he tore her spirit from her body and bound it to him. She had to follow him into her own home while he finished it." },
 				{ kind = "emote", text = "closes one hand slowly into a fist." },
 				{ kind = "say", text = "Later, his grip on the dead slipped. Only for a moment. Thousands in Lordaeron woke with their own minds again, and nowhere to go." },
-				{ kind = "say", text = "She gathered them and gave them a name: the Forsaken. They are not our friends. I won't pretend they are." },
+				{ kind = "say", text = "She gathered them and gave them a name: the Forsaken. Some call them monsters. Some call them family." },
 				{ kind = "say", text = "But when you hear her name, remember the ranger in the forest, holding one more gate." },
 				{ kind = "emote", text = "bows their head." },
 			},
@@ -388,7 +388,7 @@ ns.AddLegend("Stormwind City", "Two Boy Kings", {
 			mood = "heartfelt",
 			lines = {
 				{ kind = "say", text = "When Varian was a boy, his father was King Llane. In the First War, with the orcs at the walls, someone Llane trusted killed him in his own keep." },
-				{ kind = "say", text = "They say Varian saw it happen. Stormwind fell that year, and he was carried north with the refugees, to grow up in someone else's kingdom." },
+				{ kind = "say", text = "Varian was a boy in the keep that night. Stormwind fell that year, and he was carried north with the refugees, to grow up in someone else's kingdom." },
 				{ kind = "emote", text = "sighs." },
 				{ kind = "say", text = "He came home a man, and the city was built again, stone by stone. Varian at least knew his father was gone. This boy doesn't even get that." },
 				{ kind = "say", text = "So if you're ever in Stormwind and you see a small face at a high window in the keep, wave." },
@@ -578,7 +578,7 @@ ns.AddLegend("Teldrassil", "The Long Wait", {
 	},
 })
 
--- The Skyborne (shen'dorei), told in a High Order Skyborne voice. Sources: Blizzard's
+-- The Skyborne (shen'dorei), told so that anyone can tell it. Sources: Blizzard's
 -- "Meet the New Skyborne" (the pact with Skywall's wind spirits, the spirits vanishing,
 -- Windshapers and High Order answering differently), the BlizzCon Found Photos recap
 -- (rebels who fled Eldre'Thalas; the spirits lifted the land into Skywall), and the
@@ -590,9 +590,9 @@ ns.AddLegend("Zephras Isle", "The Island the Wind Held", {
 			title = "Part 1: The Rebels of Eldre'Thalas",
 			mood = "action",
 			lines = {
-				{ kind = "say", text = "My people were Highborne once, in the city of Eldre'Thalas. You'd call it Dire Maul now." },
-				{ kind = "say", text = "After the Sundering, the city lost the magic of the Well, and its rulers would not let go. Our elders say the prince meant to feed that magic with a demon." },
-				{ kind = "say", text = "Our ancestors rose up against him. It cost them dearly, and then they ran." },
+				{ kind = "say", text = "The Skyborne were Highborne once, in the city of Eldre'Thalas. Most folk call it Dire Maul now." },
+				{ kind = "say", text = "After the Sundering, the city lost the magic of the Well, and its rulers would not let go. Their elders say the prince meant to feed that magic with a demon." },
+				{ kind = "say", text = "Their ancestors rose up against him. It cost them dearly, and then they ran." },
 				{ kind = "emote", text = "looks up at the sky." },
 				{ kind = "say", text = "They took ships at Eldre'narr on the coast and sailed west, with the prince's fleet behind them, out past the edge of the maps." },
 			},
@@ -604,8 +604,8 @@ ns.AddLegend("Zephras Isle", "The Island the Wind Held", {
 				{ kind = "say", text = "Out there, they reached a land where the wind spirits lived. The elders say the spirits offered them a home, if they would keep faith with the wind." },
 				{ kind = "say", text = "They made that pact. The spirits lifted that land up out of the world and into Skywall, where no ship could follow." },
 				{ kind = "emote", text = "spreads both hands, palms up, and lifts them slowly." },
-				{ kind = "say", text = "We call it Zephras. Some of our people were given skysight there, so they could see the spirits and speak with them." },
-				{ kind = "say", text = "The spirits kept us hidden, from the prince and from everyone else. For thousands of years, we lived on air that had agreed to hold us." },
+				{ kind = "say", text = "They call it Zephras. Some of them were given skysight there, so they could see the spirits and speak with them." },
+				{ kind = "say", text = "The spirits kept them hidden, from the prince and from everyone else. For thousands of years, they lived on air that had agreed to hold them." },
 			},
 		},
 	},
@@ -619,13 +619,13 @@ ns.AddLegend("Zephras Isle", "The Day the Wind Went Quiet", {
 			title = "The Empty Wind",
 			mood = "heartfelt",
 			lines = {
-				{ kind = "say", text = "On Zephras, the spirits were always in the wind, and we never once thought about it." },
-				{ kind = "say", text = "My mother says she woke one morning some years ago, and the wind was empty. Nobody knows why they left." },
+				{ kind = "say", text = "On Zephras, the spirits were always in the wind, and the Skyborne never once thought about it." },
+				{ kind = "say", text = "A Skyborne I met says she woke one morning some years ago, and the wind was empty. Nobody knows why they left." },
 				{ kind = "emote", text = "holds out a hand, as if feeling for a breeze." },
-				{ kind = "say", text = "After that the pylons started failing, and we lost word from the other islands." },
+				{ kind = "say", text = "After that the pylons started failing, and they lost word from the other islands." },
 				{ kind = "say", text = "The Windshapers came down to Azeroth to find out where the spirits went, and to bring them back." },
-				{ kind = "say", text = "Those of us in the High Order came for a different reason. Our forebears were magisters, and we had let most of what they knew slip away." },
-				{ kind = "say", text = "So we came to Dalaran to learn it again. We don't know if the spirits are ever coming back." },
+				{ kind = "say", text = "The High Order came for a different reason. Their forebears were magisters, and they had let most of what those magisters knew slip away." },
+				{ kind = "say", text = "So they came to Dalaran to learn it again. Nobody knows if the spirits are ever coming back." },
 			},
 		},
 	},
