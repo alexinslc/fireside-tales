@@ -62,7 +62,9 @@ export async function isAdmin(request: Request, env: Env): Promise<string | null
 		// "name=client-id" pairs, comma separated.
 		for (const pair of (env.REVIEW_TOKENS ?? "").split(",")) {
 			const [name, clientId] = pair.split("=").map((part) => part.trim());
-			if (name && clientId && clientId === claims.common_name) return name;
+			// Access may give the client ID with or without its ".access" ending.
+			const bare = (id: string) => id.replace(/\.access$/, "");
+			if (name && clientId && bare(clientId) === bare(claims.common_name)) return name;
 		}
 		return null;
 	}
