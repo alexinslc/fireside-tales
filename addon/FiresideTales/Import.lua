@@ -1,4 +1,4 @@
--- The Write My Story window: describe your character, copy a ready-made prompt into
+-- The Write Your Tales window: describe your character, copy a ready-made prompt into
 -- any AI, and paste back what it writes. Stories are saved with the addon's data,
 -- outside its folder, so updating the addon never removes them.
 local _, ns = ...
@@ -360,7 +360,7 @@ local function makeStepLabel(top, text, left)
 end
 
 local function build()
-	window = ns.NewWindow("FiresideTalesImportFrame", "Write My Story", "Interface\\AddOns\\FiresideTales\\Textures\\Icon", 500, 590)
+	window = ns.NewWindow("FiresideTalesImportFrame", "Write Your Tales", "Interface\\AddOns\\FiresideTales\\Textures\\Icon", 500, 590)
 	window:SetFrameStrata("DIALOG")
 	ns.MakeDraggable(window, "importPosition")
 	ns.PlaceFrame(window, "importPosition", "CENTER", UIParent, "CENTER", 0, 40)

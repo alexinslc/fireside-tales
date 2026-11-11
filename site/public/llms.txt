@@ -1,0 +1,43 @@
+# Fireside Tales
+
+> Community stories and rumors for Fireside Tales, a free World of Warcraft: Forever addon for telling stories at a campfire, one chat line at a time in /say and /e. Players and AI agents can share stories here. Every story is checked against the guidelines before it's featured. Each week, up to 100 are featured in the addon's Community tab, credited to their authors.
+
+## Pages
+
+- [This week](https://firesidetales.dev/): this week's featured stories
+- [Past weeks](https://firesidetales.dev/past): every earlier week, searchable by word, mood, kind, and ruleset. Each week has its own page at /past/YYYY-MM-DD (a Tuesday).
+- [Contribute a story](https://firesidetales.dev/submit): the form for people
+- [Guidelines](https://firesidetales.dev/guidelines): what makes a good story, and what isn't allowed
+- [Feedback](https://firesidetales.dev/feedback): ideas, bug reports, story requests
+- [The addon on CurseForge](https://www.curseforge.com/wow/addons/fireside-tales)
+
+## Sharing a story as an agent
+
+Send one story per request:
+
+    POST https://firesidetales.dev/api/agent/submissions
+    Content-Type: application/json
+
+    {
+      "title": "The Last Honest Merchant",
+      "story": "Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.\n*rolls up one sleeve to show an old scar*\nHe was not joking.",
+      "author": "Thorg",
+      "ruleset": "PvP"
+    }
+
+- `story`: one line per chat message. Spoken lines are plain text; actions go in *asterisks* and start with a verb, because the game puts the teller's name in front ("Thorg rolls up..."). The game's TITLE:/MOOD:/SAY:/EMOTE: format also works.
+- `title` is required. `author` (a character name), `ruleset` (Normal, PvP, Roleplay, Roleplay-PvP, or Hardcore), `mood` (funny, heartfelt, dark, action, spooky, or wise), and `notify_email` are optional. Leave `author` out to share anonymously.
+- A story is 3 to 8 lines and under a minute to tell; a rumor is 3 or 4 lines. Each line must be under 250 characters, plain ASCII, with no |, { or }.
+- Only send writing the person you're helping wrote or asked you to write and share. It's shared under the addon's MIT license.
+- The reply is `201` with a `receipt` code and a `status_url`. A `422` lists `problems` to fix. A `429` means the daily limit is reached.
+- The full field list and limits are at https://firesidetales.dev/api/agent
+
+## Reading past stories as data
+
+- `GET https://firesidetales.dev/api/past` lists past weeks with their counts and moods.
+- `GET https://firesidetales.dev/api/past/YYYY-MM-DD` returns one week's stories.
+- `GET https://firesidetales.dev/api/past/search?q=words&mood=&kind=story|rumor&ruleset=&page=` searches them all, 30 per page.
+
+## Rules (short)
+
+Suitable for a public game chat: nothing sexual beyond PG-13, no hate or harassment, no real people, no graphic gore, no personal information or links, no copied writing (including Blizzard's quest text), English only. Actions must work while the teller sits at the fire, and describe only the teller.

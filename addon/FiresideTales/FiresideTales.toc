@@ -1,7 +1,7 @@
 ## Interface: 16001
 ## Title: Fireside Tales
 ## Notes: Tell stories at the campfire, one line at a time. Hundreds of tales for every race, class, and zone, plus your own.
-## Version: 1.5.0
+## Version: 1.6.0
 ## IconTexture: Interface\AddOns\FiresideTales\Textures\Icon
 ## SavedVariables: FiresideTalesDB
 ## OptionalDeps: totalRP3
@@ -20,6 +20,7 @@ MoreZones.lua
 StoriesTargeted.lua
 StoriesFestivals.lua
 Legends.lua
+Community.lua
 Openers.lua
 Core.lua
 Seasons.lua

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0
+
+- **Community tab:** a new tab of stories from other players, new every week and credited to their authors. This week's are at the top, with recent weeks below, and **Tell a Tale** can pick from this week's too.
+- **Contribute a Story:** on the Community tab, this button shows where to share a story or rumor of your own: **firesidetales.dev**. Write it in your browser, see how it'll look in chat, and each week up to 100 are featured for every player. If yours is featured, you'll see a note in chat when you log in.
+- **Write Your Tales:** Write My Story is now called Write Your Tales, to match the **Your Tales** tab where its stories go. Those are still just for you.
+- The tab icons fill their tabs, like the character window's.
+- Restart the game once after updating, since a file was added.
+
 ## 1.5.0
 
 - **Tabs:** the story menu has tabs down its right side, like the character window: **Your Tales** with your character's portrait, **Stories**, **Legends**, and **Rumors and Whispers**, each with the game's own icons.

@@ -7,7 +7,7 @@ Everything the project form asks for. Paste the description in Markdown mode.
 | Game | World of Warcraft |
 | Class | Addons |
 | Name | Fireside Tales |
-| Summary | Tell stories at the campfire, one line at a time: 500+ tales for every race, class, and zone, plus your own character's. |
+| Summary | Tell stories at the campfire, one line at a time: 600+ tales, plus new community stories every week. Contribute yours at firesidetales.dev. |
 | Main category | Roleplay |
 | Additional categories | Chat & Communication, if it's offered |
 | Allow comments | On |
@@ -20,6 +20,12 @@ Everything the project form asks for. Paste the description in Markdown mode.
 ![Fireside Tales](https://raw.githubusercontent.com/alexinslc/fireside-tales/main/art/banner.png)
 
 **You light a fire, someone sits down beside you, and nobody says a word.** Fireside Tales gives you something to say. Press a button and tell one of more than 500 short tales, one line at a time, in `/say` and `/e`. Everyone around the fire just sees you telling a story, and they don't need the addon to enjoy it.
+
+### Contribute a Story
+
+**Got a tale of your own? Share it with every player at [firesidetales.dev](https://firesidetales.dev/submit).** Write a story or a rumor right in your browser, one line per chat message, and see exactly how it will look in chat. Each week, up to 100 community stories are featured in the addon's **Community** tab, credited to your character (or shared anonymously). If yours is featured, the addon tells you when you log in.
+
+**[Contribute a story](https://firesidetales.dev/submit)** · [Read this week's](https://firesidetales.dev) · [Browse past weeks](https://firesidetales.dev/past)
 
 ### What it looks like at the fire
 
@@ -44,11 +50,12 @@ This is "The Last Honest Merchant," one of the built-in stories, as everyone nea
 - **For someone nearby:** target a listener, and the story uses their name.
 - **Legends:** Warcraft's own stories, told in parts, from the Legend of Stalvan to Onyxia's masquerade in Stormwind. Stop after any part and pick it up another night.
 - **Rumors and Whispers:** short things people swear they heard, from a vault combination that ends in a sneeze to cold roses in Darkshire.
+- **Community:** new stories from players every week, from [firesidetales.dev](https://firesidetales.dev). Press **Contribute a Story** on the tab to add yours.
 - **Quick to tell:** every story takes about a minute or less, so nobody's stuck waiting.
 
 ### Tell your own
 
-**Write My Story** turns any AI into your character's storyteller. Write a sentence or two about who they are, copy the ready-made prompt, and paste the answer back in the game. Your tales appear under your character's name, ready to tell. Your name, race, class, and zone are already filled in, and you can read every story before you tell it.
+**Write Your Tales** turns any AI into your character's storyteller. Write a sentence or two about who they are, copy the ready-made prompt, and paste the answer back in the game. Your tales appear under your character's name, ready to tell. Your name, race, class, and zone are already filled in, and you can read every story before you tell it.
 
 ### Easy at the fire
 
@@ -69,7 +76,7 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 | Command | What it does |
 | --- | --- |
 | `/tales stories` | Open or close the story menu |
-| `/tales add` | Open or close Write My Story |
+| `/tales add` | Open or close Write Your Tales |
 | `/tales fire` | Turn the campfire prompt off or on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show your story counts |
@@ -78,4 +85,4 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 
 The built-in stories are written with AI help and chosen by hand, and the logo and banner are AI-assisted art. Screenshots are from the real game. Most stories are fan fiction set in Azeroth. The legends retell Warcraft's own quests in new words, so their names and events come from the game. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
 
-Found a bug, or a story that doesn't sit right? Leave a comment, or open an issue on [GitHub](https://github.com/alexinslc/fireside-tales).
+Found a bug, have an idea, or want a story someone should write? Send it through [firesidetales.dev/feedback](https://firesidetales.dev/feedback), leave a comment, or open an issue on [GitHub](https://github.com/alexinslc/fireside-tales).

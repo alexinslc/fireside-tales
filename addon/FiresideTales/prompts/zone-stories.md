@@ -2,7 +2,7 @@
 
 Tales of one place. They rise to the top of the list when you're in that zone.
 
-Copy everything below the line into an AI, and fill in the bracketed parts. Then paste what it writes into **Write My Story** in the game.
+Copy everything below the line into an AI, and fill in the bracketed parts. Then paste what it writes into **Write Your Tales** in the game.
 
 ---
 

@@ -51,5 +51,5 @@ These come from the real game, not the artist:
 
 1. The story menu, with a story open in the reader.
 2. Telling a story at a real campfire, with the teller bar showing.
-3. The Write My Story window, with a filled-in prompt.
+3. The Write Your Tales window, with a filled-in prompt.
 4. A story line appearing in chat as others would see it.

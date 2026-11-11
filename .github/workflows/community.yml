@@ -1,0 +1,101 @@
+name: Community stories
+
+# Keeps addon/FiresideTales/Community.lua in step with the stories approved on firesidetales.dev,
+# and releases a new version before each week starts so players get the coming week's stories.
+#
+# - The site starts it after each approval (repository_dispatch), and it also runs daily.
+#   Either way it commits Community.lua to main when the stories changed.
+# - Monday evening (UTC), before Tuesday's new week, it releases if Community.lua changed since
+#   the last release: it bumps the patch version, adds a changelog line, tags, and starts
+#   release.yml, which uploads to CurseForge. Run it by hand with "release" ticked to release now.
+# - It only releases stories: if other addon files changed since the last release, that one is
+#   released by hand with its own changelog. And it never releases until FiresideTales.toc lists
+#   Community.lua.
+on:
+  repository_dispatch:
+    types: [community-stories]
+  schedule:
+    - cron: "30 6 * * *"
+    - cron: "0 18 * * 1"
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Release a new version now if the stories changed
+        type: boolean
+        default: false
+
+concurrency:
+  group: community-stories
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Build Community.lua
+        env:
+          SCHEDULE_TOKEN: ${{ secrets.SCHEDULE_TOKEN }}
+        run: |
+          if [ -z "$SCHEDULE_TOKEN" ]; then
+            echo "::error::Set the SCHEDULE_TOKEN secret (the same one as the site's, see site/README.md)"
+            exit 1
+          fi
+          node tools/build-community.mjs --notes "$RUNNER_TEMP/community-notes.md"
+
+      - name: Check the stories
+        shell: pwsh
+        run: ./tools/check-stories.ps1
+
+      - name: Commit the stories
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add addon/FiresideTales/Community.lua
+          if git diff --cached --quiet; then
+            echo "No new stories."
+          else
+            git commit -m "Update community stories from firesidetales.dev"
+            git push origin HEAD:main
+          fi
+
+      - name: Release
+        if: github.event.schedule == '0 18 * * 1' || inputs.release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          toc=addon/FiresideTales/FiresideTales.toc
+          if ! grep -qx 'Community.lua' <(tr -d '\r' < "$toc"); then
+            echo "FiresideTales.toc doesn't list Community.lua yet, so there's nothing to release."
+            exit 0
+          fi
+          last="$(git describe --tags --abbrev=0 --match 'v*.*.*')"
+          if git diff --quiet "$last" -- addon/FiresideTales/Community.lua; then
+            echo "Community.lua hasn't changed since $last."
+            exit 0
+          fi
+          if ! git diff --quiet "$last" -- addon ':(exclude)addon/FiresideTales/Community.lua'; then
+            echo "::warning::Other addon files changed since $last, so this release needs its own changelog. Release by hand."
+            exit 0
+          fi
+          if [ ! -s "$RUNNER_TEMP/community-notes.md" ]; then
+            echo "No stories for this week or later, so there's nothing to release."
+            exit 0
+          fi
+          version="$(sed -n 's/^## Version:[[:space:]]*//p' "$toc" | tr -d '\r')"
+          next="$(awk -F. -v OFS=. '{ $3 += 1; print }' <<< "$version")"
+          sed -i "s/^## Version:.*/## Version: $next/" "$toc"
+          { printf '# Changelog\n\n## %s\n\n' "$next"; cat "$RUNNER_TEMP/community-notes.md"; printf '\n'; tail -n +3 CHANGELOG.md; } > CHANGELOG.new
+          mv CHANGELOG.new CHANGELOG.md
+          git add "$toc" CHANGELOG.md
+          git commit -m "Release $next with new community stories"
+          git tag "v$next"
+          git push origin HEAD:main "v$next"
+          # A tag pushed with this job's token doesn't start other workflows, so start the release directly.
+          gh workflow run release.yml --ref "v$next"

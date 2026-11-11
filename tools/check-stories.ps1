@@ -25,7 +25,10 @@ $structural = @(
     '^ns\.AddStories\("(character|race|class)", "\w+", \{$', '^ns\.AddStories\("(zone|festival)", "[\w'' -]+", \{$', '^ns\.AddStories\("shared", nil, \{$',
     '^ns\.AddLegend\("[\w'' -]+", "[^"\\]+", \{$', '^\s*summary = "(?:[^"\\]|\\.)+",$',
     '^\s*\{$', '^\s*\},$', '^\s*lines = \{$', '^\s*theme = "[^"\\]+",$',
-    '^\s*\["\w+"\] = \{$', '^\s*\w+ = \{$'
+    '^\s*\["\w+"\] = \{$', '^\s*\w+ = \{$',
+    # Community.lua, written from firesidetales.dev.
+    '^if not ns\.AddCommunityWeek then return end$', '^ns\.AddCommunityWeek\("\d{4}-\d{2}-\d{2}", \{$',
+    '^\s*kind = "(story|rumor)",$', '^\s*id = "[0-9a-f-]{36}",$', '^\s*(author|ruleset) = "(?:[^"\\]|\\.)*",$'
 )
 
 $files = if ($File) { @(Split-Path $File -Leaf) } else {
@@ -74,7 +77,7 @@ foreach ($name in $files) {
             if ($kind -eq 'emote' -and $text -cmatch '^[A-Z]') { $problems.Add("$name`:$n emote starts with a capital: $text") }
             continue
         }
-        if ($row -match '^\s*title = "([^"\\]+)",$') {
+        if ($row -match '^\s*title = "((?:[^"\\]|\\.)+)",$') {
             Close-Story
             $title = $Matches[1]
             $story = [pscustomobject]@{ Title = $title; Mood = $null; Lines = 0; Emotes = 0; Says = 0; Targets = 0; Seconds = 0.0 }
@@ -104,9 +107,10 @@ foreach ($name in $files) {
     foreach ($row in Get-Content -LiteralPath (Join-Path $AddonDir $name) -Encoding utf8) {
         if ($row -match '^ns\.AddStories\("(\w+)", "?([\w'' -]+)"?, \{$') { $key = "$($Matches[1])/$($Matches[2])" }
         elseif ($row -match '^ns\.AddLegend\("[\w'' -]+", "([^"\\]+)", \{$') { $key = "legend/$($Matches[1])" }
+        elseif ($row -match '^ns\.AddCommunityWeek\("([\d-]+)", \{$') { $key = "community/$($Matches[1])" }
         elseif ($row -match '^ns\.Stories = \{$') { $key = 'shared/nil' }
         elseif ($row -match '^\t\["?(\w+)"?\] = \{$' -or $row -match '^\t(\w+) = \{$') { $key = "keyed/$($Matches[1])" }
-        elseif ($row -match '^\s*title = "([^"\\]+)",$') {
+        elseif ($row -match '^\s*title = "((?:[^"\\]|\\.)+)",$') {
             $normal = $key -replace '^(character|race|class)/', 'keyed/'
             if (-not $groups[$normal]) { $groups[$normal] = @{} }
             if ($groups[$normal][$Matches[1]]) { $problems.Add("Duplicate title '$($Matches[1])' in $normal") }

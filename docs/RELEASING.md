@@ -30,6 +30,10 @@ These need the project owner's CurseForge account:
 
 The tag has to match the TOC's version, and the changelog needs a section for it, or the release stops before uploading anything. CurseForge reviews a new project's first file before it goes live.
 
+## Community stories
+
+`.github/workflows/community.yml` keeps `Community.lua` up to date with the stories approved on firesidetales.dev and releases a patch version on its own each Monday evening (UTC) when they changed. See "From approval to the addon" in `site/README.md`. A release by hand picks up whatever `Community.lua` has at the time.
+
 ## When the client updates
 
 Change `## Interface` in the TOC and `GAME_VERSION` in `.github/workflows/release.yml`. `GAME_VERSION` is CurseForge's name for the client version, such as `1.60.1`.

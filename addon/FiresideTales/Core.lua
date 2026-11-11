@@ -204,7 +204,7 @@ function handlers.ADDON_LOADED(name)
 	-- Settings and position of the old automatic prompts, which are gone.
 	db.settings, db.position = nil, nil
 	db.chars = db.chars or {}
-	db.imported = db.imported or {} -- Stories from the Write My Story window.
+	db.imported = db.imported or {} -- Stories from the Write Your Tales window.
 end
 
 function handlers.PLAYER_LOGIN()
@@ -215,10 +215,36 @@ function handlers.PLAYER_LOGIN()
 		told = saved.told or {}, -- Story key to the time it was last finished.
 		favorites = saved.favorites or {},
 		tonight = saved.tonight or {}, -- Story keys, in telling order.
-		about = saved.about, -- The player's description, for the Write My Story prompt.
+		about = saved.about, -- The player's description, for the Write Your Tales prompt.
+		featuredNoted = saved.featuredNoted, -- The week this character was last told their story is featured.
 	}
 	db.chars[charKey] = char
 	ns.BuildMinimapButton()
+	-- A moment after the login messages, so it isn't lost among them.
+	if C_Timer then C_Timer.After(10, ns.NoteFeaturedStory) end
+end
+
+-- If a story this character shared is featured this week, says so once, in the
+-- chat window only. A story counts as theirs when its author's first name is this
+-- character's name; a Hardcore story only counts on a Hardcore character, and the
+-- other way round, since that's the one ruleset the game can tell.
+function ns.NoteFeaturedStory()
+	local weeks, current = ns.CommunityWeeksSoFar()
+	local week = weeks[1]
+	if not week or week.week ~= current or char.featuredNoted == current then return end
+	local hardcore = C_GameRules and C_GameRules.IsHardcoreActive and C_GameRules.IsHardcoreActive() or false
+	local titles = {}
+	for _, story in ipairs(week.stories) do
+		local first = (story.author or ""):match("^(%S+)")
+		local ruleset = story.ruleset or ""
+		if first and first:lower() == charKey:lower() and (ruleset == "" or (ruleset == "Hardcore") == hardcore) then
+			titles[#titles + 1] = '"' .. story.title .. '"'
+		end
+	end
+	if #titles == 0 then return end
+	char.featuredNoted = current
+	say(("Your %s %s %s featured at the fire this week! Find %s in the Community tab of the story menu."):format(
+		#titles > 1 and "stories" or "story", table.concat(titles, " and "), #titles > 1 and "are" or "is", #titles > 1 and "them" or "it"))
 end
 
 function handlers.ZONE_CHANGED_NEW_AREA()

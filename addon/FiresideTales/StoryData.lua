@@ -47,6 +47,50 @@ function ns.AddLegend(zone, title, legend)
 	ns.Legends[#ns.Legends + 1] = legend
 end
 
+-- Stories players shared at firesidetales.dev, featured a week at a time. Community.lua
+-- is written from the site, so each release carries the weeks ahead. week is the
+-- Tuesday (UTC) it starts, as "YYYY-MM-DD".
+ns.CommunityWeeks = {}
+
+function ns.AddCommunityWeek(week, stories)
+	for _, story in ipairs(stories) do
+		-- kind marks pasted stories elsewhere, so a community story's kind goes by another name.
+		story.communityKind, story.kind = story.kind, nil
+		story.week = week
+	end
+	ns.CommunityWeeks[#ns.CommunityWeeks + 1] = { week = week, stories = stories }
+	table.sort(ns.CommunityWeeks, function(a, b) return a.week < b.week end)
+end
+
+-- The Tuesday (UTC) the current week started, as "YYYY-MM-DD".
+function ns.CommunityWeekStart(now)
+	now = now or (GetServerTime and GetServerTime()) or time()
+	local t = date("!*t", now)
+	local daysSince = (t.wday - 3) % 7 -- wday 3 is Tuesday.
+	local start = now - daysSince * 86400 - (t.hour * 3600 + t.min * 60 + t.sec)
+	return date("!%Y-%m-%d", start)
+end
+
+-- Weeks that have started, newest first. The first is this week's, or the latest
+-- one this copy of the addon has, if it hasn't been updated in a while.
+function ns.CommunityWeeksSoFar(now)
+	local current = ns.CommunityWeekStart(now)
+	local out = {}
+	for index = #ns.CommunityWeeks, 1, -1 do
+		local week = ns.CommunityWeeks[index]
+		if week.week <= current then out[#out + 1] = week end
+	end
+	return out, current
+end
+
+-- "by Mira, Roleplay", or "shared anonymously".
+function ns.CommunityCredit(story)
+	local author, ruleset = story.author or "", story.ruleset or ""
+	if author ~= "" and ruleset ~= "" then return ("by %s, %s"):format(author, ruleset) end
+	if author ~= "" then return "by " .. author end
+	return "shared anonymously"
+end
+
 -- A story counts as being about a zone if its text mentions the zone's full name
 -- or one of these words. Lowercase only. Add places within a zone here too.
 ns.ZoneTerms = {

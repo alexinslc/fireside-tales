@@ -140,7 +140,11 @@ local function installApi()
 	realG.SOUNDKIT = { TELL_MESSAGE = 3081, IG_SPELLBOOK_OPEN = 829, IG_SPELLBOOK_CLOSE = 830, IG_ABILITY_PAGE_TURN = 836,
 		IG_MAINMENU_OPTION = 852, IG_MAINMENU_OPTION_CHECKBOX_ON = 856, IG_MAINMENU_OPTION_CHECKBOX_OFF = 857 }
 	realG.GetTime = function() return W.now end
-	realG.time = function() return 1800000000 end
+	-- Friday, January 15, 2027, 08:00 UTC, so the community week began Tuesday the 12th.
+	realG.time = function(t) if t then return os.time(t) end return 1800000000 end
+	realG.GetServerTime = function() return W.serverTime or 1800000000 end
+	realG.date = os.date
+	realG.C_GameRules = { IsHardcoreActive = function() return W.hardcore or false end }
 	realG.wipe = function(t) for k in pairs(t) do t[k] = nil end return t end
 	realG.unpack = unpack
 	realG.PlaySound = function(id)
@@ -893,11 +897,11 @@ scenario("other races and classes, unknown tokens", function()
 	end
 end)
 
-scenario("Write My Story round trip", function()
+scenario("Write Your Tales round trip", function()
 	W.race, W.class, W.name, W.zone = { "Human", "Human" }, { "Warrior", "WARRIOR" }, "Bram", "Duskwood"
 	ns = boot(nil)
 	slash("stories")
-	click(findButton("Write My Story", storyWindow()), "Write My Story button")
+	click(findButton("Write Your Tales", storyWindow()), "Write Your Tales button")
 	check("window opens from the menu button", importWindow():IsShown())
 	local boxes = importBoxes()
 	check("three boxes", #boxes == 3, #boxes)
@@ -1093,9 +1097,9 @@ scenario("interface sounds", function()
 	storyWindow():Hide()
 	check("closing plays only the close sound", heard() == "IG_SPELLBOOK_CLOSE", "")
 	slash("add")
-	check("Write My Story's first open plays only the open sound", heard() == "IG_SPELLBOOK_OPEN", "")
+	check("Write Your Tales' first open plays only the open sound", heard() == "IG_SPELLBOOK_OPEN", "")
 	slash("add")
-	check("Write My Story closes with the close sound", heard() == "IG_SPELLBOOK_CLOSE", "")
+	check("Write Your Tales closes with the close sound", heard() == "IG_SPELLBOOK_CLOSE", "")
 	realG.SOUNDKIT.IG_ABILITY_PAGE_TURN = nil
 	local ok = pcall(ns.PlayUISound, "IG_ABILITY_PAGE_TURN")
 	check("a sound this client lacks stays silent", ok and heard() == "", "")
@@ -1112,6 +1116,7 @@ local function allStories()
 		for _, stories in pairs(group) do addList(stories) end
 	end
 	for _, legend in ipairs(ns.Legends or {}) do addList(legend.parts) end
+	for _, week in ipairs(ns.CommunityWeeks or {}) do addList(week.stories) end
 	for _, s in ipairs(realG.FiresideTalesDB.imported) do out[#out + 1] = s end
 	return out
 end
@@ -1617,7 +1622,7 @@ scenario("festivals by date, by calendar, and the hour", function()
 	W.calendar, W.day = nil, on(2026, 11, 7)
 end)
 
-scenario("Write My Story reads a Total RP 3 profile", function()
+scenario("Write Your Tales reads a Total RP 3 profile", function()
 	W.race, W.class, W.name, W.zone = { "Human", "Human" }, { "Warlock", "WARLOCK" }, "Bram", "Elwynn Forest"
 	ns, loaded, skipped = boot({})
 	local function prompt() return importBoxes()[2]._text or "" end
@@ -1684,9 +1689,122 @@ scenario("Write My Story reads a Total RP 3 profile", function()
 	realG.TRP3_API = { profile = { getPlayerCurrentProfile = function() error("not ready") end } }
 	check("a Total RP 3 error is ignored", ns.Import.RoleplayProfile() == nil)
 	slash("add")
-	check("and Write My Story still opens", importWindow():IsShown())
+	check("and Write Your Tales still opens", importWindow():IsShown())
 	slash("add")
 	realG.TRP3_API = nil
+end)
+
+scenario("community tab: this week's shared stories, credited", function()
+	W.name = "Testhero"
+	ns, loaded, skipped = boot({})
+	check("Community.lua loads", (function() for _, file in ipairs(loaded) do if file == "Community.lua" then return true end end end)())
+	check("the week starts on Tuesday", ns.CommunityWeekStart() == "2027-01-12", ns.CommunityWeekStart())
+	check("a Tuesday is its own week", ns.CommunityWeekStart(1800000000 - 3 * 86400) == "2027-01-12")
+	check("a Monday is the week before", ns.CommunityWeekStart(1800000000 - 4 * 86400) == "2027-01-05")
+	local function story(title, author, ruleset, kind)
+		return { kind = kind or "story", title = title, mood = "funny", author = author, ruleset = ruleset, lines = {
+			{ kind = "say", text = "A gnome in Ironforge sells jars of silence." },
+			{ kind = "emote", text = "cups an invisible jar in both hands." },
+			{ kind = "say", text = "Nobody has opened one. Everyone agrees they are very quiet." },
+		} }
+	end
+	wipe(ns.CommunityWeeks) -- Only these test weeks, whatever Community.lua has.
+	ns.AddCommunityWeek("2027-01-19", { story("Next Week's Tale", "Mira", "") })
+	ns.AddCommunityWeek("2027-01-12", { story("Jars of Silence", "Testhero Ashvale", "Normal"), story("The Quiet Rumor", "", "", "rumor") })
+	ns.AddCommunityWeek("2027-01-05", { story("Last Week's Tale", "Thorg", "PvP") })
+	ns.Story.StoriesChanged()
+
+	slash("stories")
+	local tabs = {}
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") then tabs[f.key] = f end
+	end
+	check("five side tabs", tabs.community ~= nil)
+	check("community stories aren't on the Stories tab", rowFor("Jars of Silence") == nil)
+	click(tabs.community, "Community tab")
+	check("this week's are open", headerStartingWith("- This Week at the Fire") ~= nil and rowFor("Jars of Silence") ~= nil)
+	check("a rumor is listed too", rowFor("The Quiet Rumor") ~= nil)
+	check("last week's are closed but there", rowFor("Last Week's Tale") == nil and findButton("Week of January 5") ~= nil)
+	check("next week's stay hidden", rowFor("Next Week's Tale") == nil)
+	local row = rowFor("Jars of Silence")
+	check("a community story isn't marked as yours", row.story.kind == nil and row.story.communityKind == "story")
+	click(row, "Jars of Silence")
+	local credited
+	for _, f in ipairs(allFrames) do
+		if f._type == "FontString" and underFrame(f, storyWindow()) and plainText(f._text or ""):find("by Testhero Ashvale, Normal", 1, true) then credited = true end
+	end
+	check("the reader credits the author", credited)
+	check("anonymous credit", ns.CommunityCredit(rowFor("The Quiet Rumor").story) == "shared anonymously")
+	local n = #sent
+	for _ = 1, 3 do realG.FiresideTales_Speak() end
+	check("it's told like any story", #sent == n + 3 and sent[n + 2].text == "cups an invisible jar in both hands.", sent[#sent] and sent[#sent].text)
+
+	-- The note for a featured author: once a week, in the chat window only.
+	ns.CharData().featuredNoted = nil
+	local before, sentBefore = #chatOut, #sent
+	ns.NoteFeaturedStory()
+	check("the author is told their story is featured", #chatOut == before + 1 and chatOut[#chatOut]:find('Your story "Jars of Silence" is featured', 1, true), chatOut[#chatOut])
+	check("nothing is said aloud", #sent == sentBefore)
+	ns.NoteFeaturedStory()
+	check("only once a week", #chatOut == before + 1)
+	ns.CharData().featuredNoted = nil
+	W.hardcore = true
+	ns.NoteFeaturedStory()
+	check("a Normal story isn't claimed by a Hardcore character", #chatOut == before + 1)
+	W.hardcore = nil
+
+	-- Stories reach Tell a Tale only in their week.
+	local picks = {}
+	click(findButton("Menu", tellerBar()), "Menu")
+	for _ = 1, 300 do
+		clickLabel("Tell a Tale", storyWindow())
+		local _, picked = readerTitle()
+		if picked then picks[picked.title] = true end
+	end
+	check("Tell a Tale never picks last week's", not picks["Last Week's Tale"] and not picks["Next Week's Tale"])
+end)
+
+scenario("community tab: empty until the site has stories", function()
+	ns, loaded, skipped = boot({})
+	wipe(ns.CommunityWeeks)
+	ns.Story.StoriesChanged()
+	slash("stories")
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") == "community" then click(f, "Community tab") end
+	end
+	local empty
+	for _, f in ipairs(allFrames) do
+		if f._type == "FontString" and effectiveShown(f) and plainText(f._text or ""):find("No community stories yet", 1, true) then empty = true end
+	end
+	check("an empty Community tab points to Contribute a Story", empty)
+
+	-- The bottom bar's second button changes with the tab.
+	check("the Community tab offers Contribute a Story", findButton("Contribute a Story", storyWindow()) ~= nil)
+	check("and not Write Your Tales", findButton("Write Your Tales", storyWindow()) == nil)
+	local hint
+	for _, f in ipairs(allFrames) do
+		if f._type == "FontString" and effectiveShown(f) and plainText(f._text or ""):find("shared by players", 1, true) then hint = true end
+	end
+	check("the reader says these were shared by players", hint)
+	local n = #sent
+	click(findButton("Contribute a Story", storyWindow()), "Contribute a Story")
+	local contribute = rawget(realG, "FiresideTalesContributeFrame")
+	check("Contribute a Story opens its window", contribute and contribute:IsShown())
+	local url
+	for _, f in ipairs(allFrames) do
+		if f._type == "EditBox" and underFrame(f, contribute) then url = f end
+	end
+	check("it has the address to copy", url and url:GetText() == "firesidetales.dev/submit", url and url:GetText())
+	url:SetText("oops")
+	if url._scripts.OnTextChanged then url._scripts.OnTextChanged(url, true) end
+	check("the address can't be changed", url:GetText() == "firesidetales.dev/submit", url:GetText())
+	check("nothing is said aloud", #sent == n)
+	click(findButton("Contribute a Story", storyWindow()), "Contribute a Story")
+	check("pressing it again closes the window", not contribute:IsShown())
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") == "stories" then click(f, "Stories tab") end
+	end
+	check("other tabs have Write Your Tales back", findButton("Write Your Tales", storyWindow()) ~= nil and findButton("Contribute a Story", storyWindow()) == nil)
 end)
 
 setmetatable(realG, nil)

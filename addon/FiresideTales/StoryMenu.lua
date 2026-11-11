@@ -40,6 +40,7 @@ local MOODS = {
 
 local window, reader, readerContent, readerTitle, readerMeta, readerRule, readerText, status, speakButton, restartButton
 local favoriteButton, tonightButton, deleteButton, clearFiltersButton, fromButton, moodButton
+local writeButton, contributeButton -- The bottom bar's second button, which changes with the tab.
 local tabButtons = {}
 local confirmingDelete = false
 local list, listContent, countLabel, emptyLabel, searchBox
@@ -62,14 +63,17 @@ local NIGHT_HINT = "A dark night by the fire. Tell a tale?"
 local buildWindow -- Defined last, once everything it uses exists.
 local RUMORS_THEME = "Rumors and Whispers" -- These shared stories get a tab of their own.
 
--- The tabs down the window's right edge. Stories holds everything except legends and
--- rumors, which have their own tabs. Your Tales shows only your character's own.
+-- The tabs down the window's right edge. Stories holds everything except legends,
+-- rumors, and community stories, which have their own tabs. Your Tales shows only
+-- your character's own.
 local currentTab = "stories"
-local TAB_SOURCES = { mine = { mine = true }, legends = { legend = true }, rumors = { rumors = true } }
+local TAB_SOURCES = {
+	mine = { mine = true }, legends = { legend = true }, rumors = { rumors = true }, community = { community = true },
+}
 local function inTab(source)
 	local only = TAB_SOURCES[currentTab]
 	if only then return only[source] or false end
-	return source ~= "legend" and source ~= "rumors"
+	return source ~= "legend" and source ~= "rumors" and source ~= "community"
 end
 
 -- What the teller bar says when the fire offers a story.
@@ -109,7 +113,7 @@ local function getSections()
 	-- Both Skyborne races share one list, and their exact token isn't known.
 	local raceKey = (raceName .. raceToken):find("Skyborne") and "Skyborne" or raceToken
 
-	-- A built-in list plus any stories pasted into the Write My Story window.
+	-- A built-in list plus any stories pasted into the Write Your Tales window.
 	local imported = ns.GetDB().imported
 	local function withPasted(builtIn, kind, listKey)
 		local merged = {}
@@ -153,6 +157,16 @@ local function getSections()
 			part.legend, part.part = legend, index
 		end
 		add("legend", legend.title, legend.parts)
+	end
+
+	-- Community stories, newest week first. Only the latest week is open at first.
+	local weeks, current = ns.CommunityWeeksSoFar()
+	for index, week in ipairs(weeks) do
+		local when = date("!%B %d", time({ year = tonumber(week.week:sub(1, 4)), month = tonumber(week.week:sub(6, 7)),
+			day = tonumber(week.week:sub(9, 10)), hour = 12 })):gsub(" 0", " ")
+		local before = #sections
+		add("community", week.week, week.stories, week.week == current and "This Week at the Fire" or ("Week of " .. when))
+		if index == 1 and #sections > before then sections[#sections].latest = true end
 	end
 
 	local zoneNames = {}
@@ -339,7 +353,9 @@ local function refreshReader()
 		readerTitle:SetText("")
 		readerMeta:SetText("")
 		readerRule:Hide()
-		readerText:SetText(COLOR_META .. "Choose a story from the list, or press Tell a Tale and let the fire choose.|r")
+		readerText:SetText(COLOR_META .. (currentTab == "community"
+			and "These tales were shared by players. Choose one to tell, or press Contribute a Story to send your own.|r"
+			or "Choose a story from the list, or press Tell a Tale and let the fire choose.|r"))
 		status:SetText("")
 		speakButton:SetText("Tell")
 		speakButton:Disable()
@@ -374,6 +390,9 @@ local function refreshReader()
 	end
 	if currentStory.kind then
 		meta = meta .. COLOR_META .. "  -  |r" .. COLOR_ADDED .. "added by you|r"
+	end
+	if currentStory.week then
+		meta = meta .. COLOR_META .. "  -  " .. ns.CommunityCredit(currentStory) .. "|r"
 	end
 	if char.told[currentStory.key] then
 		meta = meta .. COLOR_META .. "  -  " .. toldText(char.told[currentStory.key]) .. "|r"
@@ -592,7 +611,7 @@ local function getHereStories()
 		-- Tales of other places stay put even if they mention this one in passing.
 		-- Stories told to a target, festival stories, legends, and rumors also keep
 		-- to their own.
-		local own = { places = true, target = true, festival = true, legend = true, rumors = true }
+		local own = { places = true, target = true, festival = true, legend = true, rumors = true, community = true }
 		if not own[section.source] then
 			for _, story in ipairs(section.stories) do
 				local text = textOf(story)
@@ -661,6 +680,9 @@ local function getRow(index)
 			local mood = (story.mood or ""):gsub("^%l", string.upper)
 			GameTooltip:AddLine(("%s, about %d seconds to tell, %d lines"):format(mood, storySeconds(story), #story.lines), 1, 1, 1)
 			if story.kind then GameTooltip:AddLine("Added by you", 0.73, 0.9, 0.79) end
+			if story.week then
+				GameTooltip:AddLine("Shared at firesidetales.dev, " .. ns.CommunityCredit(story), 0.85, 0.75, 0.5, true)
+			end
 			if char.favorites[story.key] then GameTooltip:AddLine("A favorite", 1, 0.82, 0) end
 			if char.told[story.key] then GameTooltip:AddLine("You " .. toldText(char.told[story.key]):gsub("^told", "told it"), 0.6, 0.6, 0.6) end
 			GameTooltip:Show()
@@ -818,7 +840,8 @@ local function renderList(keepScroll)
 			for _, section in ipairs(getSections()) do
 				local isHere = section.source == "legend" and section.stories[1].legend.zone == zone
 				if inTab(section.source) and (pass == 1) == isHere then
-					showSection(section.label or section.header, section.stories, skip, true)
+					showSection(section.label or section.header, section.stories, skip,
+						section.source ~= "community" or section.latest or false)
 				end
 			end
 		end
@@ -858,7 +881,9 @@ local function renderList(keepScroll)
 	clearFiltersButton:SetShown(isFiltering() and true or false)
 	countLabel:SetText(("%d of %d %s"):format(shown, tabTotal, currentTab == "legends" and "parts" or "stories"))
 	if currentTab == "mine" and tabTotal == 0 then
-		emptyLabel:SetText("No tales of your own yet.\nPress Write My Story to add some.")
+		emptyLabel:SetText("No tales of your own yet.\nPress Write Your Tales to add some.")
+	elseif currentTab == "community" and tabTotal == 0 then
+		emptyLabel:SetText("No community stories yet.\nPress Contribute a Story to send yours.")
 	else
 		emptyLabel:SetText("No stories match these filters.")
 	end
@@ -922,7 +947,7 @@ local function pickTale()
 	local tiers = { festival, here, {}, {} }
 	for _, section in ipairs(getSections()) do
 		local tier = (section.source == "mine" or section.source == "race" or section.source == "class") and tiers[3]
-			or (section.source == "shared" or section.source == "rumors") and tiers[4]
+			or (section.source == "shared" or section.source == "rumors" or section.latest) and tiers[4]
 		if tier then
 			for _, story in ipairs(section.stories) do
 				tier[#tier + 1] = story
@@ -1234,6 +1259,10 @@ end
 
 -- From only makes sense on the Stories tab. Elsewhere, Mood moves over into its place.
 local function refreshFilterBar()
+	if writeButton then
+		writeButton:SetShown(currentTab ~= "community")
+		contributeButton:SetShown(currentTab == "community")
+	end
 	local onStories = currentTab == "stories"
 	fromButton:SetShown(onStories)
 	moodButton:ClearAllPoints()
@@ -1252,6 +1281,8 @@ local TABS = {
 		icons = { "Interface\\Icons\\INV_Misc_Book_07", "Interface\\Icons\\INV_Misc_Book_11" } },
 	{ key = "rumors", tooltip = RUMORS_THEME, detail = "Short things people swear they heard.",
 		icons = { "Interface\\Icons\\INV_Drink_05", "Interface\\Icons\\INV_Letter_09" } },
+	{ key = "community", tooltip = "Community", detail = "Stories players shared at firesidetales.dev, new each week.",
+		icons = { "Interface\\Icons\\Achievement_Reputation_01", "Interface\\Icons\\INV_Misc_GroupNeedMore" } },
 }
 
 -- The first icon the client has. SetTexture says when a file is missing.
@@ -1312,6 +1343,8 @@ local function makeTab(info, sideTabs)
 	if not info.portrait then
 		setFirstTexture(tab.icon, info.icons)
 		tab.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92) -- Trims the icon's own border.
+		-- The character window's icons fill the tab's square, nearly to its rim.
+		if sideTabs then tab.icon:SetSize(41, 41) end
 	end
 	tab.selected:Hide()
 	tab:SetScript("OnClick", function() setTab(info.key) end)
@@ -1335,6 +1368,7 @@ function setTab(key)
 		refreshFilterBar()
 		refreshSelectors()
 		renderList()
+		if not currentStory then refreshReader() end -- The Community tab's hint differs.
 	end
 	refreshTabs()
 end
@@ -1495,9 +1529,15 @@ function buildWindow()
 	tellATale:SetScript("OnClick", ns.Story.TellATale)
 	ns.SetFlatButtonOn(tellATale, true) -- Gold, so it's easy to find.
 
-	local writeStory = ns.MakeFlatButton(window, "Write My Story", 104)
-	writeStory:SetPoint("LEFT", tellATale, "RIGHT", 4, 0)
-	writeStory:SetScript("OnClick", ns.Import.Toggle)
+	-- Write Your Tales makes stories for your character alone. On the Community tab,
+	-- the same spot offers Contribute a Story, which shares one with every player.
+	writeButton = ns.MakeFlatButton(window, "Write Your Tales", 112)
+	writeButton:SetPoint("LEFT", tellATale, "RIGHT", 4, 0)
+	writeButton:SetScript("OnClick", ns.Import.Toggle)
+	contributeButton = ns.MakeFlatButton(window, "Contribute a Story", 124)
+	contributeButton:SetPoint("LEFT", tellATale, "RIGHT", 4, 0)
+	contributeButton:SetScript("OnClick", ns.Story.ToggleContribute)
+	contributeButton:Hide()
 
 	buildList()
 	buildReader()
@@ -1514,6 +1554,64 @@ function buildWindow()
 			ns.Teller.Show()
 		end
 	end)
+end
+
+-------------------------------------------------------------------------------
+-- Contribute a Story: where to send a story for every player
+-------------------------------------------------------------------------------
+
+local CONTRIBUTE_URL = "firesidetales.dev/submit"
+local contributeWindow
+
+local function buildContribute()
+	contributeWindow = ns.NewWindow("FiresideTalesContributeFrame", "Contribute a Story",
+		"Interface\\AddOns\\FiresideTales\\Textures\\Icon", 400, 180)
+	contributeWindow:SetFrameStrata("DIALOG")
+	ns.MakeDraggable(contributeWindow, "contributePosition")
+	ns.PlaceFrame(contributeWindow, "contributePosition", "CENTER", UIParent, "CENTER", 0, 60)
+	table.insert(UISpecialFrames, "FiresideTalesContributeFrame") -- Escape closes it.
+
+	local intro = contributeWindow:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	intro:SetPoint("TOPLEFT", 66, -36)
+	intro:SetPoint("TOPRIGHT", -14, -36)
+	intro:SetJustifyH("LEFT")
+	intro:SetText("Write a story or rumor for every player, on the Fireside Tales site. Each week, up to 100 are featured "
+		.. "in the Community tab, credited to you, or shared anonymously if you like.")
+
+	-- Addons can't open a web page, so the address is ready to copy. It can't be edited.
+	local box = CreateFrame("EditBox", nil, contributeWindow, "InputBoxTemplate")
+	box:SetSize(250, 24)
+	box:SetPoint("TOP", 0, -112)
+	box:SetAutoFocus(false)
+	box:SetFontObject("ChatFontNormal")
+	box:SetJustifyH("CENTER")
+	box:SetText(CONTRIBUTE_URL)
+	box:SetScript("OnTextChanged", function(self, userInput)
+		if userInput then
+			self:SetText(CONTRIBUTE_URL)
+			self:HighlightText()
+		end
+	end)
+	box:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+	box:SetScript("OnEscapePressed", function(self) self:ClearFocus(); contributeWindow:Hide() end)
+	box:SetScript("OnMouseUp", function(self) self:HighlightText() end)
+	contributeWindow.box = box
+
+	local hint = contributeWindow:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+	hint:SetPoint("TOP", box, "BOTTOM", 0, -8)
+	hint:SetText("Selected. Press Cmd+C on a Mac or Ctrl+C on Windows to copy it.")
+
+	contributeWindow:Hide()
+	ns.AddWindowSounds(contributeWindow)
+	contributeWindow:HookScript("OnShow", function()
+		box:SetFocus()
+		box:HighlightText()
+	end)
+end
+
+function ns.Story.ToggleContribute()
+	if not contributeWindow then buildContribute() end
+	contributeWindow:SetShown(not contributeWindow:IsShown())
 end
 
 function ns.Story.Toggle()

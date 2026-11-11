@@ -1,6 +1,6 @@
 # Test harness
 
-`harness.lua` runs the whole addon outside the game. It loads the files in `FiresideTales.toc` order, stands in for the game's functions and events, and drives the menu, teller bar, Write My Story, the fire's offer, festivals, and Total RP 3 profiles. It finishes with a count of passed and failed checks.
+`harness.lua` runs the whole addon outside the game. It loads the files in `FiresideTales.toc` order, stands in for the game's functions and events, and drives the menu, teller bar, Write Your Tales, the fire's offer, festivals, and Total RP 3 profiles. It finishes with a count of passed and failed checks.
 
 It proves the addon's logic, not that the game has the functions it stands in for, so still try changes in the game.
 
@@ -14,7 +14,7 @@ luajit tools/harness/harness.lua
 
 Every check should pass, ending in a line like `RESULT: 17290 passed, 0 failed`. A failure prints `FAIL` with the check's name. The last line lists anything the addon read from the game that the harness doesn't provide, which is fine for functions the addon checks for before using.
 
-To test another copy of the addon, pass its folder. To also check a real AI reply against Write My Story, save it to a text file and pass it after the folder:
+To test another copy of the addon, pass its folder. To also check a real AI reply against Write Your Tales, save it to a text file and pass it after the folder:
 
 ```sh
 luajit tools/harness/harness.lua addon/FiresideTales reply.txt

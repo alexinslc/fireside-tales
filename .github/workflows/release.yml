@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Check the stories
         shell: pwsh
@@ -53,7 +53,7 @@ jobs:
           fi
           echo "ZIP_FILE=$zip_file" >> "$GITHUB_ENV"
 
-      - uses: actions/upload-artifact@v7.0.2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: FiresideTales-zip
           path: dist/FiresideTales-*.zip
@@ -96,3 +96,21 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" "$ZIP_FILE" --title "Fireside Tales ${GITHUB_REF_NAME#v}" --notes-file notes.md
+
+      # Tells firesidetales.dev which community stories this version carries, so the review
+      # page can show what's in the addon. A failure here doesn't undo the release.
+      - name: Report the community stories to the site
+        if: startsWith(github.ref, 'refs/tags/')
+        continue-on-error: true
+        env:
+          SCHEDULE_TOKEN: ${{ secrets.SCHEDULE_TOKEN }}
+        run: |
+          file=addon/FiresideTales/Community.lua
+          if [ -z "$SCHEDULE_TOKEN" ] || [ ! -f "$file" ]; then
+            echo "::warning::Skipped: no SCHEDULE_TOKEN secret, or no Community.lua"
+            exit 0
+          fi
+          ids="$(grep -oE 'id = "[0-9a-f-]{36}"' "$file" | cut -d'"' -f2 | jq -R . | jq -s -c .)"
+          body="$(jq -n --arg version "${GITHUB_REF_NAME#v}" --argjson ids "$ids" '{version: $version, story_ids: $ids}')"
+          curl -sS --fail-with-body -X POST "https://firesidetales.dev/api/release" \
+            -H "Authorization: Bearer $SCHEDULE_TOKEN" -H "Content-Type: application/json" -d "$body"

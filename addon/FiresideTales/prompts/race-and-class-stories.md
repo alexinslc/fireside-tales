@@ -2,7 +2,7 @@
 
 Stories anyone of that race or class can tell. They appear automatically on matching characters.
 
-Copy everything below the line into an AI, and fill in the bracketed parts. Then paste what it writes into **Write My Story** in the game.
+Copy everything below the line into an AI, and fill in the bracketed parts. Then paste what it writes into **Write Your Tales** in the game.
 
 ---
 

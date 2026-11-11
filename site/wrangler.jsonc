@@ -1,0 +1,46 @@
+// firesidetales.dev: one Worker serves the React pages (src/, built by Vite) and the API (worker/).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fireside-tales",
+  "main": "worker/index.ts",
+  // Only firesidetales.dev serves the site: no workers.dev or preview addresses beside it.
+  "workers_dev": false,
+  "preview_urls": false,
+  "upload_source_maps": true,
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // The React pages are built by Vite; unknown paths load the app, which shows its own 404.
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // Public pages go through the Worker so they arrive as real HTML for search engines and agents.
+    "run_worker_first": ["/api/*", "/", "/past", "/past/*", "/submit", "/guidelines", "/status", "/feedback", "/sitemap.xml"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "fireside-tales",
+      // Filled in by `wrangler d1 create fireside-tales` before the first deploy.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    // Cloudflare's always-pass test key until the real Turnstile widget is made.
+    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
+    // Cloudflare Access protects /admin and /api/admin. Set these once Access is on.
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": "",
+    "GITHUB_REPO": "alexinslc/fireside-tales",
+    "SITE_URL": "https://firesidetales.dev",
+    // Must be on a domain verified with the email service (Resend).
+    "EMAIL_FROM": "Fireside Tales <stories@firesidetales.dev>"
+  },
+  // Tuesday just after midnight UTC, when a new week starts: author emails and the weekly post.
+  "triggers": { "crons": ["5 0 * * 2"] },
+  // Secrets, set with `wrangler secret put` (and in .dev.vars for local work):
+  //   TURNSTILE_SECRET, IP_SALT (both required: the live site refuses forms without them)
+  //   ADMIN_EMAILS (reviewers' emails, comma separated), REVIEW_TOKENS ("name=access-client-id" pairs)
+  //   RESEND_API_KEY (optional: author emails), FEEDBACK_EMAIL (where feedback is emailed)
+  "observability": { "enabled": true }
+}

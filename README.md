@@ -22,7 +22,8 @@ An addon for telling stories at the campfire in World of Warcraft: Forever, one 
 It comes in two halves:
 
 - **The storytelling:** a story menu with filters, a small teller bar, favorites, and an evening list.
-- **The stories:** a shared collection for every race, class, and zone, plus **Write My Story**, which helps you use an AI to write your own character's stories right from the game.
+- **The stories:** a shared collection for every race, class, and zone, plus **Write Your Tales**, which helps you use an AI to write your own character's stories right from the game.
+- **Community stories:** players contribute stories and rumors at [firesidetales.dev](https://firesidetales.dev), and each week's are featured in the **Community** tab. The site's code is in [`site/`](site/README.md), and `tools/build-community.mjs` writes them into `Community.lua`.
 
 The addon never sends chat by itself. The game requires a key press or click for `/say` and `/e` outside instances, so every line waits for you to press Speak.
 
@@ -122,7 +123,7 @@ To teach a zone new place names, add them to `ns.ZoneTerms` in `StoryData.lua`.
 
 ## Writing your own stories
 
-1. Press **Write My Story** in the menu, or type `/tales add`.
+1. Press **Write Your Tales** in the menu, or type `/tales add`.
 2. Optionally, write a sentence or two about your character. It's saved for next time, and without it the AI invents something. If you use [Total RP 3](https://www.curseforge.com/wow/addons/total-rp-3), your current profile is already in the prompt: name, title, appearance, where you're from and live, what you're doing, and the start of your backstory. Use the box for anything else.
 3. Press **Select Prompt**, copy it with Cmd+C or Ctrl+C, and paste it into any AI. Your character's name, race, class, and zone are already filled in.
 4. Paste the AI's answer into the bottom box and press **Add**. It's fine to paste the whole reply.
@@ -139,7 +140,7 @@ The addon's `prompts` folder has more prompts for a race or class, a zone, every
 | --- | --- |
 | `/tales` or `/tales stories` | Open or close the story menu |
 | `/tales help` | List the commands |
-| `/tales add` | Open or close the Write My Story window |
+| `/tales add` | Open or close the Write Your Tales window |
 | `/tales fire` | Turn the campfire prompt off or back on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show who the addon thinks you are, and your story counts |
