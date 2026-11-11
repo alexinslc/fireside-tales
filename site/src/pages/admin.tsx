@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Check, RotateCcw, X } from "lucide-react";
 import { MOODS, KINDS, findProblems, tidyStory } from "@shared/rules.js";
@@ -71,13 +71,63 @@ export function AdminPage() {
 	useEffect(() => { load(); }, [load]);
 	useEffect(() => { api<{ email: string }>("/api/admin/me").then((m) => setWho(m.email)).catch(() => {}); }, []);
 
+	// Every 5 minutes while the page is in view, checks for stories and feedback that
+	// arrived since you last looked, without changing what you're reviewing.
+	const [fresh, setFresh] = useState({ stories: 0, notes: 0 });
+	const seen = useRef<{ stories: Set<string>; notes: Set<string> } | null>(null);
+	const check = useCallback(async () => {
+		try {
+			const [pending, notes] = await Promise.all([
+				api<{ submissions: { id: string }[] }>("/api/admin/submissions?status=pending"),
+				api<{ feedback: { id: string }[] }>("/api/admin/feedback?status=new"),
+			]);
+			const stories = pending.submissions.map((s) => s.id);
+			const noteIds = notes.feedback.map((n) => n.id);
+			if (!seen.current) {
+				seen.current = { stories: new Set(stories), notes: new Set(noteIds) };
+				return;
+			}
+			const known = seen.current;
+			setFresh({ stories: stories.filter((id) => !known.stories.has(id)).length, notes: noteIds.filter((id) => !known.notes.has(id)).length });
+		} catch { /* try again next time */ }
+	}, []);
+	const markSeen = useCallback(() => {
+		seen.current = null;
+		setFresh({ stories: 0, notes: 0 });
+		check();
+	}, [check]);
+	useEffect(() => {
+		check();
+		const timer = setInterval(() => { if (document.visibilityState === "visible") check(); }, 5 * 60 * 1000);
+		const onShow = () => { if (document.visibilityState === "visible") check(); };
+		document.addEventListener("visibilitychange", onShow);
+		return () => { clearInterval(timer); document.removeEventListener("visibilitychange", onShow); };
+	}, [check]);
+	// Opening the Waiting or Feedback tab counts as having seen what's new.
+	useEffect(() => { if (tab === "pending" || tab === "feedback") markSeen(); }, [tab, markSeen]);
+	const freshTotal = fresh.stories + fresh.notes;
+	useEffect(() => {
+		document.title = `${freshTotal ? `(${freshTotal}) ` : ""}Story Review · Fireside Tales`;
+	}, [freshTotal]);
+	const showFresh = () => {
+		const next = fresh.stories ? "pending" : "feedback";
+		if (next === tab) { markSeen(); load(true); } else setTab(next);
+	};
+
 	const chosen = items.find((i) => i.id === chosenId) ?? null;
 
 	return (
 		<Page>
 			<div className="mb-6 flex flex-wrap items-end justify-between gap-3">
 				<h1 className="text-4xl font-bold">Story review</h1>
-				{who && <p className="text-sm text-muted-foreground">Reviewing as {who}</p>}
+				<div className="flex flex-wrap items-center gap-3">
+					{freshTotal > 0 && (
+						<Button size="sm" onClick={showFresh}>
+							{[fresh.stories && `${fresh.stories} new ${fresh.stories === 1 ? "story" : "stories"}`, fresh.notes && `${fresh.notes} new feedback`].filter(Boolean).join(", ")}: show
+						</Button>
+					)}
+					{who && <p className="text-sm text-muted-foreground">Reviewing as {who}</p>}
+				</div>
 			</div>
 			<Tabs value={tab} onValueChange={setTab} className="mb-6">
 				<TabsList>
