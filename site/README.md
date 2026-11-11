@@ -80,7 +80,7 @@ curl -X POST https://firesidetales.dev/api/agent/submissions \
   -d '{"title":"The Gnome Who Sold Silence","story":"A gnome in Ironforge sells jars of silence.\n*cups an invisible jar in both hands*\nNobody has opened one. Everyone agrees they are very quiet."}'
 ```
 
-`story` takes the same writing as the submit page (actions in `*asterisks*`, or the game's TITLE/SAY/EMOTE format); a `text/plain` body with that format works too. The reply is `201` with a receipt code and status link, `422` with a list of problems to fix, or `429` past the limit: 3 per address a day, and 200 agent stories a day in all. `GET /api/agent` describes the fields. Agent stories go through the same review, and the review page marks them **Agent**.
+`story` takes the same writing as the submit page (actions in `*asterisks*`, or the game's TITLE/SAY/EMOTE format); a `text/plain` body with that format works too. The reply is `201` with a receipt code and status link, `422` with a list of problems to fix, or `429` past the limit: 10 per address a day, and 200 agent stories a day in all. `GET /api/agent` describes the fields. Agent stories go through the same review, and the review page marks them **Agent**.
 
 ## Reviewing with a script
 

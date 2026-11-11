@@ -6,6 +6,7 @@
   // Only firesidetales.dev serves the site: no workers.dev or preview addresses beside it.
   "workers_dev": false,
   "preview_urls": false,
+  "routes": [{ "pattern": "firesidetales.dev", "custom_domain": true }],
   "upload_source_maps": true,
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -21,16 +22,15 @@
       "binding": "DB",
       "database_name": "fireside-tales",
       // Filled in by `wrangler d1 create fireside-tales` before the first deploy.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "b5fda5c6-3199-4021-8aa4-4b2d9837165a",
       "migrations_dir": "migrations"
     }
   ],
   "vars": {
-    // Cloudflare's always-pass test key until the real Turnstile widget is made.
-    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
+        "TURNSTILE_SITE_KEY": "0x4AAAAAAF9UVqZoOgdSEe9Q",
     // Cloudflare Access protects /admin and /api/admin. Set these once Access is on.
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": "",
+    "ACCESS_TEAM_DOMAIN": "mission-access.cloudflareaccess.com",
+    "ACCESS_AUD": "50a87c564d8db4816452ce977cd288f5eb2f41ede854b14a4132f150d87a1984",
     "GITHUB_REPO": "alexinslc/fireside-tales",
     "SITE_URL": "https://firesidetales.dev",
     // Must be on a domain verified with the email service (Resend).

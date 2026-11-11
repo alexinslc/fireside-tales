@@ -27,8 +27,8 @@ export interface Env {
 	GITHUB_DISPATCH_TOKEN?: string; // Optional: lets an approval start the job that adds stories to the addon.
 }
 
-const DAILY_LIMIT = 5; // Submissions per visitor per day.
-const AGENT_DAILY_LIMIT = 3; // Per address per day through the agent API, which has no bot check.
+const DAILY_LIMIT = 10; // Submissions (and feedback notes) per visitor per day.
+const AGENT_DAILY_LIMIT = 10; // Per address per day through the agent API, which has no bot check.
 const AGENT_DAILY_TOTAL = 200; // All agents together, per day.
 const WEEKLY_TARGET = { min: 50, max: 100 }; // Featured stories per week.
 
