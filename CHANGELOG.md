@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.1
+
+- The Community tab starts empty, and fills with stories players share at firesidetales.dev, starting with the week of November 17. The placeholder stories that came with 1.7.0 are gone.
+
 ## 1.7.0
 
 - **Ten new legends** in the Legends tab, retold from Warcraft's own history:
