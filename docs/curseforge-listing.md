@@ -19,7 +19,7 @@ Everything the project form asks for. Paste the description in Markdown mode.
 
 ![Fireside Tales](https://raw.githubusercontent.com/alexinslc/fireside-tales/main/art/banner.png)
 
-**You light a fire, someone sits down beside you, and nobody says a word.** Fireside Tales gives you something to say. Press a button and tell one of more than 500 short tales, one line at a time, in `/say` and `/e`. Everyone around the fire just sees you telling a story, and they don't need the addon to enjoy it.
+**You light a fire, someone sits down beside you, and nobody says a word.** Fireside Tales gives you something to say. Press a button and tell one of more than 600 short tales, one line at a time, in `/say` and `/e`. Everyone around the fire just sees you telling a story, and they don't need the addon to enjoy it.
 
 ### Contribute a Story
 
