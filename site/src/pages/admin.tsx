@@ -196,7 +196,7 @@ function Review({ item, onSaved }: { item: Submission; onSaved: () => void }) {
 		setBusy(true);
 		try {
 			await post(`/api/admin/submissions/${item.id}`, { action, note, story: draft, ...extra });
-			toast.success(action === "approve" ? `Approved for the week of ${week ? shortWeek(week) : ""}` : action === "reject" ? "Turned away" : "Saved");
+			toast.success(action === "approve" ? `Approved for the week of ${week ? shortWeek(week) : ""}` : action === "reject" ? "Rejected" : "Saved");
 			onSaved();
 		} catch (e) {
 			const details = e instanceof ApiError && Array.isArray(e.data.problems) ? (e.data.problems as { message: string }[]).map((p) => p.message).join(" ") : "";
@@ -277,12 +277,12 @@ function Review({ item, onSaved }: { item: Submission; onSaved: () => void }) {
 							</button>
 						))}
 					</div>
-					<Textarea rows={2} placeholder="A note for the author (shown on their status page)" value={note} onChange={(e) => setNote(e.target.value)} />
+					<Textarea rows={2} placeholder="Why it was rejected. The author sees this, and gets it by email if they left one." value={note} onChange={(e) => setNote(e.target.value)} />
 					<div className="flex flex-wrap gap-2">
-						<Button disabled={busy || !week} onClick={() => act("approve", { week })}><Check />Approve for this week</Button>
+						<Button disabled={busy || !week} onClick={() => act("approve", { week })}><Check />Approve</Button>
 						<Button variant="outline" disabled={busy} onClick={() => act("update")}>Save edits</Button>
-						<Button variant="destructive" disabled={busy} onClick={() => act("reject")}><X />Turn it away</Button>
-						{item.status !== "pending" && <Button variant="outline" disabled={busy} onClick={() => act("pending")}><RotateCcw />Back to waiting</Button>}
+						<Button variant="destructive" disabled={busy} onClick={() => act("reject")}><X />Reject</Button>
+						{item.status !== "pending" && <Button variant="outline" disabled={busy} onClick={() => act("pending")}><RotateCcw />Move to Waiting</Button>}
 					</div>
 				</CardContent>
 			</Card>

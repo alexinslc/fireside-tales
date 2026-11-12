@@ -588,7 +588,7 @@ function reviewGuide(env: Env) {
 			`GET ${base}/submissions?status=pending lists stories waiting for review, oldest first (?week=YYYY-MM-DD lists one week's approved stories instead). Each has its lines, mood (empty if the writer didn't pick one), kind, credit, and source ("web" or "agent").`,
 			`GET ${base}/weeks shows how many stories each of the next 12 weeks has, and whether it has a post (?past=8 adds the 8 weeks before). Aim for ${WEEKLY_TARGET.min} to ${WEEKLY_TARGET.max} a week.`,
 			`POST ${base}/submissions/{id} with {"action":"approve"} schedules it for the first week from next week that has room (from Monday 17:00 UTC, the week after), or add "week":"YYYY-MM-DD" (a Tuesday) to pick one.`,
-			`POST ${base}/submissions/{id} with {"action":"reject","note":"..."} turns it away. The note is required and is shown to the author, so make it kind and specific about what to change.`,
+			`POST ${base}/submissions/{id} with {"action":"reject","note":"..."} rejects it. The note is required and is shown to the author, so make it kind and specific about what to change.`,
 			`Any action can include "story": {"kind","title","mood","lines":[{"kind":"say"|"emote","text"}]} to fix a typo or trim a line first. It's checked with the same rules as a new story, and the original is kept. {"action":"update"} saves an edit without deciding.`,
 			`Writers don't choose story or rumor, and may skip the mood, so set them as you approve: add "mood" (${MOODS.join(", ")}) and "kind" ("story", or "rumor" for 3 or 4 lines of hearsay with a twist). A story needs a mood to be approved.`,
 			`{"action":"pending"} undoes a decision.`,

@@ -57,7 +57,7 @@ A reviewer, or a script with a service token, can sort notes through `GET /api/a
 
 ## Letting people know
 
-- **Emails, if the author asks.** The submit page has an optional "Email me when it's featured" box. That address gets at most two emails: one when the story is approved (with its week), and one when that week starts. If the story is turned away, they get the reviewer's note instead. The address is deleted after the last email, when the author follows the stop link in any email, or once the story's week has passed. It's never shown, even on the review page.
+- **Emails, if the author asks.** The submit page has an optional "Email me when it's featured" box. That address gets at most two emails: one when the story is approved (with its week), and one when that week starts. If the story is rejected, they get the reviewer's note instead. The address is deleted after the last email, when the author follows the stop link in any email, or once the story's week has passed. It's never shown, even on the review page.
 - **Each Tuesday** just after midnight UTC, a scheduled run sends the "featured" emails. Reviewers can also run it by hand with `POST /api/admin/weekly-run` (add `?week=YYYY-MM-DD` for another week).
 
 Nothing is sent until `RESEND_API_KEY` is set, so local work is safe. To test emails locally, set `RESEND_API_URL` in `.dev.vars` to a local server that records requests.
@@ -94,7 +94,7 @@ curl https://firesidetales.dev/api/admin \
 `GET /api/admin` returns the instructions, the guidelines, and the limits. In short:
 
 - `GET /api/admin/submissions?status=pending` lists what's waiting, with each story's automatic-check notes. `GET /api/admin/submissions/{id}` gets one.
-- `POST /api/admin/submissions/{id}` with `{"action":"approve"}` schedules it for the first week from next week with room (or pass `"week"`). `{"action":"reject","note":"..."}` turns it away, and the note is required, since the author sees it. Either can include an edited `"story"`.
+- `POST /api/admin/submissions/{id}` with `{"action":"approve"}` schedules it for the first week from next week with room (or pass `"week"`). `{"action":"reject","note":"..."}` rejects it, and the note is required, since the author sees it. Either can include an edited `"story"`.
 - `{"action":"pending"}` undoes a decision.
 
 Each decision records who made it (the token's name or the reviewer's email), shown on the review page.
