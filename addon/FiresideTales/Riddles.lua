@@ -1,0 +1,273 @@
+local _, ns = ...
+
+-- Riddles to ask at the fire, each about something players carry or find. The teller
+-- says the lines, then the addon listens for the answer in nearby chat. hint is said
+-- if nobody gets it, and answer is how the teller names it ("Mira has it! It's a
+-- candle."). answers are what counts as right: lowercase words, matched as whole
+-- words anywhere in what someone says.
+ns.AddRiddles({
+	{
+		title = "Never Once Sold",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "leans toward the fire." },
+			{ kind = "say", text = "Not worth a copper and never once sold," },
+			{ kind = "say", text = "yet hold me and wait, and I'll bring you back home. What am I?" },
+		},
+		hint = "You chose where I take you, the last time you rested.",
+		answer = "a hearthstone",
+		answers = { "hearthstone", "hearthstones", "hearth stone" },
+	},
+	{
+		title = "A Heart in a Stone",
+		mood = "dark",
+		lines = {
+			{ kind = "emote", text = "lowers their voice." },
+			{ kind = "say", text = "Violet and humming, a heart in a stone," },
+			{ kind = "say", text = "I'm torn from the foes that a warlock has overthrown. What am I?" },
+		},
+		hint = "Warlocks never have enough of me.",
+		answer = "a soul shard",
+		answers = { "soul shard", "soul shards", "shard", "shards" },
+	},
+	{
+		title = "Where the Land Burned",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "taps a finger against their chin." },
+			{ kind = "say", text = "I bloom where the land has been burned to the bone," },
+			{ kind = "say", text = "and alchemists tremble to find me alone. What am I?" },
+		},
+		hint = "I'm the rarest herb there is.",
+		answer = "a Black Lotus",
+		answers = { "black lotus", "lotus" },
+	},
+	{
+		title = "The First Loot",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "emote", text = "holds up an invisible scrap between two fingers." },
+			{ kind = "say", text = "The first thing you loot from a bandit's cold hand," },
+			{ kind = "say", text = "I'll bind up your wounds when you're too hurt to stand. What am I?" },
+		},
+		hint = "Every tailor starts with me.",
+		answer = "linen cloth",
+		answers = { "linen", "linen cloth" },
+	},
+	{
+		title = "By the Water",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "leans back and looks toward the water." },
+			{ kind = "say", text = "I've a line but no words, and a hook but no hand." },
+			{ kind = "say", text = "I wait by the water while you stand on the land. What am I?" },
+		},
+		hint = "You'd use me to catch your supper.",
+		answer = "a fishing pole",
+		answers = { "fishing pole", "fishing poles", "fishing rod", "pole", "rod" },
+	},
+	{
+		title = "Red as a Rose",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "emote", text = "raises an invisible vial to the firelight." },
+			{ kind = "say", text = "Red as a rose and gone in a swallow," },
+			{ kind = "say", text = "I fill up the wounds that a blade has left hollow. What am I?" },
+		},
+		hint = "Alchemists sell me by the stack before a raid.",
+		answer = "a healing potion",
+		answers = { "healing potion", "healing potions", "health potion", "red potion" },
+	},
+	{
+		title = "Broken in Two",
+		mood = "funny",
+		lines = {
+			{ kind = "emote", text = "grins across the fire." },
+			{ kind = "say", text = "Bound to a wind lord, then broken in two," },
+			{ kind = "say", text = "the whole city asks if they've heard about you. What am I?" },
+		},
+		hint = "Did someone say...?",
+		answer = "Thunderfury",
+		answers = { "thunderfury" },
+	},
+	{
+		title = "Lighter Than Air",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "blows gently across an open palm." },
+			{ kind = "say", text = "Lighter than air and gone in a breath," },
+			{ kind = "say", text = "a mage lets me fall so they won't fall to their death. What am I?" },
+		},
+		hint = "Mages carry me for a slow fall.",
+		answer = "a light feather",
+		answers = { "light feather", "light feathers", "feather", "feathers" },
+	},
+	{
+		title = "From a String",
+		mood = "action",
+		lines = {
+			{ kind = "emote", text = "draws back an invisible bowstring." },
+			{ kind = "say", text = "I fly from a string and I never come back." },
+			{ kind = "say", text = "A hunter will buy me by hundreds a pack. What am I?" },
+		},
+		hint = "Hunters keep me in a quiver.",
+		answer = "arrows",
+		answers = { "arrow", "arrows", "ammo" },
+	},
+	{
+		title = "Veins in the Hillside",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "knocks twice on the ground beside them." },
+			{ kind = "say", text = "I sleep in the hillside in veins green and brown," },
+			{ kind = "say", text = "the first thing you'll mine when you're new to the town. What am I?" },
+		},
+		hint = "It's the first metal any miner finds.",
+		answer = "copper ore",
+		answers = { "copper", "copper ore" },
+	},
+	{
+		title = "Torn to Bind",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "emote", text = "wraps one hand slowly around the other." },
+			{ kind = "say", text = "I'm cloth that is torn so a wound can be bound," },
+			{ kind = "say", text = "but take one more hit, and I fall to the ground. What am I?" },
+		},
+		hint = "First Aid makes me.",
+		answer = "a bandage",
+		answers = { "bandage", "bandages" },
+	},
+	{
+		title = "Blue as Twilight",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "holds an invisible vial up to the light." },
+			{ kind = "say", text = "Blue as the twilight and gone in a sip," },
+			{ kind = "say", text = "I fill up a caster before the spells slip. What am I?" },
+		},
+		hint = "Casters drink me when the blue bar runs low.",
+		answer = "a mana potion",
+		answers = { "mana potion", "mana potions", "mana", "blue potion" },
+	},
+	{
+		title = "A Borrowed Breath",
+		mood = "spooky",
+		lines = {
+			{ kind = "emote", text = "closes their eyes for a moment." },
+			{ kind = "say", text = "A shaman will carry me, waiting for death," },
+			{ kind = "say", text = "then rise with my help on a borrowed breath. What am I?" },
+		},
+		hint = "Only shamans carry me.",
+		answer = "an ankh",
+		answers = { "ankh", "ankhs" },
+	},
+	{
+		title = "Iron and Oak",
+		mood = "action",
+		lines = {
+			{ kind = "emote", text = "swings an invisible tool down onto the ground." },
+			{ kind = "say", text = "My head's made of iron, my handle of oak." },
+			{ kind = "say", text = "I sing into stone with each patient stroke. What am I?" },
+		},
+		hint = "You need me in your bags to gather ore.",
+		answer = "a mining pick",
+		answers = { "mining pick", "mining picks", "pick", "pickaxe" },
+	},
+	{
+		title = "After the Hunt",
+		mood = "dark",
+		lines = {
+			{ kind = "emote", text = "draws a slow line through the air with one finger." },
+			{ kind = "say", text = "I'm never once drawn in a fight or a fray," },
+			{ kind = "say", text = "but after the hunt, I take something away. What am I?" },
+		},
+		hint = "Leatherworkers can't do without me.",
+		answer = "a skinning knife",
+		answers = { "skinning knife", "skinning knives" },
+	},
+	{
+		title = "Out of Thin Air",
+		mood = "funny",
+		lines = {
+			{ kind = "emote", text = "pretends to pour something from nothing." },
+			{ kind = "say", text = "Out of thin air a mage pours me out," },
+			{ kind = "say", text = "free for the thirsty who wander about. What am I?" },
+		},
+		hint = "Mages hand me out to thirsty friends.",
+		answer = "conjured water",
+		answers = { "conjured water", "water" },
+	},
+	{
+		title = "The First Flower",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "emote", text = "cups a hand as if holding something small and delicate." },
+			{ kind = "say", text = "The first flower picked by an herbalist's hand," },
+			{ kind = "say", text = "I bloom by the roads of the young, gentle land. What am I?" },
+		},
+		hint = "Herbalists find me in every starting zone.",
+		answer = "peacebloom",
+		answers = { "peacebloom", "peace bloom", "peaceblooms" },
+	},
+	{
+		title = "Twice as Deep",
+		mood = "action",
+		lines = {
+			{ kind = "emote", text = "runs a thumb along an invisible edge." },
+			{ kind = "say", text = "Rub me along any edge, and it bites twice as deep." },
+			{ kind = "say", text = "I'm the friend that a warrior will carry and keep. What am I?" },
+		},
+		hint = "Blacksmiths make me from rough stone.",
+		answer = "a sharpening stone",
+		answers = { "sharpening stone", "sharpening stones", "whetstone" },
+	},
+	{
+		title = "Never Enough",
+		mood = "funny",
+		lines = {
+			{ kind = "emote", text = "pats an invisible pack at their side." },
+			{ kind = "say", text = "I hang on your back and I'm never enough." },
+			{ kind = "say", text = "I'm empty by morning, by nightfall I'm stuffed. What am I?" },
+		},
+		hint = "Vendors love me when I'm full.",
+		answer = "your bags",
+		answers = { "bag", "bags", "backpack", "inventory" },
+	},
+	{
+		title = "Forty Levels",
+		mood = "funny",
+		lines = {
+			{ kind = "emote", text = "pretends to gallop with both hands." },
+			{ kind = "say", text = "For forty long levels you'll walk till you've found" },
+			{ kind = "say", text = "the gold, and then I'll carry you over the ground. What am I?" },
+		},
+		hint = "Level forty, and plenty of gold.",
+		answer = "a mount",
+		answers = { "mount", "mounts", "horse", "wolf", "ram", "raptor", "kodo", "mechanostrider", "nightsaber", "skeletal horse" },
+	},
+	{
+		title = "One Word by the Sea",
+		mood = "funny",
+		lines = {
+			{ kind = "emote", text = "makes a small gurgling noise, then looks embarrassed." },
+			{ kind = "say", text = "Taken from those who sing one word by the sea," },
+			{ kind = "say", text = "a fisherman pays you a copper for me. What am I?" },
+		},
+		hint = "Something on the shore drops me.",
+		answer = "a murloc fin",
+		answers = { "murloc fin", "murloc fins", "fin", "fins" },
+	},
+	{
+		title = "On a Kobold's Head",
+		mood = "spooky",
+		lines = {
+			{ kind = "emote", text = "shields a tiny flame with one hand." },
+			{ kind = "say", text = "A kobold will wear me on top of its head," },
+			{ kind = "say", text = "and I weep as I burn till there's nothing ahead. What am I?" },
+		},
+		hint = "You'll find me in every mine in Elwynn.",
+		answer = "a candle",
+		answers = { "candle", "candles" },
+	},
+})

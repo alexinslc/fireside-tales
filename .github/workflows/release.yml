@@ -62,7 +62,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           version="${GITHUB_REF_NAME#v}"
-          awk -v heading="## $version" '$0 == heading { found = 1; next } /^## / { found = 0 } found' CHANGELOG.md > notes.md
+          # This version and every one before it, with their headings, so the notes read
+          # like a full changelog.
+          awk -v heading="## $version" '$0 == heading { found = 1 } found' CHANGELOG.md > notes.md
           if [ ! -s notes.md ]; then
             echo "::error::CHANGELOG.md has no section for $version"
             exit 1

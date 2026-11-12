@@ -69,11 +69,12 @@ local RUMORS_THEME = "Rumors and Whispers" -- These shared stories get a tab of 
 local currentTab = "stories"
 local TAB_SOURCES = {
 	mine = { mine = true }, legends = { legend = true }, rumors = { rumors = true }, community = { community = true },
+	riddles = { riddle = true },
 }
 local function inTab(source)
 	local only = TAB_SOURCES[currentTab]
 	if only then return only[source] or false end
-	return source ~= "legend" and source ~= "rumors" and source ~= "community"
+	return source ~= "legend" and source ~= "rumors" and source ~= "community" and source ~= "riddle"
 end
 
 -- What the teller bar says when the fire offers a story.
@@ -158,6 +159,8 @@ local function getSections()
 		end
 		add("legend", legend.title, legend.parts)
 	end
+
+	add("riddle", "Riddles", ns.Riddles, "Riddles at the Fire")
 
 	-- Community stories, newest week first. Only the latest week is open at first.
 	local weeks, current = ns.CommunityWeeksSoFar()
@@ -416,12 +419,30 @@ local function refreshReader()
 		end
 		parts[#parts + 1] = text
 	end
+	if currentStory.riddle then
+		parts[#parts + 1] = COLOR_META .. "Hint: " .. currentStory.hint .. "|r"
+		parts[#parts + 1] = COLOR_META .. "Answer (only you can see this): " .. currentStory.answer .. "|r"
+	end
 	readerText:SetText(table.concat(parts, "\n\n"))
 	readerContent:SetHeight(readerTitle:GetStringHeight() + readerMeta:GetStringHeight() + readerText:GetStringHeight() + 30)
 
 	local statusText, canSpeak, speakLabel, barText, barStatus
 	local following = nextLine > total and followingStory()
-	if nextLine > total then
+	local riddle = nextLine > total and currentStory.riddle and ns.Riddle.For(currentStory)
+	local riddleNext, riddleStep = nil, nil
+	if riddle then riddleNext, riddleStep = ns.Riddle.Next() end
+	if riddleNext then
+		canSpeak = true
+		if riddleStep == "winner" then
+			statusText = riddle.winner .. " has it!"
+			barText = COLOR_NEXT .. riddle.winner .. " has it!|r Speak to say so."
+			speakLabel = "Announce"
+		else
+			statusText = ns.Riddle.IsListening() and "Listening for the answer..." or "No answer yet."
+			barText = statusText
+			speakLabel = riddleStep == "hint" and "Hint" or "Reveal"
+		end
+	elseif nextLine > total then
 		local isPart = following and following == nextPart(currentStory)
 		statusText = isPart and "End of this part." or "The end."
 		canSpeak = following and true or false
@@ -465,6 +486,7 @@ local function refreshReader()
 end
 
 local function selectStory(story)
+	if not (story and ns.Riddle.For(story)) then ns.Riddle.Stop() end
 	currentStory = story
 	nextLine = 1
 	storyTarget = nil
@@ -482,6 +504,17 @@ end
 function ns.Story.SpeakNext()
 	if not currentStory then return end
 	local total = #currentStory.lines
+	-- After a riddle is asked, Speak announces the winner, or gives the hint, or the answer.
+	if nextLine > total and currentStory.riddle and ns.Riddle.For(currentStory) then
+		local text, what = ns.Riddle.Next()
+		if text then
+			if ns.SendLine(text, "SAY") then
+				ns.Riddle.Said(what)
+				refreshReader()
+			end
+			return
+		end
+	end
 	if nextLine > total then
 		local following = followingStory()
 		if following then selectStory(following) end
@@ -496,6 +529,8 @@ function ns.Story.SpeakNext()
 
 	storyTarget = name
 	offering = false
+	-- A riddle starts listening for answers with its first line.
+	if currentStory.riddle and nextLine == 1 then ns.Riddle.Start(currentStory) end
 	nextLine = nextLine + 1
 	if nextLine > total then
 		ns.CharData().told[currentStory.key] = time()
@@ -614,7 +649,7 @@ local function getHereStories()
 		-- Tales of other places stay put even if they mention this one in passing.
 		-- Stories told to a target, festival stories, legends, and rumors also keep
 		-- to their own.
-		local own = { places = true, target = true, festival = true, legend = true, rumors = true, community = true }
+		local own = { places = true, target = true, festival = true, legend = true, rumors = true, community = true, riddle = true }
 		if not own[section.source] then
 			for _, story in ipairs(section.stories) do
 				local text = textOf(story)
@@ -882,7 +917,7 @@ local function renderList(keepScroll)
 	listContent:SetHeight(math.max(-y + 4, 1))
 	list:SetVerticalScroll(keepScroll and scroll or 0)
 	clearFiltersButton:SetShown(isFiltering() and true or false)
-	countLabel:SetText(("%d of %d %s"):format(shown, tabTotal, currentTab == "legends" and "parts" or "stories"))
+	countLabel:SetText(("%d of %d %s"):format(shown, tabTotal, currentTab == "legends" and "parts" or currentTab == "riddles" and "riddles" or "stories"))
 	if currentTab == "mine" and tabTotal == 0 then
 		emptyLabel:SetText("No tales of your own yet.\nPress Write Your Tales to add some.")
 	elseif currentTab == "community" and tabTotal == 0 then
@@ -1284,6 +1319,8 @@ local TABS = {
 		icons = { "Interface\\Icons\\INV_Misc_Book_07", "Interface\\Icons\\INV_Misc_Book_11" } },
 	{ key = "rumors", tooltip = RUMORS_THEME, detail = "Short things people swear they heard.",
 		icons = { "Interface\\Icons\\INV_Drink_05", "Interface\\Icons\\INV_Letter_09" } },
+	{ key = "riddles", tooltip = "Riddles", detail = "Ask a riddle, and the first one nearby to say the answer wins.",
+		icons = { "Interface\\Icons\\INV_Misc_QuestionMark" } },
 	{ key = "community", tooltip = "Community", detail = "Stories players shared at firesidetales.dev, new each week.",
 		icons = { "Interface\\Icons\\Achievement_Reputation_01", "Interface\\Icons\\INV_Misc_GroupNeedMore" } },
 }
@@ -1615,6 +1652,11 @@ end
 function ns.Story.ToggleContribute()
 	if not contributeWindow then buildContribute() end
 	contributeWindow:SetShown(not contributeWindow:IsShown())
+end
+
+-- Someone nearby answered the riddle in play.
+function ns.Story.RiddleChanged()
+	if currentStory and currentStory.riddle then refreshReader() end
 end
 
 function ns.Story.Toggle()

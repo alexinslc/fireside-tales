@@ -1807,6 +1807,211 @@ scenario("community tab: empty until the site has stories", function()
 	check("other tabs have Write Your Tales back", findButton("Write Your Tales", storyWindow()) ~= nil and findButton("Contribute a Story", storyWindow()) == nil)
 end)
 
+scenario("riddles: every riddle is fit to ask", function()
+	ns, loaded, skipped = boot({})
+	check("Riddles.lua loads", (function() for _, file in ipairs(loaded) do if file == "Riddles.lua" then return true end end end)())
+	check("RiddleGame.lua loads", ns.Riddle ~= nil)
+	check("22 riddles", #ns.Riddles == 22, #ns.Riddles)
+	local function safe(text)
+		return #text < 250 and not text:find("[|{}]") and not text:find("[^\32-\126]")
+	end
+	local titles = {}
+	for _, r in ipairs(ns.Riddles) do
+		local says, emotes = 0, 0
+		for _, line in ipairs(r.lines) do
+			if line.kind == "say" then says = says + 1 else emotes = emotes + 1 end
+			check(r.title .. ": line is safe for chat", safe(line.text), line.text)
+			if line.kind == "emote" then check(r.title .. ": emote starts lowercase", line.text:find("^%l") ~= nil, line.text) end
+			check(r.title .. ": its own lines don't give the answer", not ns.Riddle.Matches(r, line.text), line.text)
+		end
+		check(r.title .. ": 3 to 8 lines", #r.lines >= 3 and #r.lines <= 8, #r.lines)
+		check(r.title .. ": a spoken line and an emote", says >= 1 and emotes >= 1)
+		check(r.title .. ": has a mood", r.mood ~= nil)
+		check(r.title .. ": has a hint", type(r.hint) == "string" and safe(r.hint), r.hint)
+		check(r.title .. ": the hint doesn't give the answer", not ns.Riddle.Matches(r, r.hint), r.hint)
+		check(r.title .. ": its answer counts as right", ns.Riddle.Matches(r, r.answer), r.answer)
+		check(r.title .. ": accepted answers are plain lowercase", (function()
+			for _, a in ipairs(r.answers) do if not a:find("^[a-z0-9 ]+$") then return false end end
+			return #r.answers > 0
+		end)())
+		-- The lines Speak builds, with the longest name the game allows.
+		check(r.title .. ": the announce line fits", safe(("Abcdefghijkl has it! It's %s."):format(r.answer)))
+		check(r.title .. ": the reveal line fits", safe(("Nobody? It's %s."):format(r.answer)))
+		check(r.title .. ": title is unique", not titles[r.title], r.title)
+		titles[r.title] = true
+	end
+	-- No riddle's answer would also win another riddle by accident.
+	for _, a in ipairs(ns.Riddles) do
+		for _, b in ipairs(ns.Riddles) do
+			if a ~= b then check(a.title .. " and " .. b.title .. " don't share answers", not ns.Riddle.Matches(b, a.answer), a.answer) end
+		end
+	end
+end)
+
+scenario("riddles: matching answers", function()
+	ns, loaded, skipped = boot({})
+	local function riddle(title) for _, r in ipairs(ns.Riddles) do if r.title == title then return r end end end
+	local stone, candle, knife, lotus = riddle("Never Once Sold"), riddle("On a Kobold's Head"), riddle("After the Hunt"), riddle("Where the Land Burned")
+	check("a plain answer", ns.Riddle.Matches(stone, "hearthstone"))
+	check("inside a question", ns.Riddle.Matches(stone, "is it a hearthstone?"))
+	check("shouted", ns.Riddle.Matches(stone, "HEARTHSTONE!!!"))
+	check("plural", ns.Riddle.Matches(stone, "hearthstones"))
+	check("two words", ns.Riddle.Matches(stone, "a hearth stone maybe"))
+	check("a near miss doesn't count", not ns.Riddle.Matches(stone, "heartstone"))
+	check("half the answer doesn't count", not ns.Riddle.Matches(stone, "my hearth is cold"))
+	check("inside another word doesn't count", not ns.Riddle.Matches(candle, "candlesticks!"))
+	check("a two-word answer", ns.Riddle.Matches(knife, "a skinning knife?"))
+	check("one word of it doesn't count", not ns.Riddle.Matches(knife, "a knife") and not ns.Riddle.Matches(knife, "skinning"))
+	check("punctuation between words", ns.Riddle.Matches(lotus, "the... black-lotus"))
+	check("an empty message", not ns.Riddle.Matches(stone, ""))
+end)
+
+scenario("riddles: asking one, and someone gets it", function()
+	W.name = "Testhero"
+	ns, loaded, skipped = boot({})
+	slash("stories")
+	local tabs = {}
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") then tabs[f.key] = f end
+	end
+	check("a Riddles tab", tabs.riddles ~= nil)
+	local search
+	for _, f in ipairs(allFrames) do if f._type == "EditBox" then search = search or f end end
+	search:SetText("hearthstone")
+	search:SetText("")
+	check("riddles aren't on the Stories tab", rowFor("Never Once Sold") == nil)
+	click(tabs.riddles, "Riddles tab")
+	local row = rowFor("Never Once Sold")
+	check("the Riddles tab lists them", row ~= nil and rowFor("Never Enough") ~= nil)
+	click(row, "Never Once Sold")
+	local readerHas = function(text)
+		for _, f in ipairs(allFrames) do
+			if f._type == "FontString" and underFrame(f, storyWindow()) and plainText(f._text or ""):find(text, 1, true) then return true end
+		end
+	end
+	check("the teller sees the hint", readerHas("Hint: You chose where I take you"))
+	check("the teller sees the answer", readerHas("Answer (only you can see this): a hearthstone"))
+	check("not listening before it's asked", not ns.Riddle.IsListening())
+	fire("CHAT_MSG_SAY", "hearthstone", "Mira-Stormrage")
+	check("an answer before the riddle doesn't count", ns.Riddle.For(row.story) == nil)
+
+	local n = #sent
+	realG.FiresideTales_Speak() -- Tell: hands it to the teller bar.
+	if #sent == n then realG.FiresideTales_Speak() end
+	check("asking starts with the first line", #sent == n + 1 and sent[#sent].text == row.story.lines[1].text, sent[#sent] and sent[#sent].text)
+	check("now listening", ns.Riddle.IsListening())
+	for _ = 2, #row.story.lines do realG.FiresideTales_Speak() end
+	check("every line is asked", #sent == n + #row.story.lines)
+
+	fire("CHAT_MSG_SAY", "a rock?", "Mira-Stormrage")
+	check("a wrong guess doesn't win", ns.Riddle.For(row.story).winner == nil)
+	fire("CHAT_MSG_SAY", "it's a hearthstone, obviously", "Testhero")
+	check("the teller can't win their own riddle", ns.Riddle.For(row.story).winner == nil)
+	fire("CHAT_MSG_SAY", "<<secret>>", "Mira-Stormrage")
+	fire("CHAT_MSG_SAY", "hearthstone", "<<secret>>")
+	check("secret chat is ignored", ns.Riddle.For(row.story).winner == nil)
+	check("Speak offers the hint while waiting", findButton("Hint", tellerBar()) ~= nil, barTexts())
+
+	local sounds = W.sounds or 0
+	fire("CHAT_MSG_PARTY", "HEARTHSTONE!", "Mira-Stormrage")
+	check("the right answer wins, without the realm", ns.Riddle.For(row.story).winner == "Mira")
+	check("a sound says so", (W.sounds or 0) > sounds)
+	check("the bar names the winner", barTexts():find("Mira has it!", 1, true), barTexts())
+	check("Speak offers to announce", findButton("Announce", tellerBar()) ~= nil)
+	fire("CHAT_MSG_SAY", "hearthstone", "Bjorn")
+	check("a later answer doesn't take it", ns.Riddle.For(row.story).winner == "Mira")
+	check("nothing is said by itself", #sent == n + #row.story.lines)
+
+	realG.FiresideTales_Speak()
+	check("Announce says who got it, in /say", sent[#sent].text == "Mira has it! It's a hearthstone." and sent[#sent].chatType == "SAY", sent[#sent].text)
+	local count = #sent
+	realG.FiresideTales_Speak()
+	check("then it's over", #sent == count)
+	check("the bar says the end", barTexts():find("The end", 1, true), barTexts())
+end)
+
+scenario("riddles: nobody gets it", function()
+	W.name = "Testhero"
+	ns, loaded, skipped = boot({})
+	slash("stories")
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") == "riddles" then click(f, "Riddles tab") end
+	end
+	local row = rowFor("Never Enough")
+	click(row, "Never Enough")
+	local n = #sent
+	realG.FiresideTales_Speak()
+	if #sent == n then realG.FiresideTales_Speak() end
+	for _ = 2, #row.story.lines do realG.FiresideTales_Speak() end
+	local asked = #sent
+
+	W.lockdown = true
+	realG.FiresideTales_Speak()
+	check("a blocked hint isn't counted as given", #sent == asked and findButton("Hint", tellerBar()) ~= nil)
+	W.lockdown = false
+	realG.FiresideTales_Speak()
+	check("Speak gives the hint", sent[#sent].text == row.story.hint, sent[#sent].text)
+	check("then offers to reveal", findButton("Reveal", tellerBar()) ~= nil, barTexts())
+	check("still listening after the hint", ns.Riddle.IsListening())
+	realG.FiresideTales_Speak()
+	check("Reveal says the answer", sent[#sent].text == "Nobody? It's your bags.", sent[#sent].text)
+	fire("CHAT_MSG_SAY", "bags!", "Mira")
+	check("an answer after the reveal doesn't win", ns.Riddle.For(row.story).winner == nil)
+	local count = #sent
+	realG.FiresideTales_Speak()
+	check("then it's over", #sent == count)
+
+	-- Ask it again: it starts fresh, and an answer after the hint still wins.
+	click(findButton("Menu", tellerBar()), "Menu")
+	click(rowFor("Never Enough"), "Never Enough")
+	clickLabel("Restart", storyWindow())
+	realG.FiresideTales_Speak()
+	if #sent == count then realG.FiresideTales_Speak() end
+	for _ = 2, #row.story.lines do realG.FiresideTales_Speak() end
+	check("asked again, it listens again", ns.Riddle.IsListening() and ns.Riddle.For(row.story).winner == nil)
+	realG.FiresideTales_Speak()
+	fire("CHAT_MSG_SAY", "my bags?", "Bjorn")
+	check("an answer after the hint wins", ns.Riddle.For(row.story).winner == "Bjorn")
+	realG.FiresideTales_Speak()
+	check("and is announced", sent[#sent].text == "Bjorn has it! It's your bags.", sent[#sent].text)
+end)
+
+scenario("riddles: time runs out, and moving on stops it", function()
+	W.name = "Testhero"
+	ns, loaded, skipped = boot({})
+	slash("stories")
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "selected") and rawget(f, "key") == "riddles" then click(f, "Riddles tab") end
+	end
+	local row = rowFor("Lighter Than Air")
+	click(row, "Lighter Than Air")
+	local n = #sent
+	realG.FiresideTales_Speak()
+	if #sent == n then realG.FiresideTales_Speak() end
+	for _ = 2, #row.story.lines do realG.FiresideTales_Speak() end
+	advance(301)
+	fire("CHAT_MSG_SAY", "a feather", "Mira")
+	check("after five minutes, answers stop counting", ns.Riddle.For(row.story).winner == nil and not ns.Riddle.IsListening())
+	check("the bar says nobody's answered", barTexts():find("No answer yet", 1, true), barTexts())
+	realG.FiresideTales_Speak()
+	check("the hint still works", sent[#sent].text == row.story.hint)
+
+	click(findButton("Menu", tellerBar()), "Menu")
+	click(rowFor("On a Kobold's Head"), "On a Kobold's Head")
+	check("choosing another riddle ends this one", ns.Riddle.For(row.story) == nil)
+	fire("CHAT_MSG_SAY", "a feather", "Mira")
+	check("and its answer no longer counts", ns.Riddle.For(row.story) == nil)
+
+	-- Tell a Tale never hands you a riddle.
+	local picks = 0
+	for _ = 1, 60 do
+		clickLabel("Tell a Tale", storyWindow())
+		local _, picked = readerTitle()
+		if picked and picked.riddle then picks = picks + 1 end
+	end
+	check("Tell a Tale never picks a riddle", picks == 0, picks)
+end)
+
 setmetatable(realG, nil)
 stdPrint("")
 stdPrint(("RESULT: %d passed, %d failed"):format(passed, failed))

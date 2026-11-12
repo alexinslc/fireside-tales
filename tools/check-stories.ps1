@@ -28,12 +28,14 @@ $structural = @(
     '^\s*\["\w+"\] = \{$', '^\s*\w+ = \{$',
     # Community.lua, written from firesidetales.dev.
     '^if not ns\.AddCommunityWeek then return end$', '^ns\.AddCommunityWeek\("\d{4}-\d{2}-\d{2}", \{$',
-    '^\s*kind = "(story|rumor)",$', '^\s*id = "[0-9a-f-]{36}",$', '^\s*(author|ruleset) = "(?:[^"\\]|\\.)*",$'
+    '^\s*kind = "(story|rumor)",$', '^\s*id = "[0-9a-f-]{36}",$',
+    # Riddles.lua: the accepted answers, lowercase words in one list.
+    '^ns\.AddRiddles\(\{$', '^\s*answers = \{ "[a-z0-9 ]+"(, "[a-z0-9 ]+")* \},$', '^\s*(author|ruleset) = "(?:[^"\\]|\\.)*",$'
 )
 
 $files = if ($File) { @(Split-Path $File -Leaf) } else {
     Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') |
-        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton|Campfire|Seasons)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
+        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton|Campfire|Seasons|RiddleGame)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
 }
 
 # Macs can treat file names as case-sensitive, so a .toc entry must match exactly.
@@ -84,6 +86,14 @@ foreach ($name in $files) {
             $stories++
             continue
         }
+        # A riddle's hint and answer are said in chat too, so they follow the same line rules.
+        if ($row -match '^\s*(hint|answer) = "((?:[^"\\]|\\.)+)",$') {
+            $text = $Matches[2]
+            $bytes = $utf8.GetByteCount($text)
+            if ($bytes -gt $MaxBytes) { $problems.Add("$name`:$n is $bytes bytes (limit $MaxBytes)") }
+            if ($text -match '[|{}]|[^\x20-\x7E]') { $problems.Add("$name`:$n has an unsafe character: $text") }
+            continue
+        }
         if ($row -match '^\s*mood = "(\w+)",$') {
             if ($Matches[1] -notin $Moods) { $problems.Add("$name`:$n unknown mood '$($Matches[1])'") }
             if ($story) { $story.Mood = $Matches[1] }
@@ -108,6 +118,7 @@ foreach ($name in $files) {
         if ($row -match '^ns\.AddStories\("(\w+)", "?([\w'' -]+)"?, \{$') { $key = "$($Matches[1])/$($Matches[2])" }
         elseif ($row -match '^ns\.AddLegend\("[\w'' -]+", "([^"\\]+)", \{$') { $key = "legend/$($Matches[1])" }
         elseif ($row -match '^ns\.AddCommunityWeek\("([\d-]+)", \{$') { $key = "community/$($Matches[1])" }
+        elseif ($row -match '^ns\.AddRiddles\(\{$') { $key = 'riddles' }
         elseif ($row -match '^ns\.Stories = \{$') { $key = 'shared/nil' }
         elseif ($row -match '^\t\["?(\w+)"?\] = \{$' -or $row -match '^\t(\w+) = \{$') { $key = "keyed/$($Matches[1])" }
         elseif ($row -match '^\s*title = "((?:[^"\\]|\\.)+)",$') {

@@ -47,6 +47,17 @@ function ns.AddLegend(zone, title, legend)
 	ns.Legends[#ns.Legends + 1] = legend
 end
 
+-- Riddles, asked at the fire like a story. Each also has a hint, the answer as the
+-- teller says it, and the answers that count (see Riddles.lua and RiddleGame.lua).
+ns.Riddles = {}
+
+function ns.AddRiddles(riddles)
+	for _, riddle in ipairs(riddles) do
+		riddle.riddle = true
+		ns.Riddles[#ns.Riddles + 1] = riddle
+	end
+end
+
 -- Stories players shared at firesidetales.dev, featured a week at a time. Community.lua
 -- is written from the site, so each release carries the weeks ahead. week is the
 -- Tuesday (UTC) it starts, as "YYYY-MM-DD".

@@ -97,5 +97,5 @@ if (notesAt !== -1) {
 	const list = ahead.map(day);
 	const when = list.length <= 1 ? list.join("") : `${list.slice(0, -1).join(", ")} and ${list.at(-1)}`;
 	await writeFile(process.argv[notesAt + 1], ahead.length === 0 ? "" :
-		`- **Community stories** from firesidetales.dev for the week${ahead.length > 1 ? "s" : ""} of ${when}${credit}. Find them in the **Community** tab.\n`);
+		`- New Community stories for the week${ahead.length > 1 ? "s" : ""} of ${when}${credit}.\n`);
 }
