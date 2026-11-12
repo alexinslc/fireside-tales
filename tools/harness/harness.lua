@@ -776,6 +776,74 @@ scenario("pasted stories appear, can be told and deleted", function()
 	storyWindow():Hide()
 end)
 
+scenario("saved tales can be edited", function()
+	slash("stories")
+	local search
+	for _, f in ipairs(allFrames) do if f._type == "EditBox" and f._parent == storyWindow() then search = f end end
+	search:SetText("fenced toll")
+	click(rowFor("The Fenced Toll"), "row")
+	search:SetText("")
+	check("Edit offered on a pasted story", findButton("Edit", storyWindow()))
+	local count = ns.Import.Count()
+	clickLabel("Edit", storyWindow())
+	check("Edit opens Write Your Tales", importWindow():IsShown())
+	local text = importBox():GetText()
+	check("story is in the paste box", text:find("EVERYONE: Road Stories\nTITLE: The Fenced Toll\nMOOD: wise\nEMOTE: rolls", 1, true), text)
+	check("button says Save", findButton("Save", importWindow()))
+
+	-- A bad change keeps the story as it was.
+	importBox()._text = text:gsub("MOOD: wise", "MOOD: angry")
+	clickLabel("Save", importWindow())
+	local saidNotSaved = false
+	for _, f in ipairs(allFrames) do
+		if f._type == "FontString" and (f._text or ""):find("^Not saved yet%.") then saidNotSaved = true end
+	end
+	check("bad edit says not saved", saidNotSaved)
+	check("bad edit keeps the story", ns.Import.Count() == count and importWindow():IsShown())
+
+	-- A good change, with a new title, replaces it.
+	importBox()._text = text:gsub("The Fenced Toll", "The Mended Toll"):gsub("I paid her a copper anyway%.", "I paid her two coppers.")
+	clickLabel("Save", importWindow())
+	local mended, fenced
+	for _, story in ipairs(ns.GetDB().imported) do
+		if story.title == "The Mended Toll" then mended = story end
+		if story.title == "The Fenced Toll" then fenced = story end
+	end
+	check("edit keeps the count", ns.Import.Count() == count)
+	check("edit saves the change", mended and mended.lines[3].text == "I paid her two coppers.")
+	check("old title is gone", fenced == nil)
+	check("window closes after saving", not importWindow():IsShown())
+	local shown = false
+	for _, f in ipairs(allFrames) do
+		local root = f._parent
+		while root and root ~= storyWindow() do root = root._parent end
+		if f._type == "FontString" and f._text == "The Mended Toll" and root then shown = true end
+	end
+	check("menu shows the changed story", shown)
+
+	-- Closing mid-edit goes back to adding.
+	clickLabel("Edit", storyWindow())
+	importWindow():Hide()
+	slash("add")
+	check("closing stops editing", findButton("Add", importWindow()) and importBox():GetText() == "")
+	importWindow():Hide()
+
+	-- Saving every kind unchanged gives back the same story.
+	local before = {}
+	for index, story in ipairs(ns.GetDB().imported) do before[index] = ns.Import.AsText(story) end
+	for index = 1, #before do
+		local story = ns.GetDB().imported[index]
+		ns.Import.Edit(story)
+		clickLabel("Save", importWindow())
+	end
+	local after = {}
+	for _, story in ipairs(ns.GetDB().imported) do after[ns.Import.AsText(story)] = true end
+	local same = #ns.GetDB().imported == #before
+	for _, text in ipairs(before) do same = same and after[text] == true end
+	check("every kind survives an unchanged save", same)
+	storyWindow():Hide()
+end)
+
 scenario("game events don't pop anything up", function()
 	check("no prompt frame exists", rawget(realG, "FiresideTalesFrame") == nil)
 	check("no prompt lines loaded", ns.PromptLines == nil)

@@ -39,7 +39,7 @@ local MOODS = {
 }
 
 local window, reader, readerContent, readerTitle, readerMeta, readerRule, readerText, status, speakButton, restartButton
-local favoriteButton, tonightButton, deleteButton, clearFiltersButton, fromButton, moodButton
+local favoriteButton, tonightButton, editButton, deleteButton, clearFiltersButton, fromButton, moodButton
 local writeButton, contributeButton -- The bottom bar's second button, which changes with the tab.
 local tabButtons = {}
 local confirmingDelete = false
@@ -365,6 +365,7 @@ local function refreshReader()
 		restartButton:Disable()
 		favoriteButton:Disable()
 		tonightButton:Disable()
+		editButton:Hide()
 		deleteButton:Hide()
 		return
 	end
@@ -378,7 +379,8 @@ local function refreshReader()
 	tonightButton:Enable()
 	tonightButton:SetText(onTonight and "On Tonight" or "Add to Tonight")
 	ns.SetFlatButtonOn(tonightButton, onTonight)
-	-- Only pasted stories have a kind, and only they can be deleted here.
+	-- Only pasted stories have a kind, and only they can be changed or deleted here.
+	editButton:SetShown(currentStory.kind ~= nil)
 	deleteButton:SetShown(currentStory.kind ~= nil)
 	deleteButton:SetText(confirmingDelete and "Sure?" or "Delete")
 
@@ -1071,8 +1073,9 @@ function ns.Story.TellerClosed()
 	offerGeneration = offerGeneration + 1
 end
 
--- Rebuilds the menu after stories are pasted in or deleted.
-function ns.Story.StoriesChanged()
+-- Rebuilds the menu after stories are pasted in, changed, or deleted. show is a
+-- story to open afterward, such as one that was just changed.
+function ns.Story.StoriesChanged(show)
 	sections = nil
 	wipe(offered)
 	wipe(storyByKey)
@@ -1087,6 +1090,10 @@ function ns.Story.StoriesChanged()
 	refreshSelectors()
 	renderList()
 	refreshReader()
+	if show then
+		getSections()
+		if show.key then selectStory(show) end
+	end
 end
 
 -- The first click asks, and the second deletes.
@@ -1516,8 +1523,15 @@ local function buildReader()
 	tonightButton:SetPoint("LEFT", favoriteButton, "RIGHT", 4, 0)
 	tonightButton:SetScript("OnClick", toggleTonight)
 
+	editButton = ns.MakeFlatButton(window, "Edit", 36)
+	editButton:SetPoint("LEFT", tonightButton, "RIGHT", 4, 0)
+	editButton:SetScript("OnClick", function()
+		if currentStory and currentStory.kind then ns.Import.Edit(currentStory) end
+	end)
+	editButton:Hide()
+
 	deleteButton = ns.MakeFlatButton(window, "Delete", 44)
-	deleteButton:SetPoint("LEFT", tonightButton, "RIGHT", 4, 0)
+	deleteButton:SetPoint("LEFT", editButton, "RIGHT", 4, 0)
 	deleteButton:SetScript("OnClick", deleteCurrent)
 	deleteButton:Hide()
 

@@ -25,8 +25,9 @@ local STORIES_PER_PROMPT = 5
 local ABOUT_MAX_LETTERS = 500
 local PROFILE_STORY_LETTERS = 700 -- How much of a Total RP 3 backstory goes in the prompt.
 
-local window, editBox, resultLabel, aboutBox, promptBox, aboutLabel, copyHint
+local window, editBox, resultLabel, aboutBox, promptBox, aboutLabel, copyHint, pasteLabel, addButton
 local currentPrompt = ""
+local editing -- The saved story being changed, while its text is in the paste box.
 
 ns.Import = {}
 
@@ -293,15 +294,64 @@ local function save(stories)
 	return added, replaced
 end
 
+-- The race names the RACE line understands, by the game's race token.
+local RACE_NAMES = {
+	Human = "Human", Dwarf = "Dwarf", NightElf = "Night Elf", Gnome = "Gnome", Orc = "Orc",
+	Scourge = "Undead", Tauren = "Tauren", Troll = "Troll", Skyborne = "Skyborne",
+}
+
+-- A saved story as text, in the same form it was pasted in.
+function ns.Import.AsText(story)
+	local section
+	if story.kind == "character" then section = "CHARACTER: " .. story.listKey
+	elseif story.kind == "race" then section = "RACE: " .. (RACE_NAMES[story.listKey] or story.listKey)
+	elseif story.kind == "class" then section = "CLASS: " .. story.listKey
+	elseif story.kind == "zone" then section = "ZONE: " .. story.listKey
+	elseif story.kind == "target" then section = "TARGET:"
+	else section = "EVERYONE: " .. (story.theme or DEFAULT_THEME) end
+	local out = { section, "TITLE: " .. story.title, "MOOD: " .. (story.mood or "") }
+	for _, line in ipairs(story.lines) do
+		out[#out + 1] = (line.kind == "say" and "SAY: " or "EMOTE: ") .. line.text
+	end
+	return table.concat(out, "\n")
+end
+
+local function setEditing(story)
+	editing = story
+	if story then
+		pasteLabel:SetText(('3. Change "%s" here, then press Save.'):format(story.title))
+		addButton:SetText("Save")
+	else
+		pasteLabel:SetText("3. Paste what the AI wrote here, then press Add.")
+		addButton:SetText("Add")
+	end
+end
+
 local function addPasted()
 	local stories, problems = parse(editBox:GetText())
+	local saved = ns.GetDB().imported
+	local edited = editing
+	if edited and #stories > 0 then
+		-- The changed story takes the old one's place, even under a new title.
+		for index, story in ipairs(saved) do
+			if story == edited then
+				table.remove(saved, index)
+				break
+			end
+		end
+	end
 	local added, replaced = save(stories)
 	if added + replaced > 0 then
-		ns.Story.StoriesChanged()
 		editBox:SetText("")
+		if edited then
+			setEditing(nil)
+			window:Hide()
+		end
+		ns.Story.StoriesChanged(edited and stories[1])
 	end
 
 	local parts = { ("Added %d, replaced %d, skipped %d."):format(added, replaced, #problems) }
+	if edited and added + replaced == 0 then parts[1] = "Not saved yet." end
 	for index = 1, math.min(SHOWN_PROBLEMS, #problems) do
 		parts[#parts + 1] = problems[index]
 	end
@@ -401,7 +451,7 @@ local function build()
 	end)
 
 	-- Step 3: what the AI wrote.
-	makeStepLabel(-250, "3. Paste what the AI wrote here, then press Add.")
+	pasteLabel = makeStepLabel(-250, "3. Paste what the AI wrote here, then press Add.")
 	local box
 	editBox, box = makeTextBox(-266, nil, 104)
 
@@ -410,22 +460,26 @@ local function build()
 	resultLabel:SetWidth(472)
 	resultLabel:SetJustifyH("LEFT")
 
-	local add = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
-	add:SetSize(90, 22)
-	add:SetPoint("BOTTOMRIGHT", -12, 12)
-	add:SetText("Add")
-	add:SetScript("OnClick", addPasted)
+	addButton = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
+	addButton:SetSize(90, 22)
+	addButton:SetPoint("BOTTOMRIGHT", -12, 12)
+	addButton:SetText("Add")
+	addButton:SetScript("OnClick", addPasted)
+
+	-- Closing the window stops editing; the saved story stays as it was.
+	window:HookScript("OnHide", function()
+		if editing then
+			setEditing(nil)
+			editBox:SetText("")
+			resultLabel:SetText("")
+		end
+	end)
 
 	window:Hide()
 	ns.AddWindowSounds(window)
 end
 
-function ns.Import.Toggle()
-	if not window then build() end
-	if window:IsShown() then
-		window:Hide()
-		return
-	end
+local function open()
 	if ns.Import.RoleplayProfile() then
 		aboutLabel:SetText(("1. %s's Total RP 3 profile is in the prompt. Anything to add? Optional."):format(ns.PlayerName()))
 	else
@@ -434,6 +488,26 @@ function ns.Import.Toggle()
 	aboutBox:SetText(ns.CharData().about or "")
 	refreshPrompt() -- You may have traveled since it was last open.
 	window:Show()
+end
+
+function ns.Import.Toggle()
+	if not window then build() end
+	if window:IsShown() then
+		window:Hide()
+		return
+	end
+	open()
+end
+
+-- Opens the window with a saved story in the paste box, ready to change.
+function ns.Import.Edit(story)
+	if not window then build() end
+	if window:IsShown() then window:Hide() end
+	open()
+	setEditing(story)
+	editBox:SetText(ns.Import.AsText(story))
+	editBox:SetCursorPosition(0)
+	resultLabel:SetText("")
 end
 
 function ns.Import.Count()

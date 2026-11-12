@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.0
+
+- Added Edit for your own tales, so you can change one without pasting it again.
+
 ## 1.8.0
 
 - Added a Riddles tab with 22 riddles. Ask one at the fire, and whoever says the answer first wins.
