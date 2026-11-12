@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.1
+
+- Fixed the Delete and Restart buttons overlapping.
+
 ## 1.9.0
 
 - Added Edit for your own tales, so you can change one without pasting it again.

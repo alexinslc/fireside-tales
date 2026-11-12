@@ -1535,9 +1535,10 @@ local function buildReader()
 	deleteButton:SetScript("OnClick", deleteCurrent)
 	deleteButton:Hide()
 
-	-- Speak is the one main action, so it's the only raised button here.
+	-- Speak is the one main action, so it's the only raised button here. The reader
+	-- is 380 wide, so the buttons along its foot have to share that.
 	speakButton = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
-	speakButton:SetSize(90, 22)
+	speakButton:SetSize(74, 22)
 	speakButton:SetPoint("BOTTOMRIGHT", inset, "BOTTOMRIGHT", 0, -27)
 	speakButton:SetText("Tell")
 	speakButton:SetScript("OnClick", function()
@@ -1548,7 +1549,7 @@ local function buildReader()
 		end
 	end)
 
-	restartButton = ns.MakeFlatButton(window, "Restart", 56)
+	restartButton = ns.MakeFlatButton(window, "Restart", 50)
 	restartButton:SetPoint("RIGHT", speakButton, "LEFT", -4, 0)
 	restartButton:SetScript("OnClick", function()
 		if currentStory then
