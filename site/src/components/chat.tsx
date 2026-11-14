@@ -1,12 +1,10 @@
 import { cn } from "@/lib/utils";
 import type { Line } from "@/lib/api";
 
-// A story as people around the fire see it in chat. With onFlip, each line can be
-// clicked to switch it between spoken and action.
-export function ChatPreview({ lines, name, onFlip, className }: {
+// A story as people around the fire see it in chat.
+export function ChatPreview({ lines, name, className }: {
 	lines: Line[];
 	name?: string;
-	onFlip?: (index: number) => void;
 	className?: string;
 }) {
 	const teller = name?.trim() || "Bram";
@@ -17,19 +15,7 @@ export function ChatPreview({ lines, name, onFlip, className }: {
 			{shown.map((line, index) => {
 				const text = line.kind === "emote" ? `${teller} ${line.text}` : `[${teller}] says: ${line.text}`;
 				const tone = line.kind === "emote" ? "text-emote" : "text-say";
-				return onFlip ? (
-					<button
-						key={index}
-						type="button"
-						onClick={() => onFlip(index)}
-						title="Click to switch between spoken and action"
-						className={cn("mb-2 block w-full rounded text-left last:mb-0 hover:bg-white/5", tone)}
-					>
-						{text}
-					</button>
-				) : (
-					<p key={index} className={cn("mb-2 last:mb-0", tone)}>{text}</p>
-				);
+				return <p key={index} className={cn("mb-2 last:mb-0", tone)}>{text}</p>;
 			})}
 		</div>
 	);

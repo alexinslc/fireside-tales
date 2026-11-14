@@ -56,10 +56,6 @@ export function SubmitPage() {
 			setDraft((d) => ({ ...d, writing: text }));
 		}
 	};
-	const flip = (index: number) => {
-		const next = lines.map((line, i) => (i === index ? { ...line, kind: line.kind === "emote" ? "say" : "emote" } as Line : line));
-		setDraft((d) => ({ ...d, writing: toWriting(next) }));
-	};
 
 	const send = async (event: React.FormEvent) => {
 		event.preventDefault();
@@ -120,9 +116,9 @@ export function SubmitPage() {
 						</div>
 						<div className="space-y-2">
 							<Label htmlFor="writing" className="text-base">Your story</Label>
-							<p className="text-sm text-muted-foreground">One line for each chat message. Put actions in *asterisks*, and everything else is spoken. Or paste a story straight from the game.</p>
+							<p className="text-sm text-muted-foreground">Write it the way you'd tell it in game: one line per chat message, each starting with /say or /emote.</p>
 							<Textarea id="writing" rows={9} className="min-h-52 text-base"
-								placeholder={"Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.\n*rolls up one sleeve to show an old scar*\nHe was not joking."}
+								placeholder={"/say Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.\n/emote rolls up one sleeve to show an old scar.\n/say He was not joking."}
 								value={draft.writing} onChange={(e) => changeWriting(e.target.value)} />
 						</div>
 						<div className="grid gap-4 sm:grid-cols-2">
@@ -171,10 +167,10 @@ export function SubmitPage() {
 				<Card className="lg:sticky lg:top-24">
 					<CardHeader>
 						<CardTitle className="font-heading text-xl text-gold">How it looks</CardTitle>
-						<CardDescription>Got a line the wrong way round? Click it to switch between spoken and action.</CardDescription>
+						<CardDescription>What players will see in chat. It updates as you type.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<ChatPreview lines={lines} name={draft.author} onFlip={flip} />
+						<ChatPreview lines={lines} name={draft.author} />
 						{lines.length > 0 && (
 							<div className="space-y-1.5">
 								<div className="h-2 overflow-hidden rounded-full border bg-black/40" aria-hidden="true">

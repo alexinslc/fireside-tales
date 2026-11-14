@@ -97,6 +97,13 @@ test("the easy way: one line per chat line, actions in asterisks", () => {
 	assert.deepEqual(parseWriting(toWriting(story.lines)).lines, story.lines);
 });
 
+test("written like in-game chat with /say and /emote", () => {
+	const story = parseWriting("/say Ever met an honest merchant?\n/emote Rolls up one sleeve.\n/me grins\n/say\n/s He was not joking.");
+	assert.deepEqual(story.lines.map((l) => l.kind), ["say", "emote", "emote", "say"]);
+	assert.equal(story.lines[1].text, "rolls up one sleeve.");
+	assert.equal(toWriting(story.lines), "/say Ever met an honest merchant?\n/emote rolls up one sleeve.\n/emote grins\n/say He was not joking.");
+});
+
 test("the same box takes the Write Your Tales format, title and all", () => {
 	const story = parseWriting("TITLE: The Ferry at Dusk\nMOOD: heartfelt\nSAY: My father ran a ferry.\nEMOTE: Sighs.\nSAY: He was good at it.");
 	assert.equal(story.title, "The Ferry at Dusk");

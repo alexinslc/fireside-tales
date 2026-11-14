@@ -251,7 +251,7 @@ async function submit(request: Request, env: Env, ctx: ExecutionContext): Promis
 }
 
 // The agent API: no bot check, so tighter limits. Takes JSON with the story as plain
-// text (one line per chat message, actions in *asterisks*), or the game's paste format.
+// text (one /say or /emote line per chat message), or the game's paste format.
 async function agentSubmit(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 	const ip = request.headers.get("cf-connecting-ip") ?? "";
 	const type = request.headers.get("content-type") ?? "";
@@ -267,7 +267,7 @@ async function agentSubmit(request: Request, env: Env, ctx: ExecutionContext): P
 		body = { ...body, lines: parsed.lines, title: body.title || parsed.title, mood: body.mood || parsed.mood };
 	}
 	if (!Array.isArray(body.lines) || body.lines.length === 0) {
-		return fail("Include the story in \"story\": one line per chat message, actions in *asterisks*. See /api/agent.", 422);
+		return fail("Include the story in \"story\": one /say or /emote line per chat message. See /api/agent.", 422);
 	}
 	if (body.mood && !MOODS.includes(String(body.mood).toLowerCase())) body = { ...body, mood: "" };
 	return createSubmission(request, env, ctx, ip, body, "agent", AGENT_DAILY_LIMIT);
@@ -279,7 +279,7 @@ function agentDocs(env: Env): Response {
 		endpoint: { method: "POST", url: `${env.SITE_URL}/api/agent/submissions`, content_type: "application/json" },
 		fields: {
 			title: "Required. Up to 60 characters.",
-			story: "Required. One line per chat message. Spoken lines are plain text; actions go in *asterisks* and start with a lowercase verb. The game's TITLE:/MOOD:/SAY:/EMOTE: format also works.",
+			story: "Required. One line per chat message, written like in-game chat: start spoken lines with /say and actions with /emote. An emote starts with a lowercase verb, since the game puts the teller's name first. Lines with neither are spoken; *asterisks* and the game's TITLE:/MOOD:/SAY:/EMOTE: format also work.",
 			author: "Optional character name to credit, letters only. Leave out to share anonymously.",
 			ruleset: `Optional: ${RULESETS.join(", ")}.`,
 			mood: `Optional: ${MOODS.join(", ")}. If left out, it's suggested during review.`,
@@ -295,7 +295,7 @@ function agentDocs(env: Env): Response {
 		guidelines: `${env.SITE_URL}/guidelines`,
 		example: {
 			title: "The Last Honest Merchant",
-			story: "Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.\n*rolls up one sleeve to show an old scar*\nHe was not joking.",
+			story: "/say Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.\n/emote rolls up one sleeve to show an old scar.\n/say He was not joking.",
 			author: "Thorg",
 			ruleset: "PvP",
 		},

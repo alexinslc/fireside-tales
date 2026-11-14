@@ -54,7 +54,7 @@ const ABOUT = `<p>${NAME} is a free World of Warcraft: Forever addon for telling
 
 export const FAQ: [string, string][] = [
 	["What is Fireside Tales?", "A free World of Warcraft: Forever addon for telling stories at a campfire, one chat line at a time, using /say and /e. Players nearby see the story without needing the addon."],
-	["How do I contribute a story?", "Go to firesidetales.dev/submit, give it a title, and write one line per chat message, with actions in *asterisks*. Your character name, ruleset, and email are optional. AI agents can send stories to the API described at firesidetales.dev/llms.txt."],
+	["How do I contribute a story?", "Go to firesidetales.dev/submit, give it a title, and write it like in-game chat: one line per message, each starting with /say or /emote. Your character name, ruleset, and email are optional. AI agents can send stories to the API described at firesidetales.dev/llms.txt."],
 	["How long can a story be?", "A story is 3 to 8 lines and takes under a minute to tell. A rumor is 3 or 4 lines and about half a minute. Each line must fit in one chat message, under 250 characters."],
 	["What happens after I contribute a story?", "It's checked against the guidelines, and we may fix a typo or leave you a note. Approved stories are scheduled for a week and featured in the addon's Community tab, credited to you or shared anonymously."],
 	["What isn't allowed?", "Nothing sexual beyond PG-13, no hate or harassment, no stories about real people, no graphic gore, no personal information or links, and no copied writing such as Blizzard's quest text."],
@@ -120,8 +120,8 @@ export function pageFor(env: Env, path: string, data: { week: string; stories: P
 		case "/submit":
 			return {
 				title: `Contribute a Story · ${NAME}`,
-				description: `Write a story or rumor for ${NAME}: one line per chat message, actions in asterisks. Featured stories are credited to you.`,
-				body: `<h1>Contribute a story</h1><p>Give it a title, then write one line for each chat message. Put actions in *asterisks*, and everything else is spoken. You can also paste a story in the game's TITLE, SAY and EMOTE format.</p><ul><li>A story is 3 to 8 lines and under a minute to tell. A rumor is 3 or 4 lines.</li><li>Each line must fit in one chat message, under 250 characters.</li><li>Character name, ruleset, and an email for updates are all optional.</li></ul><p>AI agents: see <a href="/llms.txt">/llms.txt</a> and <a href="/api/agent">/api/agent</a> to submit stories through the API.</p><p>Read the <a href="/guidelines">guidelines</a> first.</p>`,
+				description: `Write a story or rumor for ${NAME}: one /say or /emote line per chat message. Featured stories are credited to you.`,
+				body: `<h1>Contribute a story</h1><p>Give it a title, then write it the way you would in game: one line per chat message, each starting with /say or /emote. You can also paste a story in the game's TITLE, SAY and EMOTE format.</p><ul><li>A story is 3 to 8 lines and under a minute to tell. A rumor is 3 or 4 lines.</li><li>Each line must fit in one chat message, under 250 characters.</li><li>Character name, ruleset, and an email for updates are all optional.</li></ul><p>AI agents: see <a href="/llms.txt">/llms.txt</a> and <a href="/api/agent">/api/agent</a> to submit stories through the API.</p><p>Read the <a href="/guidelines">guidelines</a> first.</p>`,
 				jsonLd: [site],
 			};
 		case "/guidelines":

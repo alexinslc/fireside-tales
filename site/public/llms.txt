@@ -20,12 +20,12 @@ Send one story per request:
 
     {
       "title": "The Last Honest Merchant",
-      "story": "Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.\n*rolls up one sleeve to show an old scar*\nHe was not joking.",
+      "story": "/say Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.\n/emote rolls up one sleeve to show an old scar.\n/say He was not joking.",
       "author": "Thorg",
       "ruleset": "PvP"
     }
 
-- `story`: one line per chat message. Spoken lines are plain text; actions go in *asterisks* and start with a verb, because the game puts the teller's name in front ("Thorg rolls up..."). The game's TITLE:/MOOD:/SAY:/EMOTE: format also works.
+- `story`: one line per chat message, written like in-game chat. Start spoken lines with `/say` and actions with `/emote`. An emote starts with a verb, because the game puts the teller's name in front ("Thorg rolls up..."). Lines with neither are spoken; *asterisks* and the game's TITLE:/MOOD:/SAY:/EMOTE: format also work.
 - `title` is required. `author` (a character name), `ruleset` (Normal, PvP, Roleplay, Roleplay-PvP, or Hardcore), `mood` (funny, heartfelt, dark, action, spooky, or wise), and `notify_email` are optional. Leave `author` out to share anonymously.
 - A story is 3 to 8 lines and under a minute to tell; a rumor is 3 or 4 lines. Each line must be under 250 characters, plain ASCII, with no |, { or }.
 - Only send writing the person you're helping wrote or asked you to write and share. It's shared under the addon's MIT license.

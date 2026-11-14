@@ -138,8 +138,9 @@ export function parsePaste(text) {
 	return stories.map(tidyStory);
 }
 
-// Reads a story typed the easy way: one chat line per line of text, with actions in
-// *asterisks* (or starting with /e). Text in the Write Your Tales format works too.
+// Reads a story typed the way it's said in game: one chat line per line of text,
+// starting with /say or /emote (/s, /e and /me work too). A line with neither is
+// spoken, and *asterisks* also mark an action. The Write Your Tales format works too.
 // Returns { title, mood, lines }; title and mood are only filled from that format.
 export function parseWriting(text) {
 	const source = String(text ?? "");
@@ -152,12 +153,12 @@ export function parseWriting(text) {
 		let text = raw.trim();
 		if (!text) continue;
 		let kind = "say";
-		const action = text.match(/^\*+\s*(.*?)\s*\*+$/) ?? text.match(/^\*+\s*(.*)$/) ?? text.match(/^\/(?:e|em|emote|me)\s+(.*)$/i);
+		const action = text.match(/^\*+\s*(.*?)\s*\*+$/) ?? text.match(/^\*+\s*(.*)$/) ?? text.match(/^\/(?:e|em|emote|me)(?:\s+|$)(.*)$/i);
 		if (action) {
 			kind = "emote";
 			text = action[1];
 		} else {
-			text = text.replace(/^\/(?:s|say)\s+/i, "");
+			text = text.replace(/^\/(?:s|say)(?:\s+|$)/i, "");
 		}
 		lines.push(tidyLine({ kind, text }));
 	}
@@ -166,7 +167,7 @@ export function parseWriting(text) {
 
 // The reverse, for showing a story back in the text box.
 export function toWriting(lines) {
-	return lines.map((line) => (line.kind === "emote" ? `*${line.text}*` : line.text)).join("\n");
+	return lines.map((line) => `${line.kind === "emote" ? "/emote" : "/say"} ${line.text}`).join("\n");
 }
 
 // The same story in the paste format, for the "Copy for the game" button.

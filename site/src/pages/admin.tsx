@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Check, RotateCcw, X } from "lucide-react";
-import { MOODS, KINDS, findProblems, tidyStory } from "@shared/rules.js";
+import { MOODS, KINDS, findProblems, tidyStory, parseWriting, toWriting } from "@shared/rules.js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -172,7 +172,9 @@ export function AdminPage() {
 }
 
 function Review({ item, onSaved }: { item: Submission; onSaved: () => void }) {
-	const [draft, setDraft] = useState({ kind: item.kind, title: item.title, mood: item.mood, lines: item.lines.map((l) => ({ ...l })) });
+	const [draft, setDraft] = useState({ kind: item.kind, title: item.title, mood: item.mood });
+	const [writing, setWriting] = useState(() => toWriting(item.lines));
+	const lines: Line[] = useMemo(() => parseWriting(writing).lines, [writing]);
 	const [note, setNote] = useState(item.review_note ?? "");
 	const [weeks, setWeeks] = useState<{ week: string; count: number }[]>([]);
 	const [target, setTarget] = useState({ min: 5, max: 10 });
@@ -187,15 +189,13 @@ function Review({ item, onSaved }: { item: Submission; onSaved: () => void }) {
 		}).catch(() => {});
 	}, []);
 
-	const story = useMemo(() => tidyStory({ ...draft, author: item.author, ruleset: item.ruleset }), [draft, item]);
+	const story = useMemo(() => tidyStory({ ...draft, lines, author: item.author, ruleset: item.ruleset }), [draft, lines, item]);
 	const problems = useMemo(() => findProblems(story), [story]);
-	const setLine = (index: number, change: Partial<Line>) =>
-		setDraft((d) => ({ ...d, lines: d.lines.map((l, i) => (i === index ? { ...l, ...change } : l)) }));
 
 	const act = async (action: string, extra: Record<string, unknown> = {}) => {
 		setBusy(true);
 		try {
-			await post(`/api/admin/submissions/${item.id}`, { action, note, story: draft, ...extra });
+			await post(`/api/admin/submissions/${item.id}`, { action, note, story: { ...draft, lines }, ...extra });
 			toast.success(action === "approve" ? `Approved for the week of ${week ? shortWeek(week) : ""}` : action === "reject" ? "Rejected" : "Saved");
 			onSaved();
 		} catch (e) {
@@ -236,16 +236,9 @@ function Review({ item, onSaved }: { item: Submission; onSaved: () => void }) {
 						</div>
 					</div>
 					<div className="space-y-2">
-						<Label>Lines</Label>
-						{draft.lines.map((line, index) => (
-							<div key={index} className="grid grid-cols-[110px_minmax(0,1fr)] gap-2">
-								<Select value={line.kind} onValueChange={(v) => setLine(index, { kind: v as Line["kind"] })}>
-									<SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
-									<SelectContent><SelectItem value="say">say</SelectItem><SelectItem value="emote">emote</SelectItem></SelectContent>
-								</Select>
-								<Textarea rows={2} value={line.text} onChange={(e) => setLine(index, { text: e.target.value })} aria-label={`Line ${index + 1}`} />
-							</div>
-						))}
+						<Label htmlFor="r-story">Story</Label>
+						<Textarea id="r-story" rows={Math.max(6, lines.length + 2)} className="font-[family-name:var(--font-chat)]"
+							value={writing} onChange={(e) => setWriting(e.target.value)} />
 					</div>
 					{item.original && (
 						<details>
