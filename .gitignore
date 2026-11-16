@@ -4,3 +4,7 @@ addon/FiresideTales/MoreCharacters*.lua
 
 # Built zips.
 dist/
+
+# Voice takes and the pack's sounds are made by tools/voice, not kept in git.
+voice-audio/
+addon/FiresideTalesVoices/Sounds/

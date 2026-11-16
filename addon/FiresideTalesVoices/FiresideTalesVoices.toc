@@ -1,0 +1,10 @@
+## Interface: 16001
+## Title: Fireside Tales Voices
+## Notes: Reads Fireside Tales stories aloud through Spoken when someone nearby tells one. Listens to chat only, and never sends anything.
+## Version: 0.1.0
+## IconTexture: Interface\AddOns\FiresideTales\Textures\Icon
+## Dependencies: Spoken
+## SavedVariables: FiresideTalesVoicesDB
+
+Lines.lua
+Core.lua

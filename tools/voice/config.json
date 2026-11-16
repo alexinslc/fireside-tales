@@ -1,0 +1,30 @@
+{
+	"voice": "narrator",
+	"provider": "fish",
+	"fish": {
+		"model": "s2.1-pro",
+		"referenceId": "a9e7976abe2c4441bd031ef29d138611",
+		"temperature": 0.7,
+		"topP": 0.7,
+		"latency": "normal",
+		"normalize": true,
+		"mp3Bitrate": 128,
+		"dollarsPerMillionBytes": 15
+	},
+	"elevenlabs": {
+		"voiceId": "5PsTQGkk9ch3yCS9ZDsh",
+		"model": "eleven_v3",
+		"languageCode": "en",
+		"outputFormat": "mp3_44100_128",
+		"seed": 1,
+		"voiceSettings": {
+			"stability": 0.5,
+			"similarity_boost": 0.75,
+			"style": 0,
+			"use_speaker_boost": true
+		},
+		"creditsPerCharacter": 1
+	},
+	"emotes": "off",
+	"mp3Quality": 7
+}

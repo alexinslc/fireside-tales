@@ -1,0 +1,136 @@
+// Every story line in the addon that can be read aloud, and what the voice says for it.
+//
+//   node tools/voice/lines.mjs   (prints how many lines there are, how many have a take, and the cost of the rest)
+//
+// A line is keyed by its kind and text, so the same words in two stories are one recording, and
+// a fixed typo only needs that line again. Character stories stay on this computer, so they're left out.
+import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
+import { promisify } from "node:util";
+import { readdir, readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+export const ROOT = fileURLToPath(new URL("../..", import.meta.url));
+export const ADDON_DIR = path.join(ROOT, "addon", "FiresideTales");
+export const AUDIO_DIR = process.env.FIRESIDE_VOICE_DIR ?? path.join(ROOT, "voice-audio");
+export const TAKES_FILE = path.join(AUDIO_DIR, "takes.json");
+
+const LOCAL_ONLY = /^(StoriesCharacters|MoreCharacters.*)\.lua$/;
+const LINE = /\{\s*kind\s*=\s*"(say|emote)"\s*,\s*text\s*=\s*"((?:[^"\\]|\\.)*)"\s*\}/g;
+
+export async function loadConfig() {
+	return JSON.parse(await readFile(new URL("./config.json", import.meta.url), "utf8"));
+}
+
+function unescapeLua(text) {
+	return text.replace(/\\(\d{1,3}|.)/g, (_, c) => {
+		if (/^\d+$/.test(c)) return String.fromCharCode(Number(c));
+		return { n: "\n", t: "\t", r: "\r" }[c] ?? c;
+	});
+}
+
+// What the chat line looks like when it arrives, which is what the pack matches.
+export function tidy(text) {
+	return text.replace(/\s+/g, " ").trim();
+}
+
+export function lineId(kind, text) {
+	return createHash("sha1").update(`${kind}\n${text}`).digest("hex").slice(0, 12);
+}
+
+// The words the voice reads, or null for a line that isn't voiced. A {target} line holds a name
+// that can't be recorded ahead. An emote is voiced only if config.emotes says how.
+export function spokenText(kind, text, config) {
+	if (text.includes("{target}")) return null;
+	if (kind === "emote") return config.emotes === "teller" ? `The teller ${text}` : null;
+	return text;
+}
+
+export async function collectLines(config) {
+	const files = (await readdir(ADDON_DIR)).filter((f) => f.endsWith(".lua") && !LOCAL_ONLY.test(f)).sort();
+	const byId = new Map();
+	for (const file of files) {
+		const source = await readFile(path.join(ADDON_DIR, file), "utf8");
+		for (const match of source.matchAll(LINE)) {
+			const kind = match[1];
+			const text = tidy(unescapeLua(match[2]));
+			if (!text) continue;
+			const id = lineId(kind, text);
+			const known = byId.get(id);
+			if (known) {
+				if (!known.files.includes(file)) known.files.push(file);
+				continue;
+			}
+			byId.set(id, { id, kind, text, spoken: spokenText(kind, text, config), files: [file] });
+		}
+	}
+	return [...byId.values()];
+}
+
+export async function loadTakes() {
+	try {
+		return JSON.parse(await readFile(TAKES_FILE, "utf8"));
+	} catch (error) {
+		if (error.code === "ENOENT") return {};
+		throw error;
+	}
+}
+
+// Which service and which of its voices make a voice's takes. A "-dev" voice is the Mac's own,
+// for testing. Changing the provider or its voice in config.json makes every take out of date.
+export function sourceFor(config, voice = config.voice) {
+	if (voice.endsWith("-dev")) return { provider: "say", ref: "mac" };
+	if (config.provider === "fish") return { provider: "fish", ref: config.fish.referenceId };
+	if (config.provider === "elevenlabs") return { provider: "elevenlabs", ref: config.elevenlabs.voiceId };
+	throw new Error(`config.json's provider is "${config.provider}". Use fish or elevenlabs.`);
+}
+
+// The take of a line in a voice, if it was made from the words the voice says now, by the
+// voice's current source.
+export function currentTake(takes, voice, line, source) {
+	const take = takes[voice]?.[line.id];
+	if (!take || take.spoken !== line.spoken) return null;
+	return take.provider === source.provider && (take.ref ?? "") === source.ref ? take : null;
+}
+
+// What making these lines would cost with a source: fish.audio bills UTF-8 bytes, ElevenLabs
+// characters times the plan's rate.
+export function estimate(lines, source, config) {
+	if (source.provider === "say") return "free";
+	if (source.provider === "fish") {
+		const n = lines.reduce((sum, l) => sum + bytes(l.spoken), 0);
+		return `${n.toLocaleString()} bytes, about $${((n / 1e6) * config.fish.dollarsPerMillionBytes).toFixed(2)} on fish.audio`;
+	}
+	const n = lines.reduce((sum, l) => sum + [...l.spoken].length, 0);
+	const credits = Math.round(n * config.elevenlabs.creditsPerCharacter);
+	return `${n.toLocaleString()} characters, about ${credits.toLocaleString()} ElevenLabs credits`;
+}
+
+// A sound's length, which the game can't measure, so the pack carries it.
+export async function seconds(file) {
+	const { stdout } = await promisify(execFile)("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]);
+	return Math.round(Number(stdout.trim()) * 100) / 100;
+}
+
+export function bytes(text) {
+	return Buffer.byteLength(text, "utf8");
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+	const config = await loadConfig();
+	const lines = await collectLines(config);
+	const takes = await loadTakes();
+	const source = sourceFor(config);
+	const voiced = lines.filter((l) => l.spoken);
+	const missing = voiced.filter((l) => !currentTake(takes, config.voice, l, source));
+	console.log(`${lines.length} lines (${lines.filter((l) => l.kind === "say").length} say, ${lines.filter((l) => l.kind === "emote").length} emote).`);
+	console.log(`${voiced.length} are voiced in "${config.voice}" with ${source.provider} (emotes: ${config.emotes}; {target} lines are not).`);
+	console.log(`${voiced.length - missing.length} have a take. ${missing.length} don't.`);
+	if (missing.length > 0) {
+		for (const provider of ["fish", "elevenlabs"]) {
+			const other = sourceFor({ ...config, provider });
+			console.log(`  With ${provider}: ${estimate(missing, other, config)}.`);
+		}
+	}
+}
