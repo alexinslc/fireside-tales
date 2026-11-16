@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.2
+
+- New Community stories for the week of November 17, by Garvin Flintwatch.
+
 ## 1.9.1
 
 - Fixed the Delete and Restart buttons overlapping.
