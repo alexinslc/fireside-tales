@@ -114,7 +114,7 @@ FiresideTales_AddVoice({ key = "narrator-male", title = "Male narrator", addon =
 	lengths = { aaaaaaaaaaaa = 3.5, bbbbbbbbbbbb = 2.25, cccccccccccc = 1.5, dddddddddddd = 4.0 } })
 check("a narrator is used once added", V.Narrator() and V.Narrator().key == "narrator-male")
 check("its pack counts as installed", V.HasPack("FiresideTalesVoices_Narrator"))
-check("a pack that isn't here doesn't", not V.HasPack("FiresideTalesVoices_Horde"))
+check("a pack that isn't here doesn't", not V.HasPack("FiresideTalesVoices_Orc"))
 
 chat("CHAT_MSG_SAY", "So I try to keep a light on.", "Brannoc-Forever")
 check("a known say line plays", count() == 1)
@@ -266,18 +266,18 @@ end
 
 -- A teller is read in their race's voice where one is installed.
 do
-	for _, addon in ipairs({ "FiresideTalesVoices_Alliance", "FiresideTalesVoices_Horde" }) do
-		-- Skyborne is in both faction packs; the second one loaded replaces the first.
+	for _, addon in ipairs({ "FiresideTalesVoices_Skyborne", "FiresideTalesVoices_Community" }) do
+		-- A voice can be in two packs (every voice is in the community pack too).
 		FiresideTales_AddVoice({ key = "skyborne-male", title = "Skyborne man", addon = addon, folder = "skyborne-male",
 			order = 17, race = "Skyborne", sex = 2, lengths = { aaaaaaaaaaaa = 2.0 } })
 	end
-	FiresideTales_AddVoice({ key = "dwarf-male", title = "Dwarf man", addon = "FiresideTalesVoices_Alliance",
+	FiresideTales_AddVoice({ key = "dwarf-male", title = "Dwarf man", addon = "FiresideTalesVoices_Dwarf",
 		folder = "dwarf-male", ext = "ogg", order = 10, race = "Dwarf", sex = 2, lengths = { aaaaaaaaaaaa = 5.0 } })
 	check("a voice in two packs is kept once", #V.RaceVoices() == 2)
 	check("a race voice isn't listed as a narrator", #V.Narrators() == 2)
 	now = now + 31
 	chat("CHAT_MSG_SAY", "So I try to keep a light on.", "Durin", "Player-1-00000077")
-	check("a dwarf man's line is in the dwarf voice", last().path == "Interface\\AddOns\\FiresideTalesVoices_Alliance\\Sounds\\dwarf-male\\aaaaaaaaaaaa.ogg", last().path)
+	check("a dwarf man's line is in the dwarf voice", last().path == "Interface\\AddOns\\FiresideTalesVoices_Dwarf\\Sounds\\dwarf-male\\aaaaaaaaaaaa.ogg", last().path)
 	drain()
 	chat("CHAT_MSG_SAY", "So I try to keep a light on.", "Hilda", "Player-1-00000078")
 	check("a dwarf woman's line is the narrator's", last().path:find("narrator-male", 1, true), last().path)
@@ -319,7 +319,7 @@ do
 	check("a community line plays from the community pack", last().path == "Interface\\AddOns\\FiresideTalesVoices_Community\\Sounds\\dwarf-male\\c0c0c0c0c0c0.ogg", last().path)
 	drain()
 	chat("CHAT_MSG_SAY", "So I try to keep a light on.", "Durin", "Player-1-00000077")
-	check("a built-in line still plays from its own pack", last().path:find("FiresideTalesVoices_Alliance\\Sounds\\dwarf-male\\aaaaaaaaaaaa.ogg", 1, true), last().path)
+	check("a built-in line still plays from its own pack", last().path:find("FiresideTalesVoices_Dwarf\\Sounds\\dwarf-male\\aaaaaaaaaaaa.ogg", 1, true), last().path)
 	drain()
 	FiresideTales_AddVoice({ key = "orc-female", title = "Orc woman", addon = "FiresideTalesVoices_Community",
 		folder = "orc-female", ext = "ogg", order = 13, race = "Orc", sex = 3, lengths = { c0c0c0c0c0c0 = 4.0 } })

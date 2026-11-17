@@ -27,6 +27,18 @@ Everything the project form asks for. Paste the description in Markdown mode.
 
 **[Contribute a story](https://firesidetales.dev/submit)** · [Read this week's](https://firesidetales.dev) · [Browse past weeks](https://firesidetales.dev/past)
 
+### Hear the stories read aloud
+
+**Free voice packs read every story aloud.** When someone near you tells a tale, each line plays in the voice of the teller's race, a man's or a woman's, or in one narrator's voice if you'd rather. Only listeners need the packs, and you can get just the races you'll hear. Open the **Voices** tab in the story menu, or type `/tales voices`.
+
+- **Alliance:** [Human](https://www.curseforge.com/wow/addons/fireside-tales-voices-human) · [Dwarf](https://www.curseforge.com/wow/addons/fireside-tales-voices-dwarf) · [Night Elf](https://www.curseforge.com/wow/addons/fireside-tales-voices-night-elf) · [Gnome](https://www.curseforge.com/wow/addons/fireside-tales-voices-gnome)
+- **Horde:** [Orc](https://www.curseforge.com/wow/addons/fireside-tales-voices-orc) · [Undead](https://www.curseforge.com/wow/addons/fireside-tales-voices-undead) · [Tauren](https://www.curseforge.com/wow/addons/fireside-tales-voices-tauren) · [Troll](https://www.curseforge.com/wow/addons/fireside-tales-voices-troll)
+- **Either faction:** [Skyborne](https://www.curseforge.com/wow/addons/fireside-tales-voices-skyborne)
+- **[Narrator](https://www.curseforge.com/wow/addons/fireside-tales-voices-narrator):** reads any teller whose race pack you don't have.
+- **[Community](https://www.curseforge.com/wow/addons/fireside-tales-voices-community):** each week's new community stories, in every voice.
+
+Each race is a pack of its own because CurseForge limits each download to about 500 MB.
+
 ### What it looks like at the fire
 
 This is "The Last Honest Merchant," one of the built-in stories, as everyone nearby sees it:
@@ -78,11 +90,12 @@ Fireside Tales never sends chat by itself. Every line waits for you to press **S
 | `/tales stories` | Open or close the story menu |
 | `/tales add` | Open or close Write Your Tales |
 | `/tales fire` | Turn the campfire prompt off or on |
+| `/tales voices` | Open the Voices tab |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show your story counts |
 
 ### Good to know
 
-The built-in stories are written with AI help and chosen by hand, and the logo and banner are AI-assisted art. Screenshots are from the real game. Most stories are fan fiction set in Azeroth. The legends retell Warcraft's own quests in new words, so their names and events come from the game. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
+The built-in stories are written with AI help and chosen by hand, and the logo and banner are AI-assisted art. Screenshots are from the real game. Most stories are fan fiction set in Azeroth. The legends retell Warcraft's own quests in new words, so their names and events come from the game. The voices in the voice packs are AI-generated, designed with ElevenLabs and recorded with fish.audio, and they aren't the game's voice actors. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
 
 Found a bug, have an idea, or want a story someone should write? Send it through [firesidetales.dev/feedback](https://firesidetales.dev/feedback), leave a comment, or open an issue on [GitHub](https://github.com/alexinslc/fireside-tales).
