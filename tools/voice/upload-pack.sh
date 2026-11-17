@@ -22,8 +22,9 @@ if [ "$(jq length <<< "$ids")" != 1 ]; then
 	echo "Expected one CurseForge game version named $game_version, found: $ids" >&2
 	exit 1
 fi
-base="$(basename "$zip_file" .zip)"
-name="$(sed -E 's/^FiresideTalesVoices_([A-Za-z]+)-(.*)$/Fireside Tales Voices: \1 \2/' <<< "$base")"
+# The file's name on CurseForge: the pack's title and version, from its .toc.
+toc="$(unzip -p "$zip_file" '*/*.toc' | tr -d '\r')"
+name="$(sed -n 's/^## Title: //p' <<< "$toc") $(sed -n 's/^## Version: //p' <<< "$toc")"
 metadata="$(jq -n --arg notes "$notes" --arg name "$name" --argjson ids "$ids" \
 	'{changelog: $notes, changelogType: "markdown", displayName: $name, gameVersions: $ids, releaseType: "release",
 	  relations: {projects: [{slug: "fireside-tales", type: "requiredDependency"}]}}')"
