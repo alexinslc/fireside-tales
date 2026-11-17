@@ -16,6 +16,10 @@ voice packs, so a player downloads only the ones they want:
 | `FiresideTalesVoices_Narrator` | the narrator, for any teller without a race voice | about 85 MB |
 | `FiresideTalesVoices_Community` | the lines only community stories have, in every voice | about 20 MB, new each week |
 
+Their CurseForge projects: Alliance 1812852, Horde 1812858, Narrator 1812860, and Community 1812866
+(the repository's `CF_COMMUNITY_VOICES_PROJECT_ID`), each at
+`curseforge.com/wow/addons/fireside-tales-voices-<name>`.
+
 Each has both sexes. Skyborne is in both faction packs, since either faction can play them. A pack
 needs Fireside Tales, and adds each of its voices with `FiresideTales_AddVoice`. `config.json`'s
 `packs` says which voices go in each. Each pack is built whole by `build.mjs`, so it's kept out of git.
