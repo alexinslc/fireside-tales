@@ -229,38 +229,78 @@
 	"emotes": "off",
 	"pack": {
 		"format": "ogg",
-		"sampleRate": 22050,
-		"quality": 0
+		"sampleRate": 44100,
+		"kbps": 48
 	},
 	"packs": {
-		"FiresideTalesVoices_Alliance": {
-			"title": "Alliance",
-			"notes": "Human, Dwarf, Night Elf, Gnome, and Skyborne tellers, men and women.",
+		"FiresideTalesVoices_Human": {
+			"title": "Human",
+			"notes": "Human tellers, men and women.",
 			"voices": [
 				"human-male",
-				"human-female",
-				"dwarf-male",
-				"dwarf-female",
-				"nightelf-male",
-				"nightelf-female",
-				"gnome-male",
-				"gnome-female",
-				"skyborne-male",
-				"skyborne-female"
+				"human-female"
 			]
 		},
-		"FiresideTalesVoices_Horde": {
-			"title": "Horde",
-			"notes": "Orc, Undead, Tauren, Troll, and Skyborne tellers, men and women.",
+		"FiresideTalesVoices_Dwarf": {
+			"title": "Dwarf",
+			"notes": "Dwarf tellers, men and women.",
+			"voices": [
+				"dwarf-male",
+				"dwarf-female"
+			]
+		},
+		"FiresideTalesVoices_NightElf": {
+			"title": "Night Elf",
+			"notes": "Night Elf tellers, men and women.",
+			"voices": [
+				"nightelf-male",
+				"nightelf-female"
+			]
+		},
+		"FiresideTalesVoices_Gnome": {
+			"title": "Gnome",
+			"notes": "Gnome tellers, men and women.",
+			"voices": [
+				"gnome-male",
+				"gnome-female"
+			]
+		},
+		"FiresideTalesVoices_Orc": {
+			"title": "Orc",
+			"notes": "Orc tellers, men and women.",
 			"voices": [
 				"orc-male",
-				"orc-female",
+				"orc-female"
+			]
+		},
+		"FiresideTalesVoices_Undead": {
+			"title": "Undead",
+			"notes": "Undead tellers, men and women.",
+			"voices": [
 				"undead-male",
-				"undead-female",
+				"undead-female"
+			]
+		},
+		"FiresideTalesVoices_Tauren": {
+			"title": "Tauren",
+			"notes": "Tauren tellers, men and women.",
+			"voices": [
 				"tauren-male",
-				"tauren-female",
+				"tauren-female"
+			]
+		},
+		"FiresideTalesVoices_Troll": {
+			"title": "Troll",
+			"notes": "Troll tellers, men and women.",
+			"voices": [
 				"troll-male",
-				"troll-female",
+				"troll-female"
+			]
+		},
+		"FiresideTalesVoices_Skyborne": {
+			"title": "Skyborne",
+			"notes": "Skyborne tellers, men and women.",
+			"voices": [
 				"skyborne-male",
 				"skyborne-female"
 			]
@@ -278,11 +318,26 @@
 			"notes": "This week's community stories from firesidetales.dev, in every voice. Updated each week.",
 			"lines": "community",
 			"voices": [
-				"narrator-male", "narrator-female",
-				"human-male", "human-female", "dwarf-male", "dwarf-female", "nightelf-male", "nightelf-female",
-				"gnome-male", "gnome-female", "skyborne-male", "skyborne-female",
-				"orc-male", "orc-female", "undead-male", "undead-female", "tauren-male", "tauren-female",
-				"troll-male", "troll-female"
+				"narrator-male",
+				"narrator-female",
+				"human-male",
+				"human-female",
+				"dwarf-male",
+				"dwarf-female",
+				"nightelf-male",
+				"nightelf-female",
+				"gnome-male",
+				"gnome-female",
+				"skyborne-male",
+				"skyborne-female",
+				"orc-male",
+				"orc-female",
+				"undead-male",
+				"undead-female",
+				"tauren-male",
+				"tauren-female",
+				"troll-male",
+				"troll-female"
 			]
 		}
 	}

@@ -11,18 +11,25 @@ voice packs, so a player downloads only the ones they want:
 
 | Pack | Voices | Size |
 | --- | --- | --- |
-| `FiresideTalesVoices_Alliance` | Human, Dwarf, Night Elf, Gnome, Skyborne | about 860 MB |
-| `FiresideTalesVoices_Horde` | Orc, Undead, Tauren, Troll, Skyborne | about 910 MB |
-| `FiresideTalesVoices_Narrator` | the narrator, for any teller without a race voice | about 85 MB |
-| `FiresideTalesVoices_Community` | the lines only community stories have, in every voice | about 20 MB, new each week |
+| `FiresideTalesVoices_<Race>` | one per race (Human, Dwarf, NightElf, Gnome, Orc, Undead, Tauren, Troll, Skyborne), its man and woman | 240 to 300 MB each |
+| `FiresideTalesVoices_Narrator` | the narrator, for any teller without a race voice | about 130 MB |
+| `FiresideTalesVoices_Community` | the lines only community stories have, in every voice | about 30 MB, new each week |
 
-Their CurseForge projects: Alliance 1812852, Horde 1812858, Narrator 1812860, and Community 1812866
-(the repository's `CF_COMMUNITY_VOICES_PROJECT_ID`), each at
-`curseforge.com/wow/addons/fireside-tales-voices-<name>`.
+A pack per race isn't ideal, but CurseForge refuses an upload much over 500 MB (480 MiB went
+through and 510 MiB didn't), and a faction's races together are about 1.3 GB. `build.mjs` says
+when a pack is over. The Voices tab groups them as Alliance, Horde, Skyborne, Narrator, and
+Community, so it stays short.
 
-Each has both sexes. Skyborne is in both faction packs, since either faction can play them. A pack
-needs Fireside Tales, and adds each of its voices with `FiresideTales_AddVoice`. `config.json`'s
-`packs` says which voices go in each. Each pack is built whole by `build.mjs`, so it's kept out of git.
+The sounds are Ogg Vorbis, mono, 44.1 kHz at about 48 kbps, as Spoken's quest audio is
+(`config.json`'s `pack`).
+
+Their CurseForge projects are at `curseforge.com/wow/addons/fireside-tales-voices-<race>` (like
+`night-elf`). Narrator is 1812860 and Community 1812866 (the repository's
+`CF_COMMUNITY_VOICES_PROJECT_ID`).
+
+A pack needs Fireside Tales, and adds each of its voices with `FiresideTales_AddVoice`.
+`config.json`'s `packs` says which voices go in each. Each pack is built whole by `build.mjs`, so
+it's kept out of git.
 
 Each race voice was designed with ElevenLabs Voice Design, read six lines from its race's stories
 with expressive settings (and an accent tag where it has an accent), then copied to fish.audio from
@@ -61,8 +68,8 @@ luajit tools/harness/harness.lua                    # the whole addon, the Voice
   their own, `FiresideTalesVoices_Test`.
 - Masters and `takes.json` live in `voice-audio/` (or `$FIRESIDE_VOICE_DIR`). Both it and the
   packs are kept out of git. Back up `voice-audio/`: it's what was paid for.
-- The packs' sounds are mono Ogg Vorbis (`config.json`'s `pack`). The game reads some mp3s as
-  shorter than they are and stops them partway; Ogg plays to the end. `oggenc` makes them
+- The packs' sounds are mono Ogg Vorbis (`config.json`'s `pack`). The game read our low-bitrate
+  mp3s as shorter than they are and stopped them partway; Ogg plays to the end. `oggenc` makes them
   (`brew install vorbis-tools`), since ffmpeg's own Vorbis encoder is stereo only.
 
 ## Community stories

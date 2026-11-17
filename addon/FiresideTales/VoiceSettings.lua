@@ -14,10 +14,30 @@ local summary, readerMenu, sampleStatus
 -------------------------------------------------------------------------------
 
 local linkWindow
+local LINK_ROWS = 4 -- The most packs in a group.
+local LINK_TOP, LINK_ROW = -96, 46
+
+-- A box with an address in it, selected for copying, that typing can't change.
+local function makeAddressBox(parent)
+	local box = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
+	box:SetSize(290, 24)
+	box:SetAutoFocus(false)
+	box:SetFontObject("ChatFontNormal")
+	box:SetScript("OnTextChanged", function(self, userInput)
+		if userInput then
+			self:SetText(self.url or "")
+			self:HighlightText()
+		end
+	end)
+	box:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+	box:SetScript("OnEscapePressed", function(self) self:ClearFocus(); linkWindow:Hide() end)
+	box:SetScript("OnMouseUp", function(self) self:HighlightText() end)
+	return box
+end
 
 local function buildLinkWindow()
-	linkWindow = ns.NewWindow("FiresideTalesVoiceLinkFrame", "Get a Voice Pack",
-		"Interface\\AddOns\\FiresideTales\\Textures\\Icon", 400, 180)
+	linkWindow = ns.NewWindow("FiresideTalesVoiceLinkFrame", "Get Voice Packs",
+		"Interface\\AddOns\\FiresideTales\\Textures\\Icon", 460, 180)
 	linkWindow:SetFrameStrata("DIALOG")
 	ns.MakeDraggable(linkWindow, "voiceLinkPosition")
 	ns.PlaceFrame(linkWindow, "voiceLinkPosition", "CENTER", UIParent, "CENTER", 0, 60)
@@ -29,55 +49,69 @@ local function buildLinkWindow()
 	intro:SetJustifyH("LEFT")
 	linkWindow.intro = intro
 
-	local box = CreateFrame("EditBox", nil, linkWindow, "InputBoxTemplate")
-	box:SetSize(320, 24)
-	box:SetPoint("TOP", 0, -112)
-	box:SetAutoFocus(false)
-	box:SetFontObject("ChatFontNormal")
-	box:SetJustifyH("CENTER")
-	box:SetScript("OnTextChanged", function(self, userInput)
-		if userInput then
-			self:SetText(linkWindow.url or "")
-			self:HighlightText()
-		end
-	end)
-	box:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
-	box:SetScript("OnEscapePressed", function(self) self:ClearFocus(); linkWindow:Hide() end)
-	box:SetScript("OnMouseUp", function(self) self:HighlightText() end)
-	linkWindow.box = box
+	-- One row per pack in the group: its name and size, and its address or "Installed".
+	linkWindow.rows = {}
+	for i = 1, LINK_ROWS do
+		local row = {}
+		row.name = linkWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		row.name:SetPoint("TOPLEFT", 20, LINK_TOP - (i - 1) * LINK_ROW)
+		row.size = linkWindow:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+		row.size:SetPoint("TOPLEFT", row.name, "BOTTOMLEFT", 0, -3)
+		row.box = makeAddressBox(linkWindow)
+		row.box:SetPoint("TOPRIGHT", -18, LINK_TOP - (i - 1) * LINK_ROW + 2)
+		row.installed = linkWindow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+		row.installed:SetPoint("RIGHT", row.box, "RIGHT", 0, 0)
+		row.installed:SetText("|cff80d080Installed|r")
+		linkWindow.rows[i] = row
+	end
 
 	local hint = linkWindow:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-	hint:SetPoint("TOP", box, "BOTTOM", 0, -8)
-	hint:SetText("Selected. Press Cmd+C on a Mac or Ctrl+C on Windows to copy it.")
+	hint:SetPoint("BOTTOM", 0, 14)
+	hint:SetText("Click an address to select it, then press Cmd+C on a Mac or Ctrl+C on Windows to copy it.")
+	linkWindow.hint = hint
 
 	linkWindow:Hide()
 	ns.AddWindowSounds(linkWindow)
-	linkWindow:HookScript("OnShow", function()
-		box:SetFocus()
-		box:HighlightText()
-	end)
 end
 
-local function showLink(pack)
+-- Shows a group's packs, each with its address to copy, and selects the first one not installed.
+local function showLinks(group)
 	if not linkWindow then buildLinkWindow() end
-	linkWindow.url = pack.url
-	linkWindow.intro:SetText(("%s is a separate download (%s). Get it from CurseForge or the CurseForge app, "
-		.. "then reload the game."):format(pack.title, pack.size))
-	linkWindow.box:SetText(pack.url)
+	local V = ns.Voices
+	linkWindow.intro:SetText(#group.packs > 1
+		and "Get these from CurseForge or the CurseForge app, then reload the game. CurseForge limits each "
+			.. "download to about 500 MB, so each race is a pack of its own."
+		or "Get it from CurseForge or the CurseForge app, then reload the game.")
+	local first
+	for i, row in ipairs(linkWindow.rows) do
+		local pack = group.packs[i]
+		local shown = pack ~= nil
+		row.name:SetShown(shown)
+		row.size:SetShown(shown)
+		row.box:SetShown(false)
+		row.installed:SetShown(false)
+		if pack then
+			row.name:SetText(pack.title)
+			row.size:SetText(pack.size)
+			local installed = V.HasPack(pack.addon)
+			row.installed:SetShown(installed)
+			row.box:SetShown(not installed)
+			row.box.url = pack.url
+			row.box:SetText(pack.url)
+			if not installed and not first then first = row.box end
+		end
+	end
+	linkWindow:SetHeight(-LINK_TOP + #group.packs * LINK_ROW + 30)
 	linkWindow:Show()
-	linkWindow.box:SetFocus()
-	linkWindow.box:HighlightText()
+	if first then
+		first:SetFocus()
+		first:HighlightText()
+	end
 end
 
 -------------------------------------------------------------------------------
 -- The panel
 -------------------------------------------------------------------------------
-
-local function listTitles(list)
-	local titles = {}
-	for i, voice in ipairs(list) do titles[i] = voice.title end
-	return table.concat(titles, ", ")
-end
 
 function ns.VoiceSettings.Refresh()
 	if not panel then return end
@@ -95,9 +129,13 @@ function ns.VoiceSettings.Refresh()
 	end
 
 	for _, row in ipairs(packRows) do
-		local installed = V.HasPack(row.pack.addon)
-		row.status:SetShown(installed)
-		row.get:SetShown(not installed)
+		local have, count = 0, #row.group.packs
+		for _, pack in ipairs(row.group.packs) do
+			if V.HasPack(pack.addon) then have = have + 1 end
+		end
+		row.status:SetText(have == count and "|cff80d080Installed|r"
+			or have > 0 and ("|cffd4af37%d of %d installed|r"):format(have, count) or "")
+		row.get:SetShown(have < count)
 	end
 
 	checks.on:SetChecked(s.on)
@@ -130,29 +168,31 @@ local function makeCheck(parent, label, detail, onClick)
 	return check
 end
 
-local function makePackRow(parent, pack, index)
+-- One row per group: its name and who it's for, how much is installed, and Get for the rest.
+local PACK_TOP, PACK_ROW = -92, 36
+local function makePackRow(parent, group, index)
 	local row = CreateFrame("Frame", nil, parent)
-	row:SetSize(560, 44)
-	row:SetPoint("TOPLEFT", 20, -96 - (index - 1) * 48)
-	row.pack = pack
+	row:SetSize(560, 32)
+	row:SetPoint("TOPLEFT", 20, PACK_TOP - (index - 1) * PACK_ROW)
+	row.group = group
 
 	local name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	name:SetPoint("TOPLEFT", 0, -4)
-	name:SetText(pack.title)
+	name:SetPoint("TOPLEFT", 0, -2)
+	name:SetText(group.title)
 
 	local about = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	about:SetPoint("TOPLEFT", name, "BOTTOMLEFT", 0, -4)
-	about:SetWidth(420)
+	about:SetPoint("TOPLEFT", name, "BOTTOMLEFT", 0, -3)
+	about:SetWidth(400)
 	about:SetJustifyH("LEFT")
-	about:SetText(pack.about .. " |cff9d9d9d" .. pack.size .. "|r")
+	about:SetWordWrap(false)
+	about:SetText(group.about)
+
+	row.get = ns.MakeFlatButton(row, "Get", 60)
+	row.get:SetPoint("RIGHT", 0, 0)
+	row.get:SetScript("OnClick", function() showLinks(group) end)
 
 	row.status = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	row.status:SetPoint("RIGHT", 0, 0)
-	row.status:SetText("|cff80d080Installed|r")
-
-	row.get = ns.MakeFlatButton(row, "Get on CurseForge", 120)
-	row.get:SetPoint("RIGHT", 0, 0)
-	row.get:SetScript("OnClick", function() showLink(pack) end)
+	row.status:SetPoint("RIGHT", row.get, "LEFT", -10, 0)
 
 	packRows[index] = row
 	return row
@@ -240,19 +280,19 @@ function ns.VoiceSettings.Build(window, top, bottom)
 	intro:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
 	intro:SetWidth(560)
 	intro:SetJustifyH("LEFT")
-	intro:SetText("When someone nearby tells a Fireside Tales story, or you do, each line is read aloud in the "
-		.. "voice of the teller's race. Voice packs are separate downloads, so get only the ones you want.")
+	intro:SetText("Stories told nearby are read aloud in the voice of the teller's race. "
+		.. "Each race's voices are a separate download, so get only the ones you want.")
 
 	summary = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	summary:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", 0, -10)
 	summary:SetWidth(560)
 	summary:SetJustifyH("LEFT")
 
-	for index, pack in ipairs(V.PACKS) do
-		makePackRow(panel, pack, index)
+	for index, group in ipairs(V.PACKS) do
+		makePackRow(panel, group, index)
 	end
 
-	local optionsTop = -96 - #V.PACKS * 48 - 14
+	local optionsTop = PACK_TOP - #V.PACKS * PACK_ROW - 8
 	local rule = panel:CreateTexture(nil, "ARTWORK")
 	rule:SetColorTexture(0.72, 0.55, 0.32, 0.35)
 	rule:SetPoint("TOPLEFT", 20, optionsTop)

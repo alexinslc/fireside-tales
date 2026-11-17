@@ -21,20 +21,25 @@ local CHANNEL = "Master"
 
 local KIND_BY_EVENT = { CHAT_MSG_SAY = "say", CHAT_MSG_EMOTE = "emote" }
 
--- The voice packs there are, for the Voices tab, whether or not they're installed.
+-- The voice packs there are, for the Voices tab, whether or not they're installed: one per race
+-- (each with its men and women), the narrator, and the community stories, in groups.
+local function pack(name, title, size)
+	return { addon = "FiresideTalesVoices_" .. name, title = title, size = size,
+		url = "curseforge.com/wow/addons/fireside-tales-voices-" .. title:lower():gsub(" ", "-") }
+end
 V.PACKS = {
-	{ addon = "FiresideTalesVoices_Alliance", title = "Alliance Voices", size = "about 860 MB",
-		about = "Human, Dwarf, Night Elf, Gnome, and Skyborne tellers, men and women.",
-		url = "curseforge.com/wow/addons/fireside-tales-voices-alliance" },
-	{ addon = "FiresideTalesVoices_Horde", title = "Horde Voices", size = "about 910 MB",
-		about = "Orc, Undead, Tauren, Troll, and Skyborne tellers, men and women.",
-		url = "curseforge.com/wow/addons/fireside-tales-voices-horde" },
-	{ addon = "FiresideTalesVoices_Narrator", title = "Narrator", size = "about 85 MB",
-		about = "Reads every teller whose race voice isn't installed.",
-		url = "curseforge.com/wow/addons/fireside-tales-voices-narrator" },
-	{ addon = "FiresideTalesVoices_Community", title = "Community Stories", size = "about 20 MB, new each week",
-		about = "This week's community stories from firesidetales.dev, in every voice.",
-		url = "curseforge.com/wow/addons/fireside-tales-voices-community" },
+	{ title = "Alliance", about = "Human, Dwarf, Night Elf, and Gnome tellers, men and women.", packs = {
+		pack("Human", "Human", "about 245 MB"), pack("Dwarf", "Dwarf", "about 265 MB"),
+		pack("NightElf", "Night Elf", "about 275 MB"), pack("Gnome", "Gnome", "about 270 MB") } },
+	{ title = "Horde", about = "Orc, Undead, Tauren, and Troll tellers, men and women.", packs = {
+		pack("Orc", "Orc", "about 255 MB"), pack("Undead", "Undead", "about 295 MB"),
+		pack("Tauren", "Tauren", "about 295 MB"), pack("Troll", "Troll", "about 295 MB") } },
+	{ title = "Skyborne", about = "Skyborne tellers of either faction, men and women.", packs = {
+		pack("Skyborne", "Skyborne", "about 250 MB") } },
+	{ title = "Narrator", about = "Reads every teller whose race voice isn't installed.", packs = {
+		pack("Narrator", "Narrator", "about 130 MB") } },
+	{ title = "Community Stories", about = "This week's community stories from firesidetales.dev, in every voice.",
+		packs = { pack("Community", "Community", "about 30 MB, new each week") } },
 }
 
 local voices = {} -- By key, from the packs.

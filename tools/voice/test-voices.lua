@@ -360,8 +360,9 @@ do
 		check("every VoiceLines.lua entry has a file name", good)
 	end
 	-- Each pack built next to the addon.
-	for _, addon in ipairs({ "FiresideTalesVoices_Alliance", "FiresideTalesVoices_Horde", "FiresideTalesVoices_Narrator",
-		"FiresideTalesVoices_Community" }) do
+	local packNames = { "Human", "Dwarf", "NightElf", "Gnome", "Orc", "Undead", "Tauren", "Troll", "Skyborne", "Narrator", "Community" }
+	for _, name in ipairs(packNames) do
+		local addon = "FiresideTalesVoices_" .. name
 		local packChunk = loadfile(ADDONS .. "/" .. addon .. "/Pack.lua")
 		if packChunk then
 			local added = {}

@@ -2137,38 +2137,50 @@ scenario("voices tab: no packs, getting one, and its settings", function()
 	click(tab("voices"), "Voices tab")
 	check("with no packs, it says so", shownText("No Voice Packs Installed") ~= nil)
 	check("the story list is covered", findButton("Tell a Tale", storyWindow()) == nil and findButton("Tell", storyWindow()) == nil)
-	local gets = 0
-	for _, f in ipairs(allFrames) do
-		if f._type == "Button" and effectiveShown(f) and plainText(f._text) == "Get on CurseForge" then gets = gets + 1 end
+	local function countGets()
+		local n = 0
+		for _, f in ipairs(allFrames) do
+			if f._type == "Button" and effectiveShown(f) and plainText(f._text) == "Get" then n = n + 1 end
+		end
+		return n
 	end
-	check("each pack has a way to get it", gets == #ns.Voices.PACKS, gets)
+	check("each group of packs has a way to get it", countGets() == #ns.Voices.PACKS, countGets())
 
-	clickLabel("Get on CurseForge")
+	clickLabel("Get")
 	local link = rawget(realG, "FiresideTalesVoiceLinkFrame")
-	check("getting one opens its address to copy", link and link:IsShown())
-	local box
+	check("getting one opens the addresses to copy", link and link:IsShown())
+	local boxes = {}
 	for _, f in ipairs(allFrames) do
-		if f._type == "EditBox" and underFrame(f, link) then box = f end
+		if f._type == "EditBox" and underFrame(f, link) and effectiveShown(f) then boxes[#boxes + 1] = f end
 	end
-	check("the address is the pack's CurseForge page", box and box:GetText() == ns.Voices.PACKS[1].url, box and box:GetText())
-	box:SetText("oops")
-	if box._scripts.OnTextChanged then box._scripts.OnTextChanged(box, true) end
-	check("the address can't be changed", box:GetText() == ns.Voices.PACKS[1].url, box:GetText())
+	local alliance = ns.Voices.PACKS[1].packs
+	check("each race in the group has its own address", #boxes == #alliance, #boxes)
+	check("the addresses are the packs' CurseForge pages", boxes[1] and boxes[1]:GetText() == alliance[1].url
+		and boxes[4]:GetText() == alliance[4].url, boxes[1] and boxes[1]:GetText())
+	check("Night Elf's address has a hyphen", alliance[3].url == "curseforge.com/wow/addons/fireside-tales-voices-night-elf", alliance[3].url)
+	check("the window says why there are several", shownText("about 500 MB") ~= nil)
+	boxes[1]:SetText("oops")
+	if boxes[1]._scripts.OnTextChanged then boxes[1]._scripts.OnTextChanged(boxes[1], true) end
+	check("an address can't be changed", boxes[1]:GetText() == alliance[1].url, boxes[1]:GetText())
 	link:Hide()
 
-	-- A pack is installed, as it would be after a reload.
+	-- Packs are installed, as they would be after a reload.
 	realG.FiresideTales_AddVoice({ key = "narrator-male", title = "Male narrator", addon = "FiresideTalesVoices_Narrator",
 		folder = "narrator-male", order = 1, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
-	realG.FiresideTales_AddVoice({ key = "human-male", title = "Human man", addon = "FiresideTalesVoices_Alliance",
+	realG.FiresideTales_AddVoice({ key = "human-male", title = "Human man", addon = "FiresideTalesVoices_Human",
 		folder = "human-male", order = 19, race = "Human", sex = 2, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
 	ns.VoiceSettings.Refresh()
-	check("installed packs say so", shownText("Installed") ~= nil)
+	check("an installed group says so", shownText("Installed") ~= nil)
+	check("a group partly installed says how much", shownText("1 of 4 installed") ~= nil)
 	check("and the summary says stories are read", shownText("Reading stories aloud") ~= nil)
-	gets = 0
+	check("only the groups not all installed are offered", countGets() == #ns.Voices.PACKS - 1, countGets())
+	clickLabel("Get")
+	local shownBoxes = 0
 	for _, f in ipairs(allFrames) do
-		if f._type == "Button" and effectiveShown(f) and plainText(f._text) == "Get on CurseForge" then gets = gets + 1 end
+		if f._type == "EditBox" and underFrame(f, link) and effectiveShown(f) then shownBoxes = shownBoxes + 1 end
 	end
-	check("only the packs not installed are offered", gets == #ns.Voices.PACKS - 2, gets)
+	check("an installed race shows no address", shownBoxes == 3, shownBoxes)
+	link:Hide()
 
 	local own
 	for _, f in ipairs(allFrames) do
@@ -2208,7 +2220,7 @@ scenario("voices tab: no packs, getting one, and its settings", function()
 	played[1] = nil
 
 	clickLabel("Play a Sample")
-	check("a sample plays in your race's voice", played[1] and played[1].path:find("FiresideTalesVoices_Alliance\\Sounds\\human-male\\", 1, true), played[1] and played[1].path)
+	check("a sample plays in your race's voice", played[1] and played[1].path:find("FiresideTalesVoices_Human\\Sounds\\human-male\\", 1, true), played[1] and played[1].path)
 	check("on the Master channel", played[1] and played[1].channel == "Master")
 
 	click(tab("stories"), "Stories tab")

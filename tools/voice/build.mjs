@@ -73,22 +73,25 @@ console.log(`VoiceLines.lua: ${builtIn.length} lines (and ${community.length} on
 
 // How a master becomes a pack's sound. Ogg Vorbis: the game reads some mp3s as shorter than they
 // are and stops them partway, but plays Ogg to the end. ffmpeg here has no mono Vorbis encoder, so
-// oggenc (brew install vorbis-tools) makes them, from a wav ffmpeg decodes.
+// oggenc (brew install vorbis-tools) makes them, from a wav ffmpeg decodes. config.json's "pack"
+// gives the sample rate and either kbps (an average bitrate, as Spoken's quest audio uses: 44.1 kHz
+// mono at 48) or a Vorbis quality.
 const encoding = (() => {
-	const { format = "ogg", sampleRate = 44100, quality = 0, kbps = 32 } = config.pack;
+	const { format = "ogg", sampleRate = 44100, quality, kbps = 48 } = config.pack;
 	if (format === "mp3") {
 		const args = ["-ac", "1", "-ar", String(sampleRate), "-c:a", "libmp3lame", "-b:a", `${kbps}k`];
 		return { ext: "mp3", stamp: args.join(" "), make: (master, out) => run("ffmpeg", ["-v", "error", "-y", "-i", master, ...args, out]) };
 	}
+	const rate = quality !== undefined ? ["-q", String(quality)] : ["-b", String(kbps)];
 	return {
 		ext: "ogg",
-		stamp: `ogg mono ${sampleRate} q${quality}`,
+		stamp: `ogg mono ${sampleRate} ${rate.join("")}`,
 		async make(master, out) {
 			const dir = await mkdtemp(path.join(os.tmpdir(), "fireside-"));
 			const wav = path.join(dir, "line.wav");
 			try {
 				await run("ffmpeg", ["-v", "error", "-y", "-i", master, "-map_metadata", "-1", "-fflags", "+bitexact", "-flags:a", "+bitexact", "-ac", "1", "-ar", String(sampleRate), wav]);
-				await run("oggenc", ["-Q", "-q", String(quality), "-o", out, wav]);
+				await run("oggenc", ["-Q", ...rate, "-o", out, wav]);
 			} finally {
 				await rm(dir, { recursive: true, force: true });
 			}
@@ -220,6 +223,8 @@ async function buildPack(addon, pack) {
 	].join("\n"));
 	const size = built.reduce((sum, b) => sum + b.size, 0);
 	console.log(`  ${built.length} ${built.length === 1 ? "voice" : "voices"}, ${(size / 1e6).toFixed(1)} MB in all.`);
+	// CurseForge refuses an upload much over 500 MB (480 MiB went through and 510 MiB didn't).
+	if (size > 480 * 2 ** 20) console.log(`  This is over CurseForge's upload limit of about 500 MB, so split the pack.`);
 }
 
 // The community pack changes each week, apart from Fireside Tales' own releases, so its version
