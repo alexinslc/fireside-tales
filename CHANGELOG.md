@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.10.1
+
+- Voices now come in a pack for each race, plus the narrator and community stories, since CurseForge limits each download to about 500 MB.
+- Voices sound clearer.
+- The Voices tab groups the packs by faction, with a Get button for each group.
+
 ## 1.10.0
 
 - Added voices: stories told nearby are read aloud in the voice of the teller's race. The voice packs are free, separate downloads.
