@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.0
+
+- Added voices: stories told nearby are read aloud in the voice of the teller's race. The voice packs are free, separate downloads.
+- Added a Voices tab to the story menu, with each pack, who reads (race voices or the narrator), your own stories, and a sample.
+- Added /tales voices.
+- Restart the game after updating.
+
 ## 1.9.2
 
 - New Community stories for the week of November 17, by Garvin Flintwatch.
