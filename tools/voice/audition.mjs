@@ -2,12 +2,14 @@
 // Every file lands in voice-audio/auditions/. Each command spends a little.
 //
 //   node tools/voice/audition.mjs design "<description>"      (ElevenLabs Voice Design: three voices reading the story)
+//                                                             (--name <word> names the files, so earlier designs are kept)
 //   node tools/voice/audition.mjs fish <model id> <name>       (a fish.audio library voice, line by line)
 //   node tools/voice/audition.mjs fish-from <preview.mp3>      (fish.audio copying a designed voice from its preview)
 //   node tools/voice/audition.mjs eleven <voice id> <name>     (a saved ElevenLabs voice, with Spoken's narrator settings)
 //
 // Pass --env-file <path> for the API keys.
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { promisify } from "node:util";
 import path from "node:path";
@@ -17,6 +19,14 @@ const run = promisify(execFile);
 const DIR = path.join(AUDIO_DIR, "auditions");
 
 const args = process.argv.slice(2);
+const nameAt = args.indexOf("--name");
+const designName = nameAt === -1 ? "design" : args.splice(nameAt, 2)[1];
+// --text reads the design's script from a file instead of the story; --guidance (0-100) makes the
+// voice follow the description more closely.
+const textAt = args.indexOf("--text");
+const designText = textAt === -1 ? null : await readFile(args.splice(textAt, 2)[1], "utf8");
+const guidanceAt = args.indexOf("--guidance");
+const guidance = guidanceAt === -1 ? null : Number(args.splice(guidanceAt, 2)[1]);
 const envAt = args.indexOf("--env-file");
 if (envAt !== -1) {
 	for (const row of (await readFile(args[envAt + 1], "utf8")).split(/\r?\n/)) {
@@ -25,9 +35,17 @@ if (envAt !== -1) {
 	}
 	args.splice(envAt, 2);
 }
+// --story <file.json> reads other lines than story.json's.
+const storyAt = args.indexOf("--story");
+const storyFile = storyAt === -1 ? path.join(DIR, "story.json") : args.splice(storyAt, 2)[1];
+// For eleven: --stability <0-1> (lower is more expressive) and --prefix "<audio tag>" put before each line.
+const stabilityAt = args.indexOf("--stability");
+const stability = stabilityAt === -1 ? null : Number(args.splice(stabilityAt, 2)[1]);
+const prefixAt = args.indexOf("--prefix");
+const prefix = prefixAt === -1 ? "" : `${args.splice(prefixAt, 2)[1]} `;
 const [command, ...rest] = args;
 const config = await loadConfig();
-const story = JSON.parse(await readFile(path.join(DIR, "story.json"), "utf8"));
+const story = JSON.parse(await readFile(storyFile, "utf8"));
 await mkdir(DIR, { recursive: true });
 
 async function check(response, name) {
@@ -37,8 +55,10 @@ async function check(response, name) {
 
 // Joins line takes into one file with a pause between lines, as a teller would.
 async function join(parts, out) {
-	const list = path.join(DIR, "join.txt");
-	const gap = path.join(DIR, "gap.mp3");
+	// Named for the output, so auditions running side by side don't share them.
+	const base = path.basename(out, ".mp3");
+	const list = path.join(DIR, `${base}.join.txt`);
+	const gap = path.join(DIR, `${base}.gap.mp3`);
 	await run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-t", "0.8", "-i", "anullsrc=r=44100:cl=mono", "-c:a", "libmp3lame", "-q:a", "4", gap]);
 	await writeFile(list, parts.flatMap((p, i) => [`file '${p}'`, ...(i < parts.length - 1 ? [`file '${gap}'`] : [])]).join("\n"));
 	await run("ffmpeg", ["-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", list, "-ac", "1", "-ar", "44100", "-c:a", "libmp3lame", "-q:a", "4", out]);
@@ -105,12 +125,15 @@ async function elevenLine(voiceId, text, out) {
 	const response = await check(await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=${s.outputFormat}`, {
 		method: "POST",
 		headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY, "content-type": "application/json" },
-		body: JSON.stringify({ text, model_id: s.model, language_code: s.languageCode, seed: s.seed, voice_settings: s.voiceSettings }),
+		body: JSON.stringify({ text: prefix + text, model_id: s.model, language_code: s.languageCode, seed: s.seed,
+			voice_settings: { ...s.voiceSettings, ...(stability !== null ? { stability } : {}) } }),
 	}), "ElevenLabs");
 	await writeFile(out, Buffer.from(await response.arrayBuffer()));
 }
 
 async function eachLine(name, make) {
+	// Never over an earlier audition: a design's preview may be the only copy of that voice's sound.
+	if (existsSync(path.join(DIR, `${name}.mp3`))) throw new Error(`${name}.mp3 is already there. Pick another name.`);
 	const parts = [];
 	for (const [i, text] of story.lines.entries()) {
 		const part = path.join(DIR, `${name}-${i}.mp3`);
@@ -122,30 +145,31 @@ async function eachLine(name, make) {
 
 if (command === "design") {
 	const description = rest.join(" ");
-	const text = story.lines.join(" ");
+	const text = (designText ?? story.lines.join(" ")).trim();
 	const response = await check(await fetch("https://api.elevenlabs.io/v1/text-to-voice/design?output_format=mp3_44100_128", {
 		method: "POST",
 		headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY, "content-type": "application/json" },
-		body: JSON.stringify({ voice_description: description, text, model_id: "eleven_ttv_v3" }),
+		body: JSON.stringify({ voice_description: description, text, model_id: "eleven_ttv_v3", ...(guidance !== null ? { guidance_scale: guidance } : {}) }),
 	}), "ElevenLabs");
 	const result = await response.json();
 	const saved = [];
 	for (const [i, preview] of result.previews.entries()) {
-		const file = path.join(DIR, `eleven-design-${i + 1}.mp3`);
+		const file = path.join(DIR, `eleven-${designName}-${i + 1}.mp3`);
 		await writeFile(file, Buffer.from(preview.audio_base_64, "base64"));
 		saved.push({ file: path.basename(file), generatedVoiceId: preview.generated_voice_id, seconds: preview.duration_secs });
 		console.log(`Wrote ${path.relative(process.cwd(), file)} (${preview.duration_secs.toFixed(1)} s)`);
 	}
-	await writeFile(path.join(DIR, "design.json"), `${JSON.stringify({ description, text, previews: saved }, null, "\t")}\n`);
+	await writeFile(path.join(DIR, `${designName}.json`), `${JSON.stringify({ description, text, previews: saved }, null, "\t")}\n`);
 } else if (command === "fish") {
 	const [id, name] = rest;
 	await eachLine(`fish-${name}`, (text, out) => fishLine(text, { reference_id: id }, out));
 } else if (command === "fish-from") {
-	// The preview reads the whole story, so the story is its exact transcript.
+	// The preview's transcript: the script it was designed with (--text), or the whole story.
 	const preview = path.join(DIR, rest[0]);
 	const audio = await readFile(preview);
 	const name = `fish-from-${path.basename(preview, ".mp3")}`;
-	await eachLine(name, (text, out) => fishLine(text, { references: [{ audio, text: story.lines.join(" ") }] }, out));
+	const transcript = (designText ?? story.lines.join(" ")).trim();
+	await eachLine(name, (text, out) => fishLine(text, { references: [{ audio, text: transcript }] }, out));
 } else if (command === "eleven") {
 	const [id, name] = rest;
 	await eachLine(`eleven-${name}`, (text, out) => elevenLine(id, text, out));

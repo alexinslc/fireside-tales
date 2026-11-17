@@ -7,4 +7,5 @@ dist/
 
 # Voice takes and the pack's sounds are made by tools/voice, not kept in git.
 voice-audio/
-addon/FiresideTalesVoices/Sounds/
+# The voice packs are built whole by tools/voice/build.mjs.
+addon/FiresideTalesVoices_*/

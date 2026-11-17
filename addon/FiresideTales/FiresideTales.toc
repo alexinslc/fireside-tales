@@ -24,8 +24,11 @@ Community.lua
 Riddles.lua
 Openers.lua
 Core.lua
+VoiceLines.lua
+Voices.lua
 Seasons.lua
 StoryMenu.lua
+VoiceSettings.lua
 TellerBar.lua
 Import.lua
 MinimapButton.lua

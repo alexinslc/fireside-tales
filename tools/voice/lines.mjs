@@ -40,9 +40,16 @@ export function lineId(kind, text) {
 }
 
 // The words the voice reads, or null for a line that isn't voiced. A {target} line holds a name
-// that can't be recorded ahead. An emote is voiced only if config.emotes says how.
-export function spokenText(kind, text, config) {
-	if (text.includes("{target}")) return null;
+// that can't be recorded ahead, so the voice says config.target's word in its place (a line can
+// have its own word). An emote is voiced only if config.emotes says how.
+export function spokenText(kind, text, config, id) {
+	if (text.includes("{target}")) {
+		if (kind !== "say" || !config.target) return null;
+		const word = config.target.lines?.[id] ?? config.target.word;
+		return text
+			.replace(/(^|[.!?]\s+)\{target\}/g, (_, start) => start + word[0].toUpperCase() + word.slice(1))
+			.replace(/\{target\}/g, word);
+	}
 	if (kind === "emote") return config.emotes === "teller" ? `The teller ${text}` : null;
 	return text;
 }
@@ -62,7 +69,7 @@ export async function collectLines(config) {
 				if (!known.files.includes(file)) known.files.push(file);
 				continue;
 			}
-			byId.set(id, { id, kind, text, spoken: spokenText(kind, text, config), files: [file] });
+			byId.set(id, { id, kind, text, spoken: spokenText(kind, text, config, id), files: [file] });
 		}
 	}
 	return [...byId.values()];
@@ -77,13 +84,22 @@ export async function loadTakes() {
 	}
 }
 
-// Which service and which of its voices make a voice's takes. A "-dev" voice is the Mac's own,
-// for testing. Changing the provider or its voice in config.json makes every take out of date.
+// Which service and which of its voices make a voice's takes, from config.json's "voices". A "-dev"
+// voice is the Mac's own, for testing. Changing the provider or a voice's id makes its takes out of date.
 export function sourceFor(config, voice = config.voice) {
 	if (voice.endsWith("-dev")) return { provider: "say", ref: "mac" };
-	if (config.provider === "fish") return { provider: "fish", ref: config.fish.referenceId };
-	if (config.provider === "elevenlabs") return { provider: "elevenlabs", ref: config.elevenlabs.voiceId };
-	throw new Error(`config.json's provider is "${config.provider}". Use fish or elevenlabs.`);
+	const settings = config.voices[voice];
+	if (!settings) throw new Error(`config.json has no voice "${voice}". It has ${Object.keys(config.voices).join(", ")}.`);
+	if (!["fish", "elevenlabs"].includes(config.provider)) {
+		throw new Error(`config.json's provider is "${config.provider}". Use fish or elevenlabs.`);
+	}
+	return { provider: config.provider, ref: settings[config.provider] ?? "" };
+}
+
+// The voice a command names with --voice, or config.json's.
+export function voiceOption(config) {
+	const at = process.argv.indexOf("--voice");
+	return at === -1 ? config.voice : process.argv[at + 1];
 }
 
 // The take of a line in a voice, if it was made from the words the voice says now, by the
@@ -121,16 +137,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 	const config = await loadConfig();
 	const lines = await collectLines(config);
 	const takes = await loadTakes();
-	const source = sourceFor(config);
 	const voiced = lines.filter((l) => l.spoken);
-	const missing = voiced.filter((l) => !currentTake(takes, config.voice, l, source));
 	console.log(`${lines.length} lines (${lines.filter((l) => l.kind === "say").length} say, ${lines.filter((l) => l.kind === "emote").length} emote).`);
-	console.log(`${voiced.length} are voiced in "${config.voice}" with ${source.provider} (emotes: ${config.emotes}; {target} lines are not).`);
-	console.log(`${voiced.length - missing.length} have a take. ${missing.length} don't.`);
-	if (missing.length > 0) {
-		for (const provider of ["fish", "elevenlabs"]) {
-			const other = sourceFor({ ...config, provider });
-			console.log(`  With ${provider}: ${estimate(missing, other, config)}.`);
+	console.log(`${voiced.length} are voiced (emotes: ${config.emotes}; {target} lines say "${config.target?.word ?? "nothing"}").`);
+	for (const voice of Object.keys(config.voices)) {
+		const source = sourceFor(config, voice);
+		const missing = voiced.filter((l) => !currentTake(takes, voice, l, source));
+		console.log(`${voice}: ${voiced.length - missing.length} have a take, ${missing.length} don't${source.ref ? "" : " (no voice id yet)"}.`);
+		if (missing.length > 0) {
+			for (const provider of ["fish", "elevenlabs"]) {
+				console.log(`  With ${provider}: ${estimate(missing, { provider }, config)}.`);
+			}
 		}
 	}
 }

@@ -42,6 +42,8 @@ local window, reader, readerContent, readerTitle, readerMeta, readerRule, reader
 local favoriteButton, tonightButton, editButton, deleteButton, clearFiltersButton, fromButton, moodButton
 local writeButton, contributeButton -- The bottom bar's second button, which changes with the tab.
 local tabButtons = {}
+local INSET_TOP, INSET_BOTTOM = -60, 34 -- Where the list and reader sit in the window.
+local INSET_LEFT = 8
 local confirmingDelete = false
 local list, listContent, countLabel, emptyLabel, searchBox
 local rows, headers = {}, {}
@@ -1330,7 +1332,33 @@ local TABS = {
 		icons = { "Interface\\Icons\\INV_Misc_QuestionMark" } },
 	{ key = "community", tooltip = "Community", detail = "Stories players shared at firesidetales.dev, new each week.",
 		icons = { "Interface\\Icons\\Achievement_Reputation_01", "Interface\\Icons\\INV_Misc_GroupNeedMore" } },
+	{ key = "voices", tooltip = "Voices", detail = "Hear stories read aloud in the voice of the teller's race.",
+		icons = { "Interface\\Icons\\INV_Misc_Gear_01", "Interface\\Icons\\Trade_Engineering" } },
 }
+
+-- The Voices tab is a settings page, not a list of stories, so it stands in for the menu's
+-- own pages: the list, the reader, the filters, and the buttons along the foot.
+local pageFrames = {}
+local voicePanel
+
+local function showVoicePage(on)
+	if on then
+		if voicePanel and voicePanel:IsShown() then return end
+		if not voicePanel then voicePanel = ns.VoiceSettings.Build(window, INSET_TOP, 6) end
+		for _, frame in ipairs(pageFrames) do
+			frame.firesideShown = frame:IsShown()
+			frame:Hide()
+		end
+		countLabel:Hide()
+		voicePanel:Show()
+	elseif voicePanel and voicePanel:IsShown() then
+		voicePanel:Hide()
+		for _, frame in ipairs(pageFrames) do
+			if frame.firesideShown then frame:Show() end
+		end
+		countLabel:Show()
+	end
+end
 
 -- The first icon the client has. SetTexture says when a file is missing.
 local function setFirstTexture(texture, paths)
@@ -1410,12 +1438,15 @@ function setTab(key)
 	if key ~= currentTab then
 		ns.PlayUISound("IG_CHARACTER_INFO_TAB")
 		currentTab = key
-		filters.source = nil
 		hidePopup()
-		refreshFilterBar()
-		refreshSelectors()
-		renderList()
-		if not currentStory then refreshReader() end -- The Community tab's hint differs.
+		showVoicePage(key == "voices")
+		if key ~= "voices" then
+			filters.source = nil
+			refreshFilterBar()
+			refreshSelectors()
+			renderList()
+			if not currentStory then refreshReader() end -- The Community tab's hint differs.
+		end
 	end
 	refreshTabs()
 end
@@ -1435,8 +1466,6 @@ local function buildTabs()
 	refreshTabs()
 end
 
-local INSET_TOP, INSET_BOTTOM = -60, 34
-local INSET_LEFT = 8
 
 local function buildList()
 	local inset = ns.NewInset(window)
@@ -1579,6 +1608,10 @@ function buildWindow()
 		countLabel:SetPoint("TOPRIGHT", -30, -6)
 	end
 
+	-- Everything made from here until the tabs is the story pages, which the Voices tab covers.
+	local chrome = {}
+	for _, child in ipairs({ window:GetChildren() }) do chrome[child] = true end
+
 	local tellATale = ns.MakeFlatButton(window, "Tell a Tale", 84)
 	tellATale:SetPoint("BOTTOMLEFT", INSET_LEFT, 7)
 	tellATale:SetScript("OnClick", ns.Story.TellATale)
@@ -1597,6 +1630,9 @@ function buildWindow()
 	buildList()
 	buildReader()
 	buildFilters()
+	for _, child in ipairs({ window:GetChildren() }) do
+		if not chrome[child] then pageFrames[#pageFrames + 1] = child end
+	end
 	buildTabs()
 	renderList()
 	refreshReader()
@@ -1684,6 +1720,13 @@ function ns.Story.Toggle()
 		refreshTabs() -- And your portrait may have changed.
 		window:Show()
 	end
+end
+
+-- Opens the menu at one of its tabs, as /tales voices does.
+function ns.Story.ShowTab(key)
+	if not window then buildWindow() end
+	if not window:IsShown() then ns.Story.Toggle() end
+	setTab(key)
 end
 
 function ns.Story.ZoneChanged()

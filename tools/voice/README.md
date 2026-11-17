@@ -1,51 +1,82 @@
 # Voices
 
-Fireside Tales Voices (`addon/FiresideTalesVoices`) reads stories aloud through [Spoken](https://github.com/rusty-key/spoken-wow).
-When someone nearby tells a story, each `/say` line that matches one in the pack plays in the
-narrator's voice. The pack only listens to chat. The teller doesn't need it, and the listener
-doesn't need Fireside Tales. The plan behind it is in `docs/spoken-plan.md`.
+Fireside Tales reads stories aloud. When someone nearby tells a story, or you do, each `/say` line
+that matches one in `addon/FiresideTales/VoiceLines.lua` plays as a sound, in the voice of the
+teller's race and sex. Without that voice, the narrator reads it. It only listens to chat. The teller
+doesn't need the voices; each listener does.
+
+`addon/FiresideTales/Voices.lua` finds the line, picks the voice and plays the sounds in turn.
+`VoiceSettings.lua` is the Voices tab of the story menu. The sounds are in separate addons, the
+voice packs, so a player downloads only the ones they want:
+
+| Pack | Voices | Size |
+| --- | --- | --- |
+| `FiresideTalesVoices_Alliance` | Human, Dwarf, Night Elf, Gnome, Skyborne | about 860 MB |
+| `FiresideTalesVoices_Horde` | Orc, Undead, Tauren, Troll, Skyborne | about 910 MB |
+| `FiresideTalesVoices_Narrator` | the narrator, for any teller without a race voice | about 85 MB |
+
+Each has both sexes. Skyborne is in both faction packs, since either faction can play them. A pack
+needs Fireside Tales, and adds each of its voices with `FiresideTales_AddVoice`. `config.json`'s
+`packs` says which voices go in each. Each pack is built whole by `build.mjs`, so it's kept out of git.
+
+Each race voice was designed with ElevenLabs Voice Design, read six lines from its race's stories
+with expressive settings (and an accent tag where it has an accent), then copied to fish.audio from
+that take. `tools/voice/audition.mjs` has the steps; `voice-audio/auditions/` keeps every take, so a
+voice can be copied again.
 
 ## The steps
 
 ```sh
 node tools/voice/lines.mjs                          # what's voiced, what has a take, what the rest costs
 node tools/voice/generate.mjs                       # what it would make; spends nothing
-node tools/voice/generate.mjs --spend --env-file ~/.config/fireside/fish.env
-node tools/voice/build.mjs                          # Sounds/ and Lines.lua for the pack
-luajit tools/voice/test-voices.lua                  # the pack's own checks
+node tools/voice/generate.mjs --spend --env-file ~/.config/fireside/voice.env
+node tools/voice/generate.mjs --voice races --spend --concurrency 15 --env-file ~/.config/fireside/voice.env
+node tools/voice/build.mjs                          # VoiceLines.lua and every pack (needs oggenc)
+node tools/voice/build.mjs --pack FiresideTalesVoices_Narrator
+luajit tools/voice/test-voices.lua                  # Voices.lua's own checks
+luajit tools/harness/harness.lua                    # the whole addon, the Voices tab included
 ```
 
+- `config.json`'s `voices` lists every voice: its title, order, race and sex for a race voice, and
+  its voice id on each service. `voice` is the one used when a command has no `--voice`.
 - `generate.mjs --spend` uses the `provider` in `config.json`:
-  - `fish`: fish.audio with the voice `fish.referenceId`. Needs `FISH_API_KEY`.
-  - `elevenlabs`: ElevenLabs with the voice `elevenlabs.voiceId`, and the same model and settings
-    Spoken's narrator uses (`eleven_v3`, stability 0.5, similarity 0.75, speaker boost). Needs
-    `ELEVENLABS_API_KEY`.
+  - `fish`: fish.audio with the voice's `fish` id. Needs `FISH_API_KEY`. Each request goes on a
+    connection of its own, so `--concurrency` is how many run at once (fish.audio allows 15 on a
+    balance of $100 or more).
+  - `elevenlabs`: ElevenLabs with the voice's `elevenlabs` id. Needs `ELEVENLABS_API_KEY`.
 
   Put the keys in your shell or in one env file outside the repo (`--env-file`). Start with
   `--limit 20` or `--file Stories.lua`. Each take is saved as it's made, so a stopped run picks up
-  where it left off.
-- Switching the provider or its voice makes every line need a new take. Earlier takes stay in
+  where it left off, and running it again fills in any that failed.
+- Switching the provider or a voice makes its lines need new takes. Earlier takes stay in
   `voice-audio/` (each file is named for its words, provider and voice), so switching back reuses them
   for free.
 - `generate.mjs --provider say --spend` makes free test takes with the Mac's own voice, under the
-  voice name `narrator-dev`. Build them with `build.mjs --voice narrator-dev`.
-- Masters and `takes.json` live in `voice-audio/` (or `$FIRESIDE_VOICE_DIR`). Both it and the pack's
-  `Sounds/` are kept out of git. Back up `voice-audio/`: it's what was paid for.
+  voice name `narrator-male-dev`. `build.mjs --voice narrator-male-dev` puts them in a test pack of
+  their own, `FiresideTalesVoices_Test`.
+- Masters and `takes.json` live in `voice-audio/` (or `$FIRESIDE_VOICE_DIR`). Both it and the
+  packs are kept out of git. Back up `voice-audio/`: it's what was paid for.
+- The packs' sounds are mono Ogg Vorbis (`config.json`'s `pack`). The game reads some mp3s as
+  shorter than they are and stops them partway; Ogg plays to the end. `oggenc` makes them
+  (`brew install vorbis-tools`), since ffmpeg's own Vorbis encoder is stereo only.
 
 ## What's voiced
 
 - Every `say` line in the addon's story files, keyed by its exact text. Character stories stay on
   your computer and are left out.
-- Not `{target}` lines, since the name can't be recorded ahead, or riddle answers, or imported
-  stories.
+- `{target}` lines, with "friend" (or a line's own word from `config.json`'s `target`) said in place of
+  the name. Voices.lua finds them by pattern, whatever name the teller used. Not riddle answers or
+  imported stories.
 - Emotes only when `config.json` says `"emotes": "teller"`, which reads them as "The teller pokes
   at the fire." With `"off"` they stay silent.
 
 A line's file is named from its kind and text, so changing a line's words makes it need a new
-take, and the old sound drops out of the pack at the next build.
+take, and the old sound drops out of the packs at the next build.
 
 ## In the game
 
-`/ftvoices` shows the status. `/ftvoices test` plays a line. `/ftvoices own` turns hearing your own
-stories on or off (on by default). Spoken's page lists the pack as Fireside Tales, with its own
-switch.
+The story menu's Voices tab (the gear, last on the right) lists the packs: installed, or a button
+with its CurseForge address to copy. It turns reading aloud on or off, picks who reads (race voices, or the narrator for every
+story), turns hearing your own stories on or off, and plays a sample. `/tales voices` opens
+it. Sounds play in turn at the game's Master volume (Dialog can cut a sound off partway); past two waiting lines, the oldest is dropped, so
+a fast teller doesn't leave listeners behind.

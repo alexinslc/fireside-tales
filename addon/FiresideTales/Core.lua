@@ -298,7 +298,14 @@ SlashCmdList.FIRESIDETALES = function(input)
 		end
 	elseif command == "status" then
 		showStatus()
+	elseif command == "voices" and (input or ""):lower():find("debug", 1, true) then
+		local s = ns.Voices.Settings()
+		s.debug = not s.debug
+		say(s.debug and "voice debugging on: each clip's start, end, and stop show in chat." or "voice debugging off.")
+	elseif command == "voices" then
+		ns.Voices.Status()
+		ns.Story.ShowTab("voices")
 	else
-		say("/tales stories | add | fire | minimap | status")
+		say("/tales stories | add | voices | fire | minimap | status")
 	end
 end

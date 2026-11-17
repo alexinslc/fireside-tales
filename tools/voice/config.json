@@ -1,9 +1,202 @@
 {
-	"voice": "narrator",
+	"voice": "narrator-male",
 	"provider": "fish",
+	"voices": {
+		"narrator-male": {
+			"title": "Male narrator",
+			"order": 1,
+			"fish": "a9e7976abe2c4441bd031ef29d138611",
+			"elevenlabs": "5PsTQGkk9ch3yCS9ZDsh"
+		},
+		"narrator-female": {
+			"title": "Female narrator",
+			"order": 2,
+			"fish": "",
+			"elevenlabs": ""
+		},
+		"dwarf-male": {
+			"title": "Dwarf man",
+			"order": 10,
+			"race": "Dwarf",
+			"sex": "male",
+			"fish": "81ee2ce8b96041c986101b6fff7d48b9",
+			"elevenlabs": "NZgtP3CnEw57ySaPG5dd",
+			"design": "Made with ElevenLabs Voice Design (dwarf-male-d-1), read with stability 0 and the tag [strong Scottish Highlands accent], then copied to fish.audio from that take."
+		},
+		"dwarf-female": {
+			"title": "Dwarf woman",
+			"order": 11,
+			"race": "Dwarf",
+			"sex": "female",
+			"fish": "6e67392e04854408b3ae87905cf0ad6c",
+			"elevenlabs": "y9SMdpmMBqB01DTPyWmH",
+			"design": "ElevenLabs Voice Design (dwarf-female-1)."
+		},
+		"nightelf-male": {
+			"title": "Night elf man",
+			"order": 12,
+			"race": "NightElf",
+			"sex": "male",
+			"fish": "5d33a664fcc3474b8be11a62a97a4526",
+			"elevenlabs": "x5wCuXoXsgdSGISuYgMV",
+			"design": "ElevenLabs Voice Design (nightelf-male-2)."
+		},
+		"nightelf-female": {
+			"title": "Night elf woman",
+			"order": 13,
+			"race": "NightElf",
+			"sex": "female",
+			"fish": "3d64a6261fe44e44b7b5b855fbba80f6",
+			"elevenlabs": "n7BRTpFeMwSCOS5ciNOe",
+			"design": "ElevenLabs Voice Design (nightelf-female-2)."
+		},
+		"tauren-male": {
+			"title": "Tauren man",
+			"order": 14,
+			"race": "Tauren",
+			"sex": "male",
+			"fish": "67f8542e693c494d803f13c1c69616a5",
+			"elevenlabs": "d5Nt5clSHWhPt7DmTCcg",
+			"design": "ElevenLabs Voice Design (tauren-male-1)."
+		},
+		"tauren-female": {
+			"title": "Tauren woman",
+			"order": 15,
+			"race": "Tauren",
+			"sex": "female",
+			"fish": "090fd6a549434f6cb898561db44b53c6",
+			"elevenlabs": "xSQmni65dYjXdl46L09F",
+			"design": "ElevenLabs Voice Design (tauren-female-2)."
+		},
+		"troll-male": {
+			"title": "Troll man",
+			"order": 16,
+			"race": "Troll",
+			"sex": "male",
+			"fish": "bd2f92ba2d1e4b9c9c86255a3d637a6e",
+			"elevenlabs": "E6Hr6ba8kaMl4tMVbLGT",
+			"design": "ElevenLabs Voice Design (troll-male-1)."
+		},
+		"skyborne-male": {
+			"title": "Skyborne man",
+			"order": 17,
+			"race": "Skyborne",
+			"sex": "male",
+			"fish": "21a2ffeab806443a863bdbaa15177c1c",
+			"elevenlabs": "Me01QDivCtqQHaikOOWF",
+			"design": "ElevenLabs Voice Design (skyborne-male-1)."
+		},
+		"skyborne-female": {
+			"title": "Skyborne woman",
+			"order": 18,
+			"race": "Skyborne",
+			"sex": "female",
+			"fish": "19acb761f5494e47919551cf99a17dbe",
+			"elevenlabs": "yJmI7BZnKSCDXgbPUQ1E",
+			"design": "ElevenLabs Voice Design (skyborne-female-3)."
+		},
+		"human-male": {
+			"title": "Human man",
+			"order": 19,
+			"race": "Human",
+			"sex": "male",
+			"fish": "57b4d8a3fc2f4794bcec9987ac1bd8aa",
+			"elevenlabs": "4ruRHiJlxBGbRMUogKB5",
+			"design": "ElevenLabs Voice Design (human-male-r2-3).",
+			"preview": "eleven-human-male-r2-3.mp3",
+			"generatedVoiceId": "4ruRHiJlxBGbRMUogKB5"
+		},
+		"human-female": {
+			"title": "Human woman",
+			"order": 20,
+			"race": "Human",
+			"sex": "female",
+			"fish": "6740794375be496e823798becf6eea20",
+			"elevenlabs": "kCQNGNcjovSFn8MLymYm",
+			"design": "ElevenLabs Voice Design (human-female-r2-3).",
+			"preview": "eleven-human-female-r2-3.mp3",
+			"generatedVoiceId": "kCQNGNcjovSFn8MLymYm"
+		},
+		"gnome-male": {
+			"title": "Gnome man",
+			"order": 21,
+			"race": "Gnome",
+			"sex": "male",
+			"fish": "6f44ada9c8cf4d72befe9a9c4e7027c6",
+			"elevenlabs": "7DLHHfiOOOU6hcuAcuh7",
+			"design": "ElevenLabs Voice Design (gnome-male-r2-2).",
+			"preview": "eleven-gnome-male-r2-2.mp3",
+			"generatedVoiceId": "7DLHHfiOOOU6hcuAcuh7"
+		},
+		"gnome-female": {
+			"title": "Gnome woman",
+			"order": 22,
+			"race": "Gnome",
+			"sex": "female",
+			"fish": "f941cf9882fd46e3b9d649769330b67c",
+			"elevenlabs": "WznCxoZ0Mx6ZwhKhPWff",
+			"design": "ElevenLabs Voice Design (gnome-female-r2-2).",
+			"preview": "eleven-gnome-female-r2-2.mp3",
+			"generatedVoiceId": "WznCxoZ0Mx6ZwhKhPWff"
+		},
+		"orc-male": {
+			"title": "Orc man",
+			"order": 23,
+			"race": "Orc",
+			"sex": "male",
+			"fish": "3d65b06ae116420cbec95c11cd97b9e2",
+			"elevenlabs": "wCUeGIgtTAftkxSx6Xub",
+			"design": "ElevenLabs Voice Design (orc-male-r2-1), copied to fish.audio straight from that design clip; copies from his longer reading came out too dark.",
+			"preview": "eleven-orc-male-r2-1.mp3",
+			"generatedVoiceId": "wCUeGIgtTAftkxSx6Xub"
+		},
+		"orc-female": {
+			"title": "Orc woman",
+			"order": 24,
+			"race": "Orc",
+			"sex": "female",
+			"fish": "2a00184a4703452fb8024030928cec53",
+			"elevenlabs": "4zAVNKiSJI3gadiHcjhu",
+			"design": "ElevenLabs Voice Design (orc-female-r2-1).",
+			"preview": "eleven-orc-female-r2-1.mp3",
+			"generatedVoiceId": "4zAVNKiSJI3gadiHcjhu"
+		},
+		"undead-male": {
+			"title": "Undead man",
+			"order": 25,
+			"race": "Scourge",
+			"sex": "male",
+			"fish": "83356ae051f241ffb593d0d5b538b679",
+			"elevenlabs": "uCjeDDfU68zrykhtqdYm",
+			"design": "ElevenLabs Voice Design (undead-male-r2-2).",
+			"preview": "eleven-undead-male-r2-2.mp3",
+			"generatedVoiceId": "uCjeDDfU68zrykhtqdYm"
+		},
+		"undead-female": {
+			"title": "Undead woman",
+			"order": 26,
+			"race": "Scourge",
+			"sex": "female",
+			"fish": "a7b3cb52a66f44f382618feef6e4ef14",
+			"elevenlabs": "lXrhfJOMpCKyHBUXpEfj",
+			"design": "ElevenLabs Voice Design (undead-female-r2-1).",
+			"preview": "eleven-undead-female-r2-1.mp3",
+			"generatedVoiceId": "lXrhfJOMpCKyHBUXpEfj"
+		},
+		"troll-female": {
+			"title": "Troll woman",
+			"order": 27,
+			"race": "Troll",
+			"sex": "female",
+			"fish": "33bbff42e87f420491f5f174c60d2b6d",
+			"elevenlabs": "sezeD9ksR1Pqmi52i8LL",
+			"design": "ElevenLabs Voice Design (troll-female-r2-3).",
+			"preview": "eleven-troll-female-r2-3.mp3",
+			"generatedVoiceId": "sezeD9ksR1Pqmi52i8LL"
+		}
+	},
 	"fish": {
 		"model": "s2.1-pro",
-		"referenceId": "a9e7976abe2c4441bd031ef29d138611",
 		"temperature": 0.7,
 		"topP": 0.7,
 		"latency": "normal",
@@ -12,7 +205,6 @@
 		"dollarsPerMillionBytes": 15
 	},
 	"elevenlabs": {
-		"voiceId": "5PsTQGkk9ch3yCS9ZDsh",
 		"model": "eleven_v3",
 		"languageCode": "en",
 		"outputFormat": "mp3_44100_128",
@@ -25,6 +217,61 @@
 		},
 		"creditsPerCharacter": 1
 	},
+	"target": {
+		"word": "friend",
+		"lines": {
+			"6d2198386003": "traveler",
+			"0f9179373111": "traveler",
+			"126a5bd7fa95": "traveler",
+			"1f47461947d5": "your name"
+		}
+	},
 	"emotes": "off",
-	"mp3Quality": 7
+	"pack": {
+		"format": "ogg",
+		"sampleRate": 22050,
+		"quality": 0
+	},
+	"packs": {
+		"FiresideTalesVoices_Alliance": {
+			"title": "Alliance",
+			"notes": "Human, Dwarf, Night Elf, Gnome, and Skyborne tellers, men and women.",
+			"voices": [
+				"human-male",
+				"human-female",
+				"dwarf-male",
+				"dwarf-female",
+				"nightelf-male",
+				"nightelf-female",
+				"gnome-male",
+				"gnome-female",
+				"skyborne-male",
+				"skyborne-female"
+			]
+		},
+		"FiresideTalesVoices_Horde": {
+			"title": "Horde",
+			"notes": "Orc, Undead, Tauren, Troll, and Skyborne tellers, men and women.",
+			"voices": [
+				"orc-male",
+				"orc-female",
+				"undead-male",
+				"undead-female",
+				"tauren-male",
+				"tauren-female",
+				"troll-male",
+				"troll-female",
+				"skyborne-male",
+				"skyborne-female"
+			]
+		},
+		"FiresideTalesVoices_Narrator": {
+			"title": "Narrator",
+			"notes": "The narrator, who reads every teller whose race voice isn't installed.",
+			"voices": [
+				"narrator-male",
+				"narrator-female"
+			]
+		}
+	}
 }

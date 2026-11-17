@@ -84,6 +84,16 @@ function frameMethods:Hide()
 	end
 end
 function frameMethods:IsShown() return not self._hidden end
+function frameMethods:SetChecked(on) self._checked = on and true or false end
+function frameMethods:GetChecked() return self._checked or false end
+-- Child frames, not the font strings and textures drawn on it, in the order they were made.
+function frameMethods:GetChildren()
+	local children = {}
+	for _, f in ipairs(allFrames) do
+		if f._parent == self and f._type ~= "FontString" and f._type ~= "Texture" then children[#children + 1] = f end
+	end
+	return unpack(children)
+end
 function frameMethods:SetShown(on) if on then self:Show() else self:Hide() end end
 function frameMethods:SetText(text)
 	if type(text) == "number" then text = tostring(text) end -- The client accepts numbers.
@@ -118,6 +128,28 @@ function frameMethods:SetVerticalScroll(v) self._scroll = v end
 function frameMethods:GetVerticalScrollRange() return 100 end
 function frameMethods:CreateFontString()
 	return realG.CreateFrame("FontString", nil, self)
+end
+-- A DropdownButton's menu (WowStyle1DropdownTemplate): SetupMenu keeps the builder, and
+-- GenerateMenu runs it into _menu, a list of { text, isSelected, select } like the game's radios.
+function frameMethods:SetupMenu(builder)
+	self._menuBuilder = builder
+	self:GenerateMenu()
+end
+function frameMethods:GenerateMenu()
+	if not self._menuBuilder then return end
+	local entries = {}
+	local root = {
+		CreateRadio = function(_, text, isSelected, select, data)
+			entries[#entries + 1] = { text = text, isSelected = isSelected, select = select, data = data }
+			return {}
+		end,
+		CreateTitle = function(_, text) entries[#entries + 1] = { text = text, title = true } return {} end,
+	}
+	self._menuBuilder(self, root)
+	self._menu = entries
+	for _, e in ipairs(entries) do
+		if e.isSelected and e.isSelected(e.data) then self._text = e.text end
+	end
 end
 function frameMethods:CreateTexture()
 	return realG.CreateFrame("Texture", nil, self)
@@ -941,7 +973,7 @@ scenario("/reload keeps saved data; slash leftovers", function()
 	slash("minimap")
 	check("old prompt settings cleared", db.settings == nil and db.position == nil)
 	slash("off")
-	check("/tales off is no longer a command", chatOut[#chatOut]:find("/tales stories | add | fire | minimap | status", 1, true))
+	check("/tales off is no longer a command", chatOut[#chatOut]:find("/tales stories | add | voices | fire | minimap | status", 1, true))
 	slash("")
 	check("bare /tales opens the menu", storyWindow():IsShown())
 	slash("")
@@ -2078,6 +2110,113 @@ scenario("riddles: time runs out, and moving on stops it", function()
 		if picked and picked.riddle then picks = picks + 1 end
 	end
 	check("Tell a Tale never picks a riddle", picks == 0, picks)
+end)
+
+scenario("voices tab: no packs, getting one, and its settings", function()
+	ns, loaded, skipped = boot({})
+	local played = {}
+	realG.PlaySoundFile = function(path, channel)
+		played[#played + 1] = { path = path, channel = channel }
+		return true, #played
+	end
+	realG.StopSound = function() end
+	realG.UnitGUID = function() return "Player-1-1" end
+	realG.GetPlayerInfoByGUID = function() return "Warrior", "WARRIOR", "Human", "Human", 2 end
+	slash("stories")
+	local function tab(key)
+		for _, f in ipairs(allFrames) do
+			if rawget(f, "selected") and rawget(f, "key") == key then return f end
+		end
+	end
+	local function shownText(text)
+		for _, f in ipairs(allFrames) do
+			if f._type == "FontString" and effectiveShown(f) and plainText(f._text or ""):find(text, 1, true) then return f end
+		end
+	end
+	check("there's a Voices tab", tab("voices") ~= nil)
+	click(tab("voices"), "Voices tab")
+	check("with no packs, it says so", shownText("No Voice Packs Installed") ~= nil)
+	check("the story list is covered", findButton("Tell a Tale", storyWindow()) == nil and findButton("Tell", storyWindow()) == nil)
+	local gets = 0
+	for _, f in ipairs(allFrames) do
+		if f._type == "Button" and effectiveShown(f) and plainText(f._text) == "Get on CurseForge" then gets = gets + 1 end
+	end
+	check("each pack has a way to get it", gets == #ns.Voices.PACKS, gets)
+
+	clickLabel("Get on CurseForge")
+	local link = rawget(realG, "FiresideTalesVoiceLinkFrame")
+	check("getting one opens its address to copy", link and link:IsShown())
+	local box
+	for _, f in ipairs(allFrames) do
+		if f._type == "EditBox" and underFrame(f, link) then box = f end
+	end
+	check("the address is the pack's CurseForge page", box and box:GetText() == ns.Voices.PACKS[1].url, box and box:GetText())
+	box:SetText("oops")
+	if box._scripts.OnTextChanged then box._scripts.OnTextChanged(box, true) end
+	check("the address can't be changed", box:GetText() == ns.Voices.PACKS[1].url, box:GetText())
+	link:Hide()
+
+	-- A pack is installed, as it would be after a reload.
+	realG.FiresideTales_AddVoice({ key = "narrator-male", title = "Male narrator", addon = "FiresideTalesVoices_Narrator",
+		folder = "narrator-male", order = 1, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
+	realG.FiresideTales_AddVoice({ key = "human-male", title = "Human man", addon = "FiresideTalesVoices_Alliance",
+		folder = "human-male", order = 19, race = "Human", sex = 2, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
+	ns.VoiceSettings.Refresh()
+	check("installed packs say so", shownText("Installed") ~= nil)
+	check("and the summary says stories are read", shownText("Reading stories aloud") ~= nil)
+	gets = 0
+	for _, f in ipairs(allFrames) do
+		if f._type == "Button" and effectiveShown(f) and plainText(f._text) == "Get on CurseForge" then gets = gets + 1 end
+	end
+	check("only the pack not installed is offered", gets == 1, gets)
+
+	local own
+	for _, f in ipairs(allFrames) do
+		if f._type == "CheckButton" and rawget(f, "label") and f.label._text == "Hear your own stories" then own = f end
+	end
+	check("hearing your own stories starts on", own and own:GetChecked())
+	own:SetChecked(false)
+	own._scripts.OnClick(own)
+	check("its box turns it off", ns.GetDB().voices.own == false)
+
+	local menu
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "_menu") then menu = f end
+	end
+	local function entry(text)
+		for _, e in ipairs(menu and menu._menu or {}) do
+			if e.text == text then return e end
+		end
+	end
+	check("who reads is a dropdown", menu ~= nil)
+	check("it offers race voices and the narrator", entry("Race voices") and entry("Narrator"))
+	check("race voices are picked to start", menu._text == "Race voices" and entry("Race voices").isSelected(entry("Race voices").data))
+	entry("Narrator").select(entry("Narrator").data)
+	check("picking the narrator turns race voices off", ns.GetDB().voices.races == false and menu._text == "Narrator",
+		menu._text)
+	clickLabel("Play a Sample")
+	check("with the narrator picked, the sample is his", played[1] and played[1].path:find("\\narrator-male\\", 1, true), played[1] and played[1].path)
+	realG.FiresideTales_AddVoice({ key = "narrator-female", title = "Female narrator", addon = "FiresideTalesVoices_Narrator",
+		folder = "narrator-female", order = 2, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
+	ns.VoiceSettings.Refresh()
+	check("with two narrators, each is a choice", entry("Male narrator") and entry("Female narrator") and not entry("Narrator"))
+	entry("Female narrator").select(entry("Female narrator").data)
+	check("picking one makes her the narrator", ns.Voices.Narrator().key == "narrator-female" and menu._text == "Female narrator",
+		menu._text)
+	entry("Race voices").select(entry("Race voices").data)
+	check("picking race voices turns them back on", ns.GetDB().voices.races == true and menu._text == "Race voices")
+	played[1] = nil
+
+	clickLabel("Play a Sample")
+	check("a sample plays in your race's voice", played[1] and played[1].path:find("FiresideTalesVoices_Alliance\\Sounds\\human-male\\", 1, true), played[1] and played[1].path)
+	check("on the Master channel", played[1] and played[1].channel == "Master")
+
+	click(tab("stories"), "Stories tab")
+	check("leaving the tab brings the stories back", findButton("Tell a Tale", storyWindow()) ~= nil)
+	check("and hides the Voices page", shownText("Hear your own stories") == nil)
+	storyWindow():Hide()
+	slash("voices")
+	check("/tales voices opens the Voices tab", storyWindow():IsShown() and shownText("Hear your own stories") ~= nil)
 end)
 
 setmetatable(realG, nil)
