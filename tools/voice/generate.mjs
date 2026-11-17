@@ -6,8 +6,11 @@
 //
 // config.json's "provider" is fish (needs FISH_API_KEY) or elevenlabs (needs ELEVENLABS_API_KEY).
 // --voice <name> picks one of config.json's "voices" (its "voice" otherwise). Several can be given
-// as a comma list, or "races" for every race voice; one run then makes them all, sharing the work.
-// Other options: --limit <n>, --file <Stories.lua>, --env-file <path> (reads the keys from it), --concurrency <n>.
+// as a comma list, "races" for every race voice, or "all" for every voice with an id; one run then
+// makes them all, sharing the work.
+// Other options: --limit <n>, --file <Stories.lua>, --community (only lines that are in community
+// stories alone), --env-file <path> (reads the keys from it), --concurrency <n>, and
+// --max-dollars <n>, which stops before spending anything if the run would cost more.
 // Masters are mp3s in voice-audio/masters/<voice>/, one per line, provider and voice, so
 // switching back to an earlier provider or voice reuses what was already paid for. Nothing here
 // deletes a take.
@@ -128,7 +131,9 @@ if (asked && asked !== "say") throw new Error(`Set "provider" in tools/voice/con
 const named = voiceOption(config);
 const wanted = named === "races"
 	? Object.keys(config.voices).filter((v) => config.voices[v].race)
-	: named.split(",").map((v) => v.trim()).filter(Boolean);
+	: named === "all"
+		? Object.keys(config.voices).filter((v) => config.voices[v][config.provider])
+		: named.split(",").map((v) => v.trim()).filter(Boolean);
 const voices = wanted.map((v) => (asked === "say" ? `${v}-dev` : v));
 const sources = new Map(voices.map((v) => [v, sourceFor(config, v)]));
 const envFile = option("env-file");
@@ -136,7 +141,9 @@ if (envFile) await loadEnvFile(envFile);
 
 const takes = await loadTakes();
 const onlyFile = option("file");
-const lines = (await collectLines(config)).filter((line) => line.spoken && (!onlyFile || line.files.includes(onlyFile)));
+const onlyCommunity = flag("community");
+const lines = (await collectLines(config)).filter((line) => line.spoken
+	&& (!onlyFile || line.files.includes(onlyFile)) && (!onlyCommunity || line.community));
 const limit = Number(option("limit", "0"));
 // One job per voice and line, a voice's lines together, so a stopped run leaves whole voices done.
 let todo = [];
@@ -149,6 +156,14 @@ for (const voice of voices) {
 }
 if (voices.length > 1) console.log(`${todo.length} in all: ${estimate(todo.map((j) => j.line), sources.get(voices[0]), config)}.`);
 if (todo.length === 0) process.exit(0);
+const maxDollars = option("max-dollars");
+if (maxDollars !== null && sources.get(voices[0]).provider === "fish") {
+	const dollars = (todo.reduce((sum, j) => sum + bytes(j.line.spoken), 0) / 1e6) * config.fish.dollarsPerMillionBytes;
+	if (!(dollars <= Number(maxDollars))) {
+		console.error(`This would cost about $${dollars.toFixed(2)}, over --max-dollars ${maxDollars}, so nothing was made.`);
+		process.exit(2);
+	}
+}
 if (!flag("spend")) {
 	for (const { line } of todo.slice(0, 5)) console.log(`  ${line.id}  ${line.spoken.slice(0, 90)}`);
 	console.log("Nothing was made. Add --spend to make them.");

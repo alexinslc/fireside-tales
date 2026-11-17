@@ -14,6 +14,7 @@ voice packs, so a player downloads only the ones they want:
 | `FiresideTalesVoices_Alliance` | Human, Dwarf, Night Elf, Gnome, Skyborne | about 860 MB |
 | `FiresideTalesVoices_Horde` | Orc, Undead, Tauren, Troll, Skyborne | about 910 MB |
 | `FiresideTalesVoices_Narrator` | the narrator, for any teller without a race voice | about 85 MB |
+| `FiresideTalesVoices_Community` | the lines only community stories have, in every voice | about 20 MB, new each week |
 
 Each has both sexes. Skyborne is in both faction packs, since either faction can play them. A pack
 needs Fireside Tales, and adds each of its voices with `FiresideTales_AddVoice`. `config.json`'s
@@ -59,6 +60,32 @@ luajit tools/harness/harness.lua                    # the whole addon, the Voice
 - The packs' sounds are mono Ogg Vorbis (`config.json`'s `pack`). The game reads some mp3s as
   shorter than they are and stops them partway; Ogg plays to the end. `oggenc` makes them
   (`brew install vorbis-tools`), since ffmpeg's own Vorbis encoder is stereo only.
+
+## Community stories
+
+Lines only community stories have (from `Community.lua`) are in the community pack alone, never in
+VoiceLines.lua or the main packs, since they change each week. The pack adds them with
+`FiresideTales_AddLines`, along with its sounds for every voice, so its version is the newest week it
+has (like `2026.11.17`), apart from Fireside Tales' own.
+
+`.github/workflows/community-voices.yml` keeps it up to date. Each Monday evening (UTC), after
+"Community stories" releases the week's stories, it:
+
+1. brings back the takes it paid for earlier, from the `community-voices-state` GitHub release;
+2. makes the new lines in every voice (`generate.mjs --voice all --community --max-dollars 15`), and
+   stops before spending more than that;
+3. keeps the takes for the lines `Community.lua` has now, so old weeks drop out;
+4. builds the pack and uploads it to CurseForge if it changed.
+
+It needs the `FISH_API_KEY` and `CF_API_TOKEN` secrets and the `CF_COMMUNITY_VOICES_PROJECT_ID`
+variable. Run it by hand from the Actions tab to spend more than $15, or to upload again.
+
+To do the same here:
+
+```sh
+node tools/voice/generate.mjs --voice all --community --spend --concurrency 15 --env-file ~/.config/fireside/voice.env
+node tools/voice/build.mjs --pack FiresideTalesVoices_Community
+```
 
 ## What's voiced
 

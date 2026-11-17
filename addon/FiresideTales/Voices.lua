@@ -32,6 +32,9 @@ V.PACKS = {
 	{ addon = "FiresideTalesVoices_Narrator", title = "Narrator", size = "about 85 MB",
 		about = "Reads every teller whose race voice isn't installed.",
 		url = "curseforge.com/wow/addons/fireside-tales-voices-narrator" },
+	{ addon = "FiresideTalesVoices_Community", title = "Community Stories", size = "about 20 MB, new each week",
+		about = "This week's community stories from firesidetales.dev, in every voice.",
+		url = "curseforge.com/wow/addons/fireside-tales-voices-community" },
 }
 
 local voices = {} -- By key, from the packs.
@@ -82,18 +85,45 @@ V.Settings = settings
 -- The voices installed
 -------------------------------------------------------------------------------
 
--- A pack adds each of its voices: { key, title, addon, folder, order, lengths = { [id] = seconds } }.
+local packsAdded = {} -- By addon name: each pack that added a voice.
+
+-- A pack adds each of its voices: { key, title, addon, folder, ext, order, lengths = { [id] = seconds } }.
 -- A race voice also has race (the game's English race name, like "Dwarf") and sex (2 male, 3 female).
--- A voice in two packs (Skyborne is in both) is added once.
+-- A voice in several packs (Skyborne is in both faction packs, and every voice is in the community
+-- pack) is one voice, with each line's sound in the pack that has it.
 function FiresideTales_AddVoice(voice)
 	if type(voice) ~= "table" or type(voice.key) ~= "string" or type(voice.addon) ~= "string"
 		or type(voice.lengths) ~= "table" then
 		return
 	end
-	voice.title = voice.title or voice.key
-	voice.folder = voice.folder or voice.key
-	voice.order = tonumber(voice.order) or 99
-	voices[voice.key] = voice
+	packsAdded[voice.addon] = true
+	local from = { addon = voice.addon, folder = voice.folder or voice.key, ext = voice.ext or "mp3" }
+	local known = voices[voice.key]
+	if not known then
+		known = {
+			key = voice.key, title = voice.title or voice.key, order = tonumber(voice.order) or 99,
+			race = voice.race, sex = voice.sex, lengths = {}, from = {},
+		}
+		voices[voice.key] = known
+	end
+	for id, length in pairs(voice.lengths) do
+		known.lengths[id] = length
+		known.from[id] = from
+	end
+end
+
+-- A pack's own lines, like the community pack's: { say = { [text] = { id } }, emote = { ... } },
+-- listened for along with Fireside Tales' own.
+local addedLines = { say = {}, emote = {} }
+local targetLines
+function FiresideTales_AddLines(lines)
+	if type(lines) ~= "table" then return end
+	for kind, list in pairs(lines) do
+		if addedLines[kind] and type(list) == "table" then
+			for text, entry in pairs(list) do addedLines[kind][text] = entry end
+		end
+	end
+	targetLines = nil -- Made again with these.
 end
 
 local function sorted(filter)
@@ -136,10 +166,7 @@ end
 
 -- Whether a pack's addon is loaded, which is when its voices are here.
 function V.HasPack(addon)
-	for _, voice in pairs(voices) do
-		if voice.addon == addon then return true end
-	end
-	-- Skyborne is in both faction packs but kept once, so its pack might not be the one named.
+	if packsAdded[addon] then return true end
 	local isLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 	return isLoaded ~= nil and isLoaded(addon) == true
 end
@@ -153,18 +180,20 @@ end
 -------------------------------------------------------------------------------
 
 -- Lines with {target} arrive with the target's name in its place, so they're found by pattern.
-local targetLines
 local function findLine(kind, text)
-	local lines = ns.VoiceLines and ns.VoiceLines[kind]
-	if not lines then return nil end
-	if lines[text] then return lines[text] end
+	local own = ns.VoiceLines and ns.VoiceLines[kind] or {}
+	local added = addedLines[kind] or {}
+	local entry = own[text] or added[text]
+	if entry then return entry end
 	if kind ~= "say" then return nil end
 	if not targetLines then
 		targetLines = {}
-		for template, entry in pairs(lines) do
-			if template:find("{target}", 1, true) then
-				local pattern = template:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0"):gsub("{target}", ".+")
-				targetLines[#targetLines + 1] = { "^" .. pattern .. "$", entry }
+		for _, lines in ipairs({ own, added }) do
+			for template, found in pairs(lines) do
+				if template:find("{target}", 1, true) then
+					local pattern = template:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0"):gsub("{target}", ".+")
+					targetLines[#targetLines + 1] = { "^" .. pattern .. "$", found }
+				end
 			end
 		end
 	end
@@ -259,7 +288,8 @@ local function play(kind, text, teller, guid, asked)
 	heard[key] = now
 	if asked then V.Stop() end
 	local clip = {
-		path = "Interface\\AddOns\\" .. voice.addon .. "\\Sounds\\" .. voice.folder .. "\\" .. id .. "." .. (voice.ext or "mp3"),
+		path = ("Interface\\AddOns\\%s\\Sounds\\%s\\%s.%s"):format(voice.from[id].addon, voice.from[id].folder, id,
+			voice.from[id].ext),
 		length = length,
 		voice = voice,
 	}

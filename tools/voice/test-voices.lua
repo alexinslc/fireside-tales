@@ -300,6 +300,38 @@ do
 	drain()
 end
 
+-- The community pack adds its own lines, and its sounds to the voices already here.
+do
+	check("a community line isn't known before its pack loads", V.FindLine("say", "A tale from the site.") == nil)
+	FiresideTales_AddLines({
+		say = { ["A tale from the site."] = { "c0c0c0c0c0c0" }, ["Hello there, {target}."] = { "c1c1c1c1c1c1" } },
+		emote = {},
+	})
+	check("its lines are found", V.FindLine("say", "A tale from the site.") and V.FindLine("say", "A tale from the site.")[1] == "c0c0c0c0c0c0")
+	check("its {target} lines are found by pattern", V.FindLine("say", "Hello there, Brannoc.") and V.FindLine("say", "Hello there, Brannoc.")[1] == "c1c1c1c1c1c1")
+	check("the built-in lines are still found", V.FindLine("say", "So I try to keep a light on.") ~= nil)
+	FiresideTales_AddVoice({ key = "dwarf-male", title = "Dwarf man", addon = "FiresideTalesVoices_Community",
+		folder = "dwarf-male", ext = "ogg", order = 10, race = "Dwarf", sex = 2, lengths = { c0c0c0c0c0c0 = 4.0 } })
+	check("the community pack counts as installed", V.HasPack("FiresideTalesVoices_Community"))
+	check("its voice joins the one already here", #V.RaceVoices() == 2 and V.RaceVoices()[1].lengths.aaaaaaaaaaaa == 5.0)
+	now = now + 31
+	chat("CHAT_MSG_SAY", "A tale from the site.", "Durin", "Player-1-00000077")
+	check("a community line plays from the community pack", last().path == "Interface\\AddOns\\FiresideTalesVoices_Community\\Sounds\\dwarf-male\\c0c0c0c0c0c0.ogg", last().path)
+	drain()
+	chat("CHAT_MSG_SAY", "So I try to keep a light on.", "Durin", "Player-1-00000077")
+	check("a built-in line still plays from its own pack", last().path:find("FiresideTalesVoices_Alliance\\Sounds\\dwarf-male\\aaaaaaaaaaaa.ogg", 1, true), last().path)
+	drain()
+	FiresideTales_AddVoice({ key = "orc-female", title = "Orc woman", addon = "FiresideTalesVoices_Community",
+		folder = "orc-female", ext = "ogg", order = 13, race = "Orc", sex = 3, lengths = { c0c0c0c0c0c0 = 4.0 } })
+	playerInfo["Player-1-00000090"] = { "Orc", 3 }
+	chat("CHAT_MSG_SAY", "So I try to keep a light on.", "Garra", "Player-1-00000090")
+	check("a voice only the community pack has reads the rest by the narrator", last().path:find("narrator-male", 1, true), last().path)
+	drain()
+	chat("CHAT_MSG_SAY", "A tale from the site.", "Garra", "Player-1-00000090")
+	check("and its own community lines in that voice", last().path:find("Community\\Sounds\\orc-female\\c0c0c0c0c0c0", 1, true), last().path)
+	drain()
+end
+
 -- Without PlaySoundFile, nothing errors.
 do
 	local saved = PlaySoundFile
@@ -328,14 +360,30 @@ do
 		check("every VoiceLines.lua entry has a file name", good)
 	end
 	-- Each pack built next to the addon.
-	for _, addon in ipairs({ "FiresideTalesVoices_Alliance", "FiresideTalesVoices_Horde", "FiresideTalesVoices_Narrator" }) do
+	for _, addon in ipairs({ "FiresideTalesVoices_Alliance", "FiresideTalesVoices_Horde", "FiresideTalesVoices_Narrator",
+		"FiresideTalesVoices_Community" }) do
 		local packChunk = loadfile(ADDONS .. "/" .. addon .. "/Pack.lua")
 		if packChunk then
 			local added = {}
-			local saved = FiresideTales_AddVoice
+			local saved, savedLines = FiresideTales_AddVoice, FiresideTales_AddLines
 			FiresideTales_AddVoice = function(v) added[#added + 1] = v end
+			-- The community pack's lines count as known lines for its own sounds.
+			local ownLines = 0
+			FiresideTales_AddLines = function(lines)
+				for _, list in pairs(lines) do
+					for _, entry in pairs(list) do
+						ids[entry[1]] = true
+						ownLines = ownLines + 1
+					end
+				end
+			end
 			packChunk(addon)
-			FiresideTales_AddVoice = saved
+			FiresideTales_AddVoice, FiresideTales_AddLines = saved, savedLines
+			if addon == "FiresideTalesVoices_Community" then
+				check("the community pack adds its own lines", ownLines > 0, ownLines)
+			else
+				check(addon .. " adds no lines of its own", ownLines == 0, ownLines)
+			end
 			check(addon .. " adds its voices", #added > 0, #added)
 			local good = true
 			for _, v in ipairs(added) do

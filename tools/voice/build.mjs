@@ -36,13 +36,18 @@ const byText = (a, b) => (a.text < b.text ? -1 : a.text > b.text ? 1 : 0);
 
 const config = await loadConfig();
 const takes = await loadTakes();
-const lines = (await collectLines(config)).filter((l) => l.spoken);
+const allLines = (await collectLines(config)).filter((l) => l.spoken);
+// The main packs and VoiceLines.lua have the built-in stories' lines; the community pack, and the
+// lines table it adds, the ones only community stories have.
+const builtIn = allLines.filter((l) => !l.community);
+const community = allLines.filter((l) => l.community);
+const linesFor = (pack) => (pack.lines === "community" ? community : builtIn);
 const coreToc = await readFile(path.join(CORE, "FiresideTales.toc"), "utf8");
 const version = coreToc.match(/^## Version: (.+)$/m)[1].trim();
 const interfaceVersion = coreToc.match(/^## Interface: (.+)$/m)[1].trim();
 
-// The shared table: every voiced line, whichever voices have it.
-const block = (kind) => lines
+// A lines table: every voiced line, whichever voices have it.
+const block = (lines, kind) => lines
 	.filter((l) => l.kind === kind)
 	.sort(byText)
 	.map((l) => `\t\t[${lua(l.text)}] = { "${l.id}"${l.spoken !== l.text ? `, ${lua(l.spoken)}` : ""} },`)
@@ -56,15 +61,15 @@ await writeFile(path.join(CORE, "VoiceLines.lua"), [
 	"",
 	"ns.VoiceLines = {",
 	"\tsay = {",
-	block("say"),
+	block(builtIn, "say"),
 	"\t},",
 	"\temote = {",
-	block("emote"),
+	block(builtIn, "emote"),
 	"\t},",
 	"}",
 	"",
 ].join("\n"));
-console.log(`VoiceLines.lua: ${lines.length} lines.`);
+console.log(`VoiceLines.lua: ${builtIn.length} lines (and ${community.length} only community stories have).`);
 
 // How a master becomes a pack's sound. Ogg Vorbis: the game reads some mp3s as shorter than they
 // are and stops them partway, but plays Ogg to the end. ffmpeg here has no mono Vorbis encoder, so
@@ -92,7 +97,7 @@ const encoding = (() => {
 })();
 
 // One voice's sounds, into the pack's Sounds/<voice>/. Returns what Pack.lua says about it.
-async function buildVoice(voice, sounds, fresh) {
+async function buildVoice(voice, sounds, fresh, lines) {
 	const base = voice.replace(/-dev$/, "");
 	const settings = config.voices[base];
 	if (!settings) throw new Error(`config.json has no voice "${base}".`);
@@ -150,9 +155,10 @@ async function buildPack(addon, pack) {
 	const fresh = await readFile(stamp, "utf8").then((t) => t === encoding.stamp, () => false);
 
 	console.log(`${addon}:`);
+	const lines = linesFor(pack);
 	const built = [];
 	for (const voice of pack.voices) {
-		const result = await buildVoice(voice, sounds, fresh);
+		const result = await buildVoice(voice, sounds, fresh, lines);
 		if (result) built.push(result);
 	}
 	// Voices no longer in the pack.
@@ -171,7 +177,7 @@ async function buildPack(addon, pack) {
 		`## Interface: ${interfaceVersion}`,
 		`## Title: ${title}`,
 		`## Notes: ${pack.notes} Fireside Tales reads stories aloud in these voices.`,
-		`## Version: ${version}`,
+		`## Version: ${pack.lines === "community" ? communityVersion() : version}`,
 		"## IconTexture: Interface\\AddOns\\FiresideTales\\Textures\\Icon",
 		"## Dependencies: FiresideTales",
 		"",
@@ -197,11 +203,32 @@ async function buildPack(addon, pack) {
 		"-- Written by tools/voice/build.mjs, so don't edit it here.",
 		"local ADDON = ...",
 		"",
+		...(pack.lines === "community" ? [
+			"-- The lines only community stories have, which Fireside Tales listens for along with its own.",
+			"FiresideTales_AddLines({",
+			"\tsay = {",
+			block(lines, "say"),
+			"\t},",
+			"\temote = {",
+			block(lines, "emote"),
+			"\t},",
+			"})",
+			"",
+		] : []),
 		built.map(voiceBlock).join("\n\n"),
 		"",
 	].join("\n"));
 	const size = built.reduce((sum, b) => sum + b.size, 0);
 	console.log(`  ${built.length} ${built.length === 1 ? "voice" : "voices"}, ${(size / 1e6).toFixed(1)} MB in all.`);
+}
+
+// The community pack changes each week, apart from Fireside Tales' own releases, so its version
+// is the newest week it has, like 2026.11.17.
+const communitySource = await readFile(path.join(CORE, "Community.lua"), "utf8").catch(() => "");
+function communityVersion() {
+	const weeks = [...communitySource.matchAll(/AddCommunityWeek\("(\d{4})-(\d{2})-(\d{2})"/g)]
+		.map((m) => `${m[1]}.${m[2]}.${m[3]}`);
+	return weeks.sort().at(-1) ?? version;
 }
 
 const packs = config.packs;

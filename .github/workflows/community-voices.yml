@@ -1,0 +1,139 @@
+name: Community voices
+
+# Reads each week's community stories aloud: makes the new lines in every voice with fish.audio,
+# builds the Fireside Tales Voices: Community pack, and uploads it to CurseForge.
+#
+# - Runs Monday evening (UTC), after "Community stories" has released the week's stories, and by hand.
+# - Only new lines are made. What was paid for is kept between runs as an asset of the
+#   "community-voices-state" GitHub release (masters and their takes, for the lines in
+#   Community.lua now), so a week that leaves Community.lua drops out of it too.
+# - It stops before spending more than the cap (15 dollars, or what's given when run by hand).
+# - It uploads only when the pack changed since the last upload.
+#
+# Needs the FISH_API_KEY and CF_API_TOKEN secrets and the CF_COMMUNITY_VOICES_PROJECT_ID variable.
+on:
+  schedule:
+    - cron: "30 18 * * 1"
+  workflow_dispatch:
+    inputs:
+      max_dollars:
+        description: The most to spend on fish.audio this run
+        default: "15"
+      upload:
+        description: Upload the pack to CurseForge even if it hasn't changed
+        type: boolean
+        default: false
+
+concurrency:
+  group: community-voices
+  cancel-in-progress: false
+
+env:
+  # CurseForge's name for the client version, as in release.yml.
+  GAME_VERSION: "1.60.1"
+  STATE_TAG: community-voices-state
+  PACK: FiresideTalesVoices_Community
+
+jobs:
+  voices:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+
+      - name: Install the encoders
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg vorbis-tools
+
+      - name: Bring back what was paid for
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p voice-audio
+          if gh release view "$STATE_TAG" > /dev/null 2>&1; then
+            gh release download "$STATE_TAG" --pattern state.tar.gz --dir "$RUNNER_TEMP" || true
+          fi
+          if [ -f "$RUNNER_TEMP/state.tar.gz" ]; then
+            tar -xzf "$RUNNER_TEMP/state.tar.gz" -C voice-audio
+            echo "Restored $(find voice-audio/masters -type f | wc -l) masters."
+          else
+            echo "No earlier state, so every community line is made."
+          fi
+
+      - name: Make the new lines
+        env:
+          FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
+          MAX_DOLLARS: ${{ inputs.max_dollars || '15' }}
+        run: |
+          if [ -z "$FISH_API_KEY" ]; then
+            echo "::error::Set the FISH_API_KEY secret"
+            exit 1
+          fi
+          node tools/voice/generate.mjs --voice all --community --concurrency 15 --max-dollars "$MAX_DOLLARS" --spend
+
+      - name: Keep what was paid for
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -f voice-audio/takes.json ] || exit 0
+          node tools/voice/community-state.mjs save "$RUNNER_TEMP/state"
+          if [ -f voice-audio/last-upload.sha ]; then cp voice-audio/last-upload.sha "$RUNNER_TEMP/state/"; fi
+          tar -czf "$RUNNER_TEMP/state.tar.gz" -C "$RUNNER_TEMP/state" .
+          if ! gh release view "$STATE_TAG" > /dev/null 2>&1; then
+            gh release create "$STATE_TAG" --prerelease --title "Community voices (kept by the workflow)" \
+              --notes "What the Community voices workflow has paid for, so each week only the new lines are made. Not a release of the addon."
+          fi
+          gh release upload "$STATE_TAG" "$RUNNER_TEMP/state.tar.gz" --clobber
+
+      - name: Build the pack
+        run: |
+          node tools/voice/build.mjs --pack "$PACK"
+          if [ ! -f "addon/$PACK/Pack.lua" ]; then
+            echo "No community lines, so there's no pack to upload."
+            echo "NO_PACK=1" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          version="$(sed -n 's/^## Version:[[:space:]]*//p' "addon/$PACK/$PACK.toc")"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          (cd addon && zip -q -r "../$PACK-$version.zip" "$PACK" -x "$PACK/.encoding")
+          echo "ZIP_FILE=$PACK-$version.zip" >> "$GITHUB_ENV"
+          sha256sum "addon/$PACK/Pack.lua" | cut -d' ' -f1 > "$RUNNER_TEMP/pack.sha"
+
+      - name: Upload to CurseForge
+        if: env.NO_PACK != '1'
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_PROJECT_ID: ${{ vars.CF_COMMUNITY_VOICES_PROJECT_ID }}
+          FORCE: ${{ inputs.upload && '1' || '' }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$CF_API_TOKEN" ] || [ -z "$CF_PROJECT_ID" ]; then
+            echo "::error::Set the CF_API_TOKEN secret and CF_COMMUNITY_VOICES_PROJECT_ID variable"
+            exit 1
+          fi
+          last="$(cat voice-audio/last-upload.sha 2>/dev/null || true)"
+          if [ -z "$FORCE" ] && [ "$last" = "$(cat "$RUNNER_TEMP/pack.sha")" ]; then
+            echo "The pack hasn't changed since the last upload."
+            exit 0
+          fi
+          api="https://wow.curseforge.com/api"
+          ids="$(curl -fsS -H "X-Api-Token: $CF_API_TOKEN" "$api/game/versions" |
+            jq -c --arg name "$GAME_VERSION" '[.[] | select(.name == $name) | .id]')"
+          if [ "$(jq length <<< "$ids")" != 1 ]; then
+            echo "::error::Expected one CurseForge game version named $GAME_VERSION, found: $ids"
+            exit 1
+          fi
+          notes="- Community stories through the week of $VERSION, read aloud in every voice."
+          metadata="$(jq -n --arg notes "$notes" --arg name "Community Voices $VERSION" --argjson ids "$ids" \
+            '{changelog: $notes, changelogType: "markdown", displayName: $name, gameVersions: $ids, releaseType: "release"}')"
+          curl -sS --fail-with-body -H "X-Api-Token: $CF_API_TOKEN" \
+            --form-string "metadata=$metadata" -F "file=@$ZIP_FILE" \
+            "$api/projects/$CF_PROJECT_ID/upload-file"
+          # Remember this upload in the kept state.
+          mkdir -p "$RUNNER_TEMP/state"
+          cp "$RUNNER_TEMP/pack.sha" "$RUNNER_TEMP/state/last-upload.sha"
+          tar -czf "$RUNNER_TEMP/state.tar.gz" -C "$RUNNER_TEMP/state" .
+          gh release upload "$STATE_TAG" "$RUNNER_TEMP/state.tar.gz" --clobber

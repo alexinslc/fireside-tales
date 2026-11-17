@@ -272,6 +272,18 @@
 				"narrator-male",
 				"narrator-female"
 			]
+		},
+		"FiresideTalesVoices_Community": {
+			"title": "Community",
+			"notes": "This week's community stories from firesidetales.dev, in every voice. Updated each week.",
+			"lines": "community",
+			"voices": [
+				"narrator-male", "narrator-female",
+				"human-male", "human-female", "dwarf-male", "dwarf-female", "nightelf-male", "nightelf-female",
+				"gnome-male", "gnome-female", "skyborne-male", "skyborne-female",
+				"orc-male", "orc-female", "undead-male", "undead-female", "tauren-male", "tauren-female",
+				"troll-male", "troll-female"
+			]
 		}
 	}
 }

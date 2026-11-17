@@ -2168,7 +2168,7 @@ scenario("voices tab: no packs, getting one, and its settings", function()
 	for _, f in ipairs(allFrames) do
 		if f._type == "Button" and effectiveShown(f) and plainText(f._text) == "Get on CurseForge" then gets = gets + 1 end
 	end
-	check("only the pack not installed is offered", gets == 1, gets)
+	check("only the packs not installed are offered", gets == #ns.Voices.PACKS - 2, gets)
 
 	local own
 	for _, f in ipairs(allFrames) do

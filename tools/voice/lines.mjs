@@ -17,6 +17,7 @@ export const AUDIO_DIR = process.env.FIRESIDE_VOICE_DIR ?? path.join(ROOT, "voic
 export const TAKES_FILE = path.join(AUDIO_DIR, "takes.json");
 
 const LOCAL_ONLY = /^(StoriesCharacters|MoreCharacters.*)\.lua$/;
+export const COMMUNITY_FILE = "Community.lua";
 const LINE = /\{\s*kind\s*=\s*"(say|emote)"\s*,\s*text\s*=\s*"((?:[^"\\]|\\.)*)"\s*\}/g;
 
 export async function loadConfig() {
@@ -72,6 +73,9 @@ export async function collectLines(config) {
 			byId.set(id, { id, kind, text, spoken: spokenText(kind, text, config, id), files: [file] });
 		}
 	}
+	// A community line is one only community stories have. Those come and go each week, so their
+	// sounds are in a pack of their own; a line a built-in story also has stays in the main packs.
+	for (const line of byId.values()) line.community = line.files.every((f) => f === COMMUNITY_FILE);
 	return [...byId.values()];
 }
 
