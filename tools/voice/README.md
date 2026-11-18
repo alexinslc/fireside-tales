@@ -13,7 +13,7 @@ voice packs, so a player downloads only the ones they want:
 | --- | --- | --- |
 | `FiresideTalesVoices_<Race>` | one per race (Human, Dwarf, NightElf, Gnome, Orc, Undead, Tauren, Troll, Skyborne), its man and woman | 240 to 300 MB each |
 | `FiresideTalesVoices_Narrator` | the narrator, for any teller without a race voice | about 130 MB |
-| `FiresideTalesVoices_Community` | the lines only community stories have, in every voice | about 30 MB, new each week |
+| `FiresideTalesVoices_Community` | the lines of this week's community stories, in every voice | new each week, up to about 350 MB |
 
 A pack per race isn't ideal, but CurseForge refuses an upload much over 500 MB (480 MiB went
 through and 510 MiB didn't), and a faction's races together are about 1.3 GB. `build.mjs` says

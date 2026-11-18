@@ -164,14 +164,12 @@ local function getSections()
 
 	add("riddle", "Riddles", ns.Riddles, "Riddles at the Fire")
 
-	-- Community stories, newest week first. Only the latest week is open at first.
-	local weeks, current = ns.CommunityWeeksSoFar()
-	for index, week in ipairs(weeks) do
-		local when = date("!%B %d", time({ year = tonumber(week.week:sub(1, 4)), month = tonumber(week.week:sub(6, 7)),
-			day = tonumber(week.week:sub(9, 10)), hour = 12 })):gsub(" 0", " ")
+	-- This week's community stories. They rotate each week, so there's only ever one week.
+	local week = ns.ThisCommunityWeek()
+	if week then
 		local before = #sections
-		add("community", week.week, week.stories, week.week == current and "This Week at the Fire" or ("Week of " .. when))
-		if index == 1 and #sections > before then sections[#sections].latest = true end
+		add("community", week.week, week.stories, "This Week at the Fire")
+		if #sections > before then sections[#sections].latest = true end
 	end
 
 	local zoneNames = {}
@@ -925,7 +923,7 @@ local function renderList(keepScroll)
 	if currentTab == "mine" and tabTotal == 0 then
 		emptyLabel:SetText("No tales of your own yet.\nPress Write Your Tales to add some.")
 	elseif currentTab == "community" and tabTotal == 0 then
-		emptyLabel:SetText("No community stories yet.\nPress Contribute a Story to send yours.")
+		emptyLabel:SetText("No community stories this week.\nPress Contribute a Story to send yours.")
 	else
 		emptyLabel:SetText("No stories match these filters.")
 	end

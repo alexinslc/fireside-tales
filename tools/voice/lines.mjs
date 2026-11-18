@@ -10,6 +10,7 @@ import { promisify } from "node:util";
 import { readdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { weekStart } from "../../site/shared/rules.js";
 
 export const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 export const ADDON_DIR = path.join(ROOT, "addon", "FiresideTales");
@@ -19,6 +20,17 @@ export const TAKES_FILE = path.join(AUDIO_DIR, "takes.json");
 const LOCAL_ONLY = /^(StoriesCharacters|MoreCharacters.*)\.lua$/;
 export const COMMUNITY_FILE = "Community.lua";
 const LINE = /\{\s*kind\s*=\s*"(say|emote)"\s*,\s*text\s*=\s*"((?:[^"\\]|\\.)*)"\s*\}/g;
+
+// Community stories rotate each week, and so does their pack: it has only the week being told
+// tomorrow. On a Monday (UTC), when the weekly job runs, that's the week starting the next day.
+// FIRESIDE_COMMUNITY_WEEK picks another (a Tuesday, YYYY-MM-DD).
+export const COMMUNITY_WEEK = process.env.FIRESIDE_COMMUNITY_WEEK || weekStart(new Date(Date.now() + 86400000));
+
+// Only the voiced week's part of Community.lua.
+function communityPart(source) {
+	const parts = source.split(/(?=ns\.AddCommunityWeek\(")/);
+	return parts.filter((part) => part.startsWith(`ns.AddCommunityWeek("${COMMUNITY_WEEK}"`)).join("");
+}
 
 export async function loadConfig() {
 	return JSON.parse(await readFile(new URL("./config.json", import.meta.url), "utf8"));
@@ -59,7 +71,8 @@ export async function collectLines(config) {
 	const files = (await readdir(ADDON_DIR)).filter((f) => f.endsWith(".lua") && !LOCAL_ONLY.test(f)).sort();
 	const byId = new Map();
 	for (const file of files) {
-		const source = await readFile(path.join(ADDON_DIR, file), "utf8");
+		const text = await readFile(path.join(ADDON_DIR, file), "utf8");
+		const source = file === COMMUNITY_FILE ? communityPart(text) : text;
 		for (const match of source.matchAll(LINE)) {
 			const kind = match[1];
 			const text = tidy(unescapeLua(match[2]));

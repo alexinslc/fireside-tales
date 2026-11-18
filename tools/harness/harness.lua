@@ -1824,7 +1824,7 @@ scenario("community tab: this week's shared stories, credited", function()
 	click(tabs.community, "Community tab")
 	check("this week's are open", headerStartingWith("- This Week at the Fire") ~= nil and rowFor("Jars of Silence") ~= nil)
 	check("a rumor is listed too", rowFor("The Quiet Rumor") ~= nil)
-	check("last week's are closed but there", rowFor("Last Week's Tale") == nil and findButton("Week of January 5") ~= nil)
+	check("last week's are gone", rowFor("Last Week's Tale") == nil and findButton("Week of January 5") == nil)
 	check("next week's stay hidden", rowFor("Next Week's Tale") == nil)
 	local row = rowFor("Jars of Silence")
 	check("a community story isn't marked as yours", row.story.kind == nil and row.story.communityKind == "story")
@@ -1862,6 +1862,11 @@ scenario("community tab: this week's shared stories, credited", function()
 		if picked then picks[picked.title] = true end
 	end
 	check("Tell a Tale never picks last week's", not picks["Last Week's Tale"] and not picks["Next Week's Tale"])
+
+	-- A copy that hasn't been updated has no stories for this week, and shows none.
+	wipe(ns.CommunityWeeks)
+	ns.AddCommunityWeek("2027-01-05", { story("Last Week's Tale", "Thorg", "PvP") })
+	check("an old copy shows no old stories", ns.ThisCommunityWeek() == nil)
 end)
 
 scenario("community tab: empty until the site has stories", function()
@@ -1874,7 +1879,7 @@ scenario("community tab: empty until the site has stories", function()
 	end
 	local empty
 	for _, f in ipairs(allFrames) do
-		if f._type == "FontString" and effectiveShown(f) and plainText(f._text or ""):find("No community stories yet", 1, true) then empty = true end
+		if f._type == "FontString" and effectiveShown(f) and plainText(f._text or ""):find("No community stories this week", 1, true) then empty = true end
 	end
 	check("an empty Community tab points to Contribute a Story", empty)
 

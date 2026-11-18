@@ -229,9 +229,8 @@ end
 -- character's name; a Hardcore story only counts on a Hardcore character, and the
 -- other way round, since that's the one ruleset the game can tell.
 function ns.NoteFeaturedStory()
-	local weeks, current = ns.CommunityWeeksSoFar()
-	local week = weeks[1]
-	if not week or week.week ~= current or char.featuredNoted == current then return end
+	local week, current = ns.ThisCommunityWeek()
+	if not week or char.featuredNoted == current then return end
 	local hardcore = C_GameRules and C_GameRules.IsHardcoreActive and C_GameRules.IsHardcoreActive() or false
 	local titles = {}
 	for _, story in ipairs(week.stories) do

@@ -3,7 +3,7 @@
 //
 //   node tools/voice/community-state.mjs save <folder>   (copies the community lines' takes and masters into it)
 //
-// Only the lines community stories have now are kept, so a week that leaves Community.lua drops out.
+// Only the lines of the week being voiced are kept, so last week's drop out when the week turns.
 // Restoring is unpacking the folder over voice-audio/.
 import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";

@@ -14,7 +14,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from "node:fs/
 import os from "node:os";
 import { promisify } from "node:util";
 import path from "node:path";
-import { AUDIO_DIR, ROOT, collectLines, currentTake, loadConfig, loadTakes, seconds, sourceFor } from "./lines.mjs";
+import { AUDIO_DIR, COMMUNITY_WEEK, ROOT, collectLines, currentTake, loadConfig, loadTakes, seconds, sourceFor } from "./lines.mjs";
 
 const run = promisify(execFile);
 const ADDONS = path.join(ROOT, "addon");
@@ -228,12 +228,9 @@ async function buildPack(addon, pack) {
 }
 
 // The community pack changes each week, apart from Fireside Tales' own releases, so its version
-// is the newest week it has, like 2026.11.17.
-const communitySource = await readFile(path.join(CORE, "Community.lua"), "utf8").catch(() => "");
+// is the week it has, like 2026.11.24.
 function communityVersion() {
-	const weeks = [...communitySource.matchAll(/AddCommunityWeek\("(\d{4})-(\d{2})-(\d{2})"/g)]
-		.map((m) => `${m[1]}.${m[2]}.${m[3]}`);
-	return weeks.sort().at(-1) ?? version;
+	return COMMUNITY_WEEK.replaceAll("-", ".");
 }
 
 const packs = config.packs;

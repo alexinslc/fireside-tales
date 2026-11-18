@@ -39,7 +39,7 @@ V.PACKS = {
 	{ title = "Narrator", about = "Reads every teller whose race voice isn't installed.", packs = {
 		pack("Narrator", "Narrator", "about 130 MB") } },
 	{ title = "Community Stories", about = "This week's community stories from firesidetales.dev, in every voice.",
-		packs = { pack("Community", "Community", "about 30 MB, new each week") } },
+		packs = { pack("Community", "Community", "new each week, up to about 350 MB") } },
 }
 
 local voices = {} -- By key, from the packs.

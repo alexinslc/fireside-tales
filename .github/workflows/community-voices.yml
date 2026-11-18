@@ -4,9 +4,10 @@ name: Community voices
 # builds the Fireside Tales Voices: Community pack, and uploads it to CurseForge.
 #
 # - Runs Monday evening (UTC), after "Community stories" has released the week's stories, and by hand.
+# - Stories rotate each week, and so does the pack: it has only the week starting the next day
+#   (on other days, this week). Last week's lines and sounds are dropped.
 # - Only new lines are made. What was paid for is kept between runs as an asset of the
-#   "community-voices-state" GitHub release (masters and their takes, for the lines in
-#   Community.lua now), so a week that leaves Community.lua drops out of it too.
+#   "community-voices-state" GitHub release (masters and their takes, for the voiced week).
 # - It stops before spending more than the cap (15 dollars, or what's given when run by hand).
 # - It uploads only when the pack changed since the last upload.
 #
@@ -126,9 +127,10 @@ jobs:
             echo "::error::Expected one CurseForge game version named $GAME_VERSION, found: $ids"
             exit 1
           fi
-          notes="- Community stories through the week of $VERSION, read aloud in every voice."
+          notes="- Community stories for the week of $VERSION, read aloud in every voice."
           metadata="$(jq -n --arg notes "$notes" --arg name "Community Voices $VERSION" --argjson ids "$ids" \
-            '{changelog: $notes, changelogType: "markdown", displayName: $name, gameVersions: $ids, releaseType: "release"}')"
+            '{changelog: $notes, changelogType: "markdown", displayName: $name, gameVersions: $ids, releaseType: "release",
+              relations: {projects: [{slug: "fireside-tales", type: "requiredDependency"}]}}')"
           curl -sS --fail-with-body -H "X-Api-Token: $CF_API_TOKEN" \
             --form-string "metadata=$metadata" -F "file=@$ZIP_FILE" \
             "$api/projects/$CF_PROJECT_ID/upload-file"

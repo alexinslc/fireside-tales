@@ -9,11 +9,10 @@
 // nothing new leaves git clean.
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { findProblems, weekStart, addWeeks } from "../site/shared/rules.js";
+import { findProblems, weekStart } from "../site/shared/rules.js";
 
 const SOURCE = process.env.SCHEDULE_URL ?? "https://firesidetales.dev/api/schedule";
 const OUTPUT = fileURLToPath(new URL("../addon/FiresideTales/Community.lua", import.meta.url));
-const KEEP_PAST_WEEKS = 4; // Recent weeks stay, for players who update late.
 
 async function load() {
 	const from = process.argv.indexOf("--from");
@@ -50,7 +49,9 @@ function storyLua(story) {
 }
 
 const data = await load();
-const oldest = addWeeks(weekStart(), -KEEP_PAST_WEEKS);
+// Stories rotate each week, so a week that's over is dropped. Weeks ahead stay, so a release
+// carries next week's stories before it starts.
+const oldest = weekStart();
 const weeks = new Map();
 const skipped = [];
 for (const story of data.stories ?? []) {

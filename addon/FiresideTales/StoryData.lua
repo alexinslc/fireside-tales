@@ -82,16 +82,14 @@ function ns.CommunityWeekStart(now)
 	return date("!%Y-%m-%d", start)
 end
 
--- Weeks that have started, newest first. The first is this week's, or the latest
--- one this copy of the addon has, if it hasn't been updated in a while.
-function ns.CommunityWeeksSoFar(now)
+-- This week's community stories, or nil. They rotate each week: past weeks aren't shown,
+-- even if this copy of the addon still has them.
+function ns.ThisCommunityWeek(now)
 	local current = ns.CommunityWeekStart(now)
-	local out = {}
-	for index = #ns.CommunityWeeks, 1, -1 do
-		local week = ns.CommunityWeeks[index]
-		if week.week <= current then out[#out + 1] = week end
+	for _, week in ipairs(ns.CommunityWeeks) do
+		if week.week == current then return week, current end
 	end
-	return out, current
+	return nil, current
 end
 
 -- "by Mira, Roleplay", or "shared anonymously".
