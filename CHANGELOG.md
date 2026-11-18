@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.4
+
+- Reorganized the built-in stories by menu section. Nothing changes in game.
+
 ## 1.10.3
 
 - Community stories now change completely each week, and past weeks' stories are no longer listed.
