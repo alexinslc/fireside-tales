@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.3
+
+- Community stories now change completely each week, and past weeks' stories are no longer listed.
+
 ## 1.10.2
 
 - The voice packs now show as optional add-ons on Fireside Tales' CurseForge page.
