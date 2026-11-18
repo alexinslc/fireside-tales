@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.2
+
+- The voice packs now show as optional add-ons on Fireside Tales' CurseForge page.
+
 ## 1.10.1
 
 - Voices now come in a pack for each race, plus the narrator and community stories, since CurseForge limits each download to about 500 MB.
