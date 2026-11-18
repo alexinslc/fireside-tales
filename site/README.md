@@ -102,7 +102,7 @@ Each decision records who made it (the token's name or the reviewer's email), sh
 ## From approval to the addon
 
 1. An approval (or a change to an approved story) starts `.github/workflows/community.yml` in the addon's repository, if `GITHUB_DISPATCH_TOKEN` is set. It also runs daily.
-2. The job runs `tools/build-community.mjs`, which reads `/api/schedule` and writes `addon/FiresideTales/Community.lua`, checking every line again. If it changed, the job commits it to main.
+2. The job runs `tools/build-community.mjs`, which reads `/api/schedule` and writes `addon/FiresideTales/stories/Community.lua`, checking every line again. If it changed, the job commits it to main.
 3. On Monday evening (UTC), before the new week, the job releases if `Community.lua` changed since the last release: it bumps the patch version, adds a changelog line crediting the authors, tags it, and starts the release workflow, which uploads to CurseForge. Run the job by hand with **release** ticked to release sooner.
 4. It only releases stories. If other addon files changed since the last release, it skips, so that release is made by hand with its own changelog.
 

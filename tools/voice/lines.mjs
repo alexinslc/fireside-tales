@@ -17,8 +17,9 @@ export const ADDON_DIR = path.join(ROOT, "addon", "FiresideTales");
 export const AUDIO_DIR = process.env.FIRESIDE_VOICE_DIR ?? path.join(ROOT, "voice-audio");
 export const TAKES_FILE = path.join(AUDIO_DIR, "takes.json");
 
-const LOCAL_ONLY = /^(StoriesCharacters|MoreCharacters.*)\.lua$/;
-export const COMMUNITY_FILE = "Community.lua";
+// Paths in the addon folder, with forward slashes.
+const LOCAL_ONLY = /^stories\/characters\//;
+export const COMMUNITY_FILE = "stories/Community.lua";
 const LINE = /\{\s*kind\s*=\s*"(say|emote)"\s*,\s*text\s*=\s*"((?:[^"\\]|\\.)*)"\s*\}/g;
 
 // Community stories rotate each week, and so does their pack: it has only the week being told
@@ -68,7 +69,9 @@ export function spokenText(kind, text, config, id) {
 }
 
 export async function collectLines(config) {
-	const files = (await readdir(ADDON_DIR)).filter((f) => f.endsWith(".lua") && !LOCAL_ONLY.test(f)).sort();
+	const files = (await readdir(ADDON_DIR, { recursive: true }))
+		.map((f) => f.split(path.sep).join("/"))
+		.filter((f) => f.endsWith(".lua") && !LOCAL_ONLY.test(f)).sort();
 	const byId = new Map();
 	for (const file of files) {
 		const text = await readFile(path.join(ADDON_DIR, file), "utf8");

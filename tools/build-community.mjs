@@ -1,4 +1,4 @@
-// Writes addon/FiresideTales/Community.lua from the stories approved on firesidetales.dev.
+// Writes addon/FiresideTales/stories/Community.lua from the stories approved on firesidetales.dev.
 // The addon can't reach the internet, so each release carries the weeks ahead.
 //
 //   SCHEDULE_TOKEN=... node tools/build-community.mjs  (reads https://firesidetales.dev/api/schedule)
@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import { findProblems, weekStart } from "../site/shared/rules.js";
 
 const SOURCE = process.env.SCHEDULE_URL ?? "https://firesidetales.dev/api/schedule";
-const OUTPUT = fileURLToPath(new URL("../addon/FiresideTales/Community.lua", import.meta.url));
+const OUTPUT = fileURLToPath(new URL("../addon/FiresideTales/stories/Community.lua", import.meta.url));
 
 async function load() {
 	const from = process.argv.indexOf("--from");

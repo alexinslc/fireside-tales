@@ -4,7 +4,8 @@
     Checks the addon's story files for mistakes that would break the game's Lua or chat.
 .DESCRIPTION
     Run it after editing stories. Every line of a story file must match the expected
-    layout, so this also catches syntax errors. Pass -File to check just one file.
+    layout, so this also catches syntax errors. Pass -File to check just one file, by
+    its path in the addon folder (like stories/zones/Westfall.lua).
 #>
 [CmdletBinding()]
 param(
@@ -15,14 +16,14 @@ param(
 $Moods = 'funny', 'heartfelt', 'dark', 'action', 'spooky', 'wise'
 $MaxBytes = 250
 $MaxSeconds = 60
-$TargetFile = 'StoriesTargeted.lua'
+$TargetFile = 'stories/Targeted.lua'
 $TargetRoom = 'x' * 24 # {target} is measured as a long character name.
 $problems = [Collections.Generic.List[string]]::new()
 $utf8 = [Text.Encoding]::UTF8
 $lineRow = '^\s*\{ kind = "(say|emote)", text = "((?:[^"\\]|\\.)*)" \},$'
 $structural = @(
     '^\s*$', '^\s*--', '^local _, ns = \.\.\.$', '^ns\.\w+ = \{$', '^\}$', '^\}\)$',
-    '^ns\.AddStories\("(character|race|class)", "\w+", \{$', '^ns\.AddStories\("(zone|festival)", "[\w'' -]+", \{$', '^ns\.AddStories\("shared", nil, \{$',
+    '^ns\.AddStories\("(character|race|class)", "\w+", \{$', '^ns\.AddStories\("(zone|festival)", "[\w'' -]+", \{$', '^ns\.AddStories\("(shared|target)", nil, \{$',
     '^ns\.AddLegend\("[\w'' -]+", "[^"\\]+", \{$', '^\s*summary = "(?:[^"\\]|\\.)+",$',
     '^\s*\{$', '^\s*\},$', '^\s*lines = \{$', '^\s*theme = "[^"\\]+",$',
     '^\s*\["\w+"\] = \{$', '^\s*\w+ = \{$',
@@ -33,17 +34,32 @@ $structural = @(
     '^ns\.AddRiddles\(\{$', '^\s*answers = \{ "[a-z0-9 ]+"(, "[a-z0-9 ]+")* \},$', '^\s*(author|ruleset) = "(?:[^"\\]|\\.)*",$'
 )
 
-$files = if ($File) { @(Split-Path $File -Leaf) } else {
-    Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') |
-        Where-Object { $_ -match '\.lua$' -and $_ -notmatch '^(StoryData|Core|StoryMenu|TellerBar|Import|MinimapButton|Campfire|Seasons|RiddleGame|Voices|VoiceSettings|VoiceLines)\.lua$' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
+# Story files are the .toc's entries in stories/, which it writes with backslashes, as the
+# game does. Names here use forward slashes.
+$tocEntries = @(Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') | Where-Object { $_ -match '\.lua$' })
+$files = if ($File) { @($File -replace '\\', '/') } else {
+    $tocEntries | ForEach-Object { $_ -replace '\\', '/' } |
+        Where-Object { $_ -like 'stories/*' -and (Test-Path -LiteralPath (Join-Path $AddonDir $_)) }
 }
 
-# Macs can treat file names as case-sensitive, so a .toc entry must match exactly.
-$actualNames = @(Get-ChildItem -LiteralPath $AddonDir -File | ForEach-Object Name)
-foreach ($entry in Get-Content -LiteralPath (Join-Path $AddonDir 'FiresideTales.toc') | Where-Object { $_ -match '\.lua$' }) {
-    if ($entry -match '[\\/]') { $problems.Add("FiresideTales.toc: '$entry' uses a path separator") }
-    $match = $actualNames | Where-Object { $_ -ieq $entry }
-    if ($match -and $match -cne $entry) { $problems.Add("FiresideTales.toc: '$entry' doesn't match the file's capitalization: $match") }
+# Macs can treat file names as case-sensitive, so each part of a .toc entry must match exactly.
+foreach ($entry in $tocEntries) {
+    if ($entry -match '/') { $problems.Add("FiresideTales.toc: '$entry' uses / where the game expects \"); continue }
+    $folder = $AddonDir
+    foreach ($part in $entry -split '\\') {
+        if (-not (Test-Path -LiteralPath $folder -PathType Container)) { break }
+        $match = Get-ChildItem -LiteralPath $folder | Where-Object { $_.Name -ieq $part } | Select-Object -First 1
+        if (-not $match) { break }
+        if ($match.Name -cne $part) { $problems.Add("FiresideTales.toc: '$entry' doesn't match the capitalization of $($match.Name)") }
+        $folder = $match.FullName
+    }
+}
+
+# Every story file should be in the .toc, or the game never loads it.
+$listed = @($tocEntries | ForEach-Object { $_ -replace '\\', '/' })
+Get-ChildItem -LiteralPath (Join-Path $AddonDir 'stories') -Recurse -File -Filter *.lua | ForEach-Object {
+    $relative = [IO.Path]::GetRelativePath($AddonDir, $_.FullName) -replace '\\', '/'
+    if ($relative -notin $listed) { $problems.Add("FiresideTales.toc doesn't list $relative") }
 }
 
 $grandTotal = 0

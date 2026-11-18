@@ -1,0 +1,162 @@
+-- Quiet Moments: stories anyone can tell, listed under this heading in the Stories tab.
+local _, ns = ...
+
+ns.AddStories("shared", nil, {
+	{
+		theme = "Quiet Moments",
+		title = "Why I Left",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "stares at nothing in particular for a while before speaking." },
+			{ kind = "say", text = "People always ask why I left home. They expect a grand reason. Revenge, or a prophecy." },
+			{ kind = "say", text = "Truth is, I looked up from my work one morning and couldn't remember a single thing that had happened that year." },
+			{ kind = "say", text = "I can tell you about every day of this one." },
+			{ kind = "emote", text = "feeds a thin stick to the flames and watches it catch." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "The Letter",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "emote", text = "takes a worn, much-folded letter from a pouch and smooths it out." },
+			{ kind = "say", text = "I've been writing this for three years. Every town, I add a little more." },
+			{ kind = "say", text = "I keep meaning to send it. But then something else happens, and it seems like they ought to hear about that too." },
+			{ kind = "emote", text = "holds the letter a moment too near the flames, then folds it carefully and tucks it away again." },
+			{ kind = "say", text = "Next town, maybe." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "Good Morning",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "stretches their shoulders and lets out a slow, contented breath." },
+			{ kind = "say", text = "An old soldier taught me this. Every morning, name one thing you're glad you lived to see." },
+			{ kind = "say", text = "Some days it's a sunrise. Some days it's a hot meal. Some days, I'll be honest, it's that someone I can't stand tripped over a tent rope." },
+			{ kind = "say", text = "Doesn't matter what it is. You just have to find one. And you always can." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "The Whittling",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "shaves a thin curl from a small piece of wood and watches it fall." },
+			{ kind = "say", text = "I've been carving this for six years. It started off as a chair leg. It was going to be a horse." },
+			{ kind = "say", text = "Then I got the legs wrong, and it was going to be a spoon. Now I'd call it a peg. A small peg." },
+			{ kind = "emote", text = "turns the wood to the firelight, then takes off another curl and flicks it into the flames." },
+			{ kind = "say", text = "I don't think I was ever making anything. But I've thought through a lot of bad nights with this in my hands." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "Nothing Happened Today",
+		mood = "wise",
+		lines = {
+			{ kind = "emote", text = "leans back with both hands behind their head." },
+			{ kind = "say", text = "Nothing happened today. Nobody chased me. Nothing burned. I sat on a wall for a while and I ate a pear." },
+			{ kind = "say", text = "You'll never hear a song about a day like this. Nobody buys a round for it." },
+			{ kind = "say", text = "But I think it's what all the other stories are trying to get back to." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "The Names at Night",
+		mood = "dark",
+		lines = {
+			{ kind = "say", text = "I say their names before I sleep. Everyone I've lost, in the order I lost them. I started when there were only three." },
+			{ kind = "emote", text = "moves their lips silently for a moment, eyes closed." },
+			{ kind = "say", text = "It takes a good while now. Last week I got to the end, and I had the feeling I'd skipped someone." },
+			{ kind = "say", text = "I went through it all again. And again. I was still at it when the sun came up." },
+			{ kind = "say", text = "I never did find out who. Whoever they are, that's the second time I've lost them." },
+			{ kind = "emote", text = "stirs the coals with a stick, lips still moving." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "Someone Else's Washing",
+		mood = "dark",
+		lines = {
+			{ kind = "say", text = "I went home, a few years back. Walked for a month to do it. I had a whole speech ready." },
+			{ kind = "say", text = "It was evening when I got to the gate. There was a light on, and someone else's washing on the line. Someone inside was laughing." },
+			{ kind = "emote", text = "rests one hand on the air, as if on the top of a low gate, then lets it fall." },
+			{ kind = "say", text = "I stood there until it got dark. Nobody came out. No reason they should." },
+			{ kind = "say", text = "That's how it ought to be, I said. I said it the whole way back to the road. I said it for a long while after that." },
+			{ kind = "emote", text = "watches the smoke drift off into the dark for a long while." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "My Small Brown Enemy",
+		mood = "funny",
+		lines = {
+			{ kind = "emote", text = "narrows their eyes, as though at some small and hated foe." },
+			{ kind = "say", text = "There's a little brown bird that's been following me for three towns now. Every morning it lands on my knee and steals my breakfast." },
+			{ kind = "say", text = "It looks me right in the eye while it does it. No shame at all. I've shouted at it. I've moved camp. It finds me." },
+			{ kind = "emote", text = "breaks off a crumb and sets it carefully on one knee, without looking." },
+			{ kind = "say", text = "This is only so I can get a better shot at it. Don't tell anyone." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "My Father's Knot",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "emote", text = "ties a neat knot in a bit of string without looking, then pulls it loose." },
+			{ kind = "say", text = "My father taught me that one. It doesn't slip, and it comes undone with one tug. I've never seen anyone else tie it." },
+			{ kind = "say", text = "Last spring a child in some village I was passing through watched me do it, and asked me to show her. Took all afternoon. She had it by supper." },
+			{ kind = "say", text = "I don't remember the name of that village. But there's a little girl somewhere tying up a gate with my father's hands." },
+			{ kind = "emote", text = "ties the knot again, and this time leaves it tied." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "How I Hold a Cup",
+		mood = "heartfelt",
+		lines = {
+			{ kind = "say", text = "Noticed something strange this morning. I was sitting here with my tea, and I looked down, and I was holding the cup the way my mother did." },
+			{ kind = "emote", text = "wraps both hands around their cup with one thumb hooked over the rim, and looks at it." },
+			{ kind = "say", text = "Thumb over the rim, just like that. It used to drive me mad. I told her she'd burn herself." },
+			{ kind = "say", text = "I can't say when it started. I've been gone from her table for more than half my life." },
+			{ kind = "say", text = "Funny how far you can walk, and find you've brought somebody with you." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "The Hour Before Dawn",
+		mood = "spooky",
+		lines = {
+			{ kind = "say", text = "There's an hour before dawn when even the crickets stop. Have you ever noticed? Everything out there holds very still." },
+			{ kind = "say", text = "I used to think it was the cold. Then one night, on watch, I decided to hold still along with it. I wanted to see what it was like." },
+			{ kind = "emote", text = "stops moving entirely, barely breathing, eyes fixed on the dark." },
+			{ kind = "say", text = "After a long while I worked it out. I could hear something else, out there in the dark, holding still as well." },
+			{ kind = "say", text = "Now I make a little noise at that hour. Poke the fire. Clear my throat. It seems polite to let it know I'm not listening." },
+			{ kind = "emote", text = "pokes the fire twice and clears their throat, a little too loudly." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "The Crow on the Spear",
+		mood = "action",
+		lines = {
+			{ kind = "say", text = "People ask about the fighting. What I remember best is the breath right before it, when two lines have stopped and no one's yet decided to die." },
+			{ kind = "say", text = "One morning, in all that quiet, a crow came down and landed on a spear in the front rank. The fellow holding it didn't dare move." },
+			{ kind = "emote", text = "holds out one arm, very still, and looks along it." },
+			{ kind = "say", text = "Two thousand people watched that bird scratch itself. Then the horns went, and I ran, screaming, into the worst day of my life." },
+			{ kind = "say", text = "I can't tell you a thing about that day. I could draw you that crow." },
+		},
+	},
+	{
+		theme = "Quiet Moments",
+		title = "Too Good to Wear",
+		mood = "wise",
+		lines = {
+			{ kind = "say", text = "I saved for months for a new shirt, then kept it wrapped up in my pack. I was waiting for a day clean enough to deserve it." },
+			{ kind = "say", text = "A fellow traveler asked why I was still wearing the torn one. I told him the roads were too dusty. He asked if I was waiting for someone to wash them." },
+			{ kind = "emote", text = "smooths down the front of their shirt with a small, pleased smile." },
+			{ kind = "say", text = "I put it on at the next stream. I spilled supper down it that same evening." },
+			{ kind = "say", text = "It's still a very good shirt. I've had a lot of good days in it now." },
+		},
+	},
+})

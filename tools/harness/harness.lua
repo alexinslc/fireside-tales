@@ -335,7 +335,8 @@ local function boot(db)
 	for raw in io.lines(ADDON_DIR .. "/FiresideTales.toc") do
 		local file = raw:gsub("%s+$", "")
 		if file:find("%.lua$") then
-			local handle = io.open(ADDON_DIR .. "/" .. file)
+			-- The .toc uses backslashes, as the game does, for files in folders.
+			local handle = io.open(ADDON_DIR .. "/" .. file:gsub("\\", "/"))
 			if handle then
 				local source = handle:read("*a")
 				handle:close()
@@ -1797,7 +1798,7 @@ end)
 scenario("community tab: this week's shared stories, credited", function()
 	W.name = "Testhero"
 	ns, loaded, skipped = boot({})
-	check("Community.lua loads", (function() for _, file in ipairs(loaded) do if file == "Community.lua" then return true end end end)())
+	check("Community.lua loads", (function() for _, file in ipairs(loaded) do if file == "stories\\Community.lua" then return true end end end)())
 	check("the week starts on Tuesday", ns.CommunityWeekStart() == "2027-01-12", ns.CommunityWeekStart())
 	check("a Tuesday is its own week", ns.CommunityWeekStart(1800000000 - 3 * 86400) == "2027-01-12")
 	check("a Monday is the week before", ns.CommunityWeekStart(1800000000 - 4 * 86400) == "2027-01-05")
@@ -1914,7 +1915,7 @@ end)
 
 scenario("riddles: every riddle is fit to ask", function()
 	ns, loaded, skipped = boot({})
-	check("Riddles.lua loads", (function() for _, file in ipairs(loaded) do if file == "Riddles.lua" then return true end end end)())
+	check("Riddles.lua loads", (function() for _, file in ipairs(loaded) do if file == "stories\\Riddles.lua" then return true end end end)())
 	check("RiddleGame.lua loads", ns.Riddle ~= nil)
 	check("22 riddles", #ns.Riddles == 22, #ns.Riddles)
 	local function safe(text)

@@ -109,7 +109,7 @@ jobs:
         env:
           SCHEDULE_TOKEN: ${{ secrets.SCHEDULE_TOKEN }}
         run: |
-          file=addon/FiresideTales/Community.lua
+          file=addon/FiresideTales/stories/Community.lua
           if [ -z "$SCHEDULE_TOKEN" ] || [ ! -f "$file" ]; then
             echo "::warning::Skipped: no SCHEDULE_TOKEN secret, or no Community.lua"
             exit 0

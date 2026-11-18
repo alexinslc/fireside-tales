@@ -36,7 +36,8 @@ try {
     # A shared copy's .toc lists only the files it has.
     $stageToc = Join-Path $folder 'FiresideTales.toc'
     $kept = Get-Content -LiteralPath $stageToc | Where-Object {
-        $_ -notmatch '\.lua$' -or (Test-Path -LiteralPath (Join-Path $folder $_))
+        # Entries in folders use backslashes, as the game does.
+        $_ -notmatch '\.lua$' -or (Test-Path -LiteralPath (Join-Path $folder ($_ -replace '\\', '/')))
     }
     [IO.File]::WriteAllLines($stageToc, [string[]]$kept)
 

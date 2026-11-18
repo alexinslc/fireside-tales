@@ -1,6 +1,5 @@
 # Character stories stay on this computer. Everything else is shared.
-addon/FiresideTales/StoriesCharacters.lua
-addon/FiresideTales/MoreCharacters*.lua
+addon/FiresideTales/stories/characters/
 
 # Built zips.
 dist/

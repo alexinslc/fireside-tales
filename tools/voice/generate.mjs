@@ -8,7 +8,7 @@
 // --voice <name> picks one of config.json's "voices" (its "voice" otherwise). Several can be given
 // as a comma list, "races" for every race voice, or "all" for every voice with an id; one run then
 // makes them all, sharing the work.
-// Other options: --limit <n>, --file <Stories.lua>, --community (only lines that are in community
+// Other options: --limit <n>, --file <stories/zones/Westfall.lua>, --community (only lines that are in community
 // stories alone), --env-file <path> (reads the keys from it), --concurrency <n>, and
 // --max-dollars <n>, which stops before spending anything if the run would cost more.
 // Masters are mp3s in voice-audio/masters/<voice>/, one per line, provider and voice, so
@@ -143,7 +143,7 @@ const takes = await loadTakes();
 const onlyFile = option("file");
 const onlyCommunity = flag("community");
 const lines = (await collectLines(config)).filter((line) => line.spoken
-	&& (!onlyFile || line.files.includes(onlyFile)) && (!onlyCommunity || line.community));
+	&& (!onlyFile || line.files.some((f) => f === onlyFile || f.endsWith(`/${onlyFile}`))) && (!onlyCommunity || line.community));
 const limit = Number(option("limit", "0"));
 // One job per voice and line, a voice's lines together, so a stopped run leaves whole voices done.
 let todo = [];

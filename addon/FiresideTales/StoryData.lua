@@ -1,14 +1,11 @@
--- Lets later story files add to the lists. Loaded after the first story files.
+-- The story lists, which the files in stories/ fill with AddStories. Loaded before them.
 local _, ns = ...
 
+ns.Stories = {}
+ns.CharacterStories = {}
+ns.RaceStories = {}
+ns.ClassStories = {}
 ns.ZoneStories = {}
-
--- Some story files stay local and aren't in the repository, so a fresh copy may
--- not have these yet.
-ns.Stories = ns.Stories or {}
-ns.CharacterStories = ns.CharacterStories or {}
-ns.RaceStories = ns.RaceStories or {}
-ns.ClassStories = ns.ClassStories or {}
 ns.TargetStories = {}
 ns.FestivalStories = {}
 
@@ -18,12 +15,13 @@ local function append(target, stories)
 	end
 end
 
--- kind is "character", "race", "class", "zone", "festival", or "shared". key is
--- the character's first name, the race or class token, the zone's name as the
--- game shows it, or a festival's name from Seasons.lua ("shared" has no key).
+-- kind is "character", "race", "class", "zone", "festival", "shared", or "target".
+-- key is the character's first name, the race or class token, the zone's name as
+-- the game shows it, or a festival's name from Seasons.lua ("shared" and "target"
+-- have no key).
 function ns.AddStories(kind, key, stories)
-	if kind == "shared" then
-		append(ns.Stories, stories)
+	if kind == "shared" or kind == "target" then
+		append(kind == "shared" and ns.Stories or ns.TargetStories, stories)
 		return
 	end
 	local lists = {

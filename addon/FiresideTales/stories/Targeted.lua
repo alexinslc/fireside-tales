@@ -1,9 +1,9 @@
--- Stories told to one person. Target a listener before the first line: {target}
--- becomes their name, and stays the same until the story ends or restarts.
+-- Target Someone First: stories told to one person. Target a listener before the first line:
+-- {target} becomes their name, and stays the same until the story ends or restarts.
 -- Say what the teller does, never what the listener does or feels.
 local _, ns = ...
 
-ns.TargetStories = {
+ns.AddStories("target", nil, {
 	{
 		title = "Your Exact Face",
 		mood = "funny",
@@ -362,4 +362,4 @@ ns.TargetStories = {
 			{ kind = "emote", text = "smiles at {target} a little too brightly." },
 		},
 	},
-}
+})

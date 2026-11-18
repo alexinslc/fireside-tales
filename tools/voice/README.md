@@ -58,7 +58,7 @@ luajit tools/harness/harness.lua                    # the whole addon, the Voice
   - `elevenlabs`: ElevenLabs with the voice's `elevenlabs` id. Needs `ELEVENLABS_API_KEY`.
 
   Put the keys in your shell or in one env file outside the repo (`--env-file`). Start with
-  `--limit 20` or `--file Stories.lua`. Each take is saved as it's made, so a stopped run picks up
+  `--limit 20` or `--file stories/zones/Westfall.lua`. Each take is saved as it's made, so a stopped run picks up
   where it left off, and running it again fills in any that failed.
 - Switching the provider or a voice makes its lines need new takes. Earlier takes stay in
   `voice-audio/` (each file is named for its words, provider and voice), so switching back reuses them
@@ -85,7 +85,7 @@ has (like `2026.11.17`), apart from Fireside Tales' own.
 1. brings back the takes it paid for earlier, from the `community-voices-state` GitHub release;
 2. makes the new lines in every voice (`generate.mjs --voice all --community --max-dollars 15`), and
    stops before spending more than that;
-3. keeps the takes for the lines `Community.lua` has now, so old weeks drop out;
+3. keeps the takes for the week being voiced, so last week's drop out;
 4. builds the pack and uploads it to CurseForge if it changed.
 
 It needs the `FISH_API_KEY` and `CF_API_TOKEN` secrets and the `CF_COMMUNITY_VOICES_PROJECT_ID`

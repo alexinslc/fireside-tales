@@ -155,14 +155,18 @@ These commands need [PowerShell 7](https://learn.microsoft.com/powershell/script
 
 Pass `-WowPath` if the game isn't in the default location. Restart the game after linking.
 
-Built-in stories are in `addon/FiresideTales/`:
+Built-in stories are in `addon/FiresideTales/stories/`, one file per section of the story menu:
 
-- **Starter stories for everyone:** `Stories.lua` and `MoreShared.lua`.
-- **Starter stories told to a target:** `StoriesTargeted.lua`. Write `{target}` where the name goes, and describe only what the teller does, never what the listener does or feels.
-- **Race, class, and zone stories:** `StoriesRaces.lua`, `MoreRaces.lua`, `StoriesClasses.lua`, `MoreClasses.lua`, and `MoreZones.lua`.
-- **Festival stories:** `StoriesFestivals.lua`. Each list's name matches a festival in `Seasons.lua`, which also holds how each festival is recognized.
+- **Stories for everyone:** `shared/`, one file per heading, like `shared/GhostStories.lua`. Rumors are `shared/RumorsAndWhispers.lua`, which gets its own tab; keep them to about three lines.
+- **Race and class stories:** `races/` and `classes/`, one file per race or class, like `races/Undead.lua` and `classes/Mage.lua`.
+- **Zone stories:** `zones/`, one file per zone, like `zones/ElwynnForest.lua`.
+- **Stories told to a target:** `Targeted.lua`. Write `{target}` where the name goes, and describe only what the teller does, never what the listener does or feels.
+- **Festival stories:** `festivals/`, one file per festival. Each file's list name matches a festival in `Seasons.lua`, which also holds how each festival is recognized.
 - **Legends:** `Legends.lua`. Each legend has a zone, a title, a one-line `summary`, and its `parts`, which are stories in order. Keep them true to the game's own lore, list your sources above each one, and retell rather than quote.
-- **Rumors:** shared stories with the theme `Rumors and Whispers` get their own tab. Keep them to about three lines.
+- **Riddles** are in `Riddles.lua`, and this week's community stories in `Community.lua`, which is written from the site.
+- **Your own character's stories** go in `characters/`, which stays on your computer and out of git.
+
+A new file has to be listed in `FiresideTales.toc` (with backslashes, like `stories\zones\Westfall.lua`), and the game only picks it up after a full restart. `tools/check-stories.ps1` says if one is missing.
 
 Each story needs a `title`, a `mood` (`funny`, `heartfelt`, `dark`, `action`, `spooky`, or `wise`), and `lines`. Shared stories also need a `theme`.
 
