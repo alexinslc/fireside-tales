@@ -182,10 +182,12 @@ function Review({ item, onSaved }: { item: Submission; onSaved: () => void }) {
 	const [busy, setBusy] = useState(false);
 
 	useEffect(() => {
-		api<{ weeks: { week: string; count: number }[]; target: { min: number; max: number } }>("/api/admin/weeks").then((data) => {
-			setWeeks(data.weeks);
+		api<{ weeks: { week: string; count: number }[]; target: { min: number; max: number }; first_open: string }>("/api/admin/weeks").then((data) => {
+			// Only weeks a release can still reach: this week has started, so it's never offered.
+			const open = data.weeks.filter((x) => x.week >= data.first_open);
+			setWeeks(open);
 			setTarget(data.target);
-			setWeek((w) => w ?? (data.weeks.find((x) => x.count < data.target.max) ?? data.weeks[0])?.week ?? null);
+			setWeek((w) => (w && w >= data.first_open ? w : null) ?? (open.find((x) => x.count < data.target.max) ?? open[0])?.week ?? null);
 		}).catch(() => {});
 	}, []);
 

@@ -575,7 +575,7 @@ async function adminWeeks(env: Env, url: URL): Promise<Response> {
 	const counts = Object.fromEntries(results.map((r) => [r.week, r.n]));
 	const { results: posts } = await env.DB.prepare("SELECT week, status FROM week_posts WHERE week >= ?").bind(first).all<{ week: string; status: string }>();
 	const postStatus = Object.fromEntries(posts.map((p) => [p.week, p.status]));
-	return json({ target: WEEKLY_TARGET, weeks: weeks.map((week) => ({ week, count: counts[week] ?? 0, post: postStatus[week] ?? null })) });
+	return json({ target: WEEKLY_TARGET, first_open: firstOpenWeek(), weeks: weeks.map((week) => ({ week, count: counts[week] ?? 0, post: postStatus[week] ?? null })) });
 }
 
 // How to review through the API, for scripts and tools signed in with a service token.
@@ -586,7 +586,7 @@ function reviewGuide(env: Env) {
 		start: `GET ${base}/overview first, every run. Its "todo" list says what needs doing, most urgent first. "counts" and each submission's "stage" say where stories are: waiting, scheduled (approved, not in a release yet), in_addon (released, its week hasn't started), featured (this week), missed (this week started but no release carried it: approve it again into a later week), or past.`,
 		steps: [
 			`GET ${base}/submissions?status=pending lists stories waiting for review, oldest first (?week=YYYY-MM-DD lists one week's approved stories instead). Each has its lines, mood (empty if the writer didn't pick one), kind, credit, and source ("web" or "agent").`,
-			`GET ${base}/weeks shows how many stories each of the next 12 weeks has, and whether it has a post (?past=8 adds the 8 weeks before). Aim for ${WEEKLY_TARGET.min} to ${WEEKLY_TARGET.max} a week.`,
+			`GET ${base}/weeks shows how many stories each of the next 12 weeks has, and whether it has a post (?past=8 adds the 8 weeks before). "first_open" is the first week an approval can still reach players; earlier weeks have started or their release has gone out. Aim for ${WEEKLY_TARGET.min} to ${WEEKLY_TARGET.max} a week.`,
 			`POST ${base}/submissions/{id} with {"action":"approve"} schedules it for the first week from next week that has room (from Monday 17:00 UTC, the week after), or add "week":"YYYY-MM-DD" (a Tuesday) to pick one.`,
 			`POST ${base}/submissions/{id} with {"action":"reject","note":"..."} rejects it. The note is required and is shown to the author, so make it kind and specific about what to change.`,
 			`Any action can include "story": {"kind","title","mood","lines":[{"kind":"say"|"emote","text"}]} to fix a typo or trim a line first. It's checked with the same rules as a new story, and the original is kept. {"action":"update"} saves an edit without deciding.`,
@@ -619,10 +619,13 @@ function reviewGuide(env: Env) {
 // The first week from next week on that still has room. Not this week: stories reach
 // players with addon releases, which go out Monday at 18:00 UTC before each week starts.
 // From Monday 17:00 UTC on, next week's release is about to go, so it starts a week later.
-async function nextOpenWeek(env: Env): Promise<string> {
-	const now = new Date();
+function firstOpenWeek(now = new Date()): string {
 	const lastCall = now.getUTCDay() === 1 && now.getUTCHours() >= 17;
-	const first = addWeeks(weekStart(), lastCall ? 2 : 1);
+	return addWeeks(weekStart(now), lastCall ? 2 : 1);
+}
+
+async function nextOpenWeek(env: Env): Promise<string> {
+	const first = firstOpenWeek();
 	const { results } = await env.DB.prepare(
 		"SELECT week, COUNT(*) AS n FROM submissions WHERE status = 'approved' AND week >= ? GROUP BY week",
 	).bind(first).all<{ week: string; n: number }>();
