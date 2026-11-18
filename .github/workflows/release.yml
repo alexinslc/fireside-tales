@@ -88,7 +88,9 @@ jobs:
             exit 1
           fi
           metadata="$(jq -n --rawfile notes notes.md --arg name "Fireside Tales ${GITHUB_REF_NAME#v}" --argjson ids "$ids" \
-            '{changelog: $notes, changelogType: "markdown", displayName: $name, gameVersions: $ids, releaseType: "release"}')"
+            --argjson packs '["narrator","community","human","dwarf","gnome","night-elf","orc","undead","tauren","troll","skyborne"]' \
+            '{changelog: $notes, changelogType: "markdown", displayName: $name, gameVersions: $ids, releaseType: "release",
+              relations: {projects: [$packs[] | {slug: ("fireside-tales-voices-" + .), type: "optionalDependency"}]}}')"
           curl -sS --fail-with-body -H "X-Api-Token: $CF_API_TOKEN" \
             --form-string "metadata=$metadata" -F "file=@$ZIP_FILE" \
             "$api/projects/$CF_PROJECT_ID/upload-file"
