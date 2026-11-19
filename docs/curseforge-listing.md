@@ -7,7 +7,7 @@ Everything the project form asks for. Paste the description in Markdown mode.
 | Game | World of Warcraft |
 | Class | Addons |
 | Name | Fireside Tales |
-| Summary | Tell stories at the campfire, one line at a time: 600+ tales, plus new community stories every week. Contribute yours at firesidetales.dev. |
+| Summary | Tell stories at the campfire, one line at a time. 600+ tales, read aloud in each teller's voice, plus new player stories every week. |
 | Main category | Roleplay |
 | Additional categories | Chat & Communication, if it's offered |
 | Allow comments | On |
@@ -19,83 +19,48 @@ Everything the project form asks for. Paste the description in Markdown mode.
 
 ![Fireside Tales](https://raw.githubusercontent.com/alexinslc/fireside-tales/main/art/banner.png)
 
-**You light a fire, someone sits down beside you, and nobody says a word.** Fireside Tales gives you something to say. Press a button and tell one of more than 600 short tales, one line at a time, in `/say` and `/e`. Everyone around the fire just sees you telling a story, and they don't need the addon to enjoy it.
+**Stay awhile and listen.**
 
-### Contribute a Story
+Stop sitting at campfires in silence. Tell any of 600+ tales line by line in `/say` and `/e`, and hear the stories around you read aloud in the teller's own voice.
 
-**Got a tale of your own? Share it with every player at [firesidetales.dev](https://firesidetales.dev/submit).** Write a story or a rumor right in your browser, one line per chat message, and see exactly how it will look in chat. Each week, up to 100 community stories are featured in the addon's **Community** tab, credited to your character (or shared anonymously). If yours is featured, the addon tells you when you log in.
+## Storytelling made easy
 
-**[Contribute a story](https://firesidetales.dev/submit)** · [Read this week's](https://firesidetales.dev) · [Browse past weeks](https://firesidetales.dev/past)
+Click the minimap book or type `/tales`, pick a story, and press **Speak** for each line. Stuck? **Tell a Tale** picks one for you. There are stories for your race, class and zone, legends told across several nights, rumors, riddles and festival tales, all a minute or less.
 
-### Hear the stories read aloud
+## Fully voiced
 
-**Free voice packs read every story aloud.** When someone near you tells a tale, each line plays in the voice of the teller's race, a man's or a woman's, or in one narrator's voice if you'd rather. Only listeners need the packs, and you can get just the races you'll hear. Open the **Voices** tab in the story menu, or type `/tales voices`.
+Every story told near you is read aloud in a voice that fits the teller's race, man or woman. Grab the races you play with, or all of them. The Narrator covers any race you don't have.
 
-- **Alliance:** [Human](https://www.curseforge.com/wow/addons/fireside-tales-voices-human) · [Dwarf](https://www.curseforge.com/wow/addons/fireside-tales-voices-dwarf) · [Night Elf](https://www.curseforge.com/wow/addons/fireside-tales-voices-night-elf) · [Gnome](https://www.curseforge.com/wow/addons/fireside-tales-voices-gnome)
-- **Horde:** [Orc](https://www.curseforge.com/wow/addons/fireside-tales-voices-orc) · [Undead](https://www.curseforge.com/wow/addons/fireside-tales-voices-undead) · [Tauren](https://www.curseforge.com/wow/addons/fireside-tales-voices-tauren) · [Troll](https://www.curseforge.com/wow/addons/fireside-tales-voices-troll)
-- **Either faction:** [Skyborne](https://www.curseforge.com/wow/addons/fireside-tales-voices-skyborne)
-- **[Narrator](https://www.curseforge.com/wow/addons/fireside-tales-voices-narrator):** reads any teller whose race pack you don't have.
-- **[Community](https://www.curseforge.com/wow/addons/fireside-tales-voices-community):** each week's new community stories, in every voice.
+### Available Voice Packs
 
-Each race is a pack of its own because CurseForge limits each download to about 500 MB.
+| Alliance | Horde | Everyone |
+| --- | --- | --- |
+| [Human](https://www.curseforge.com/wow/addons/fireside-tales-voices-human) | [Orc](https://www.curseforge.com/wow/addons/fireside-tales-voices-orc) | [Narrator](https://www.curseforge.com/wow/addons/fireside-tales-voices-narrator): reads for missing races |
+| [Dwarf](https://www.curseforge.com/wow/addons/fireside-tales-voices-dwarf) | [Undead](https://www.curseforge.com/wow/addons/fireside-tales-voices-undead) | [Community](https://www.curseforge.com/wow/addons/fireside-tales-voices-community): this week's player stories |
+| [Night Elf](https://www.curseforge.com/wow/addons/fireside-tales-voices-night-elf) | [Tauren](https://www.curseforge.com/wow/addons/fireside-tales-voices-tauren) | [Skyborne](https://www.curseforge.com/wow/addons/fireside-tales-voices-skyborne): either faction |
+| [Gnome](https://www.curseforge.com/wow/addons/fireside-tales-voices-gnome) | [Troll](https://www.curseforge.com/wow/addons/fireside-tales-voices-troll) | |
 
-### What it looks like at the fire
+Free, about 250 MB per race. See what you have in the **Voices** tab (`/tales voices`).
 
-This is "The Last Honest Merchant," one of the built-in stories, as everyone nearby sees it:
+## Share your story
 
-> **Brenna says:** Ever met an honest merchant? I did, once. He sold me a mule and told me it was a terrible mule.
->
-> **Brenna says:** Bites, he said. Kicks. Lies down in rivers. Will outlive you purely out of spite.
->
-> **Brenna says:** I bought it anyway, because a man that truthful surely had to be joking.
->
-> *Brenna rolls up one sleeve to show an old, crescent-shaped scar.*
->
-> **Brenna says:** He was not joking.
->
-> **Brenna says:** Best mule I ever owned. Carried me through two winters and bit everyone who tried to rob me.
+Write your own at **[firesidetales.dev](https://firesidetales.dev/submit)**, the way you'd type it in game. Picked stories go into the addon's **Community** tab and the Community voice pack, so every player can tell them at their own fire. **Community stories rotate every week:** a fresh batch arrives each Tuesday, credited to your character and fully voiced.
 
-### Stories for everyone
+## Tales about your character
 
-- **For your character:** tales for every race and class, chosen automatically.
-- **For where you are:** stories of all 45 zones. The ones about your current zone rise to the top.
-- **For someone nearby:** target a listener, and the story uses their name.
-- **Legends:** Warcraft's own stories, told in parts, from the Legend of Stalvan to Onyxia's masquerade in Stormwind. Stop after any part and pick it up another night.
-- **Rumors and Whispers:** short things people swear they heard, from a vault combination that ends in a sneeze to cold roses in Darkshire.
-- **Community:** new stories from players every week, from [firesidetales.dev](https://firesidetales.dev). Press **Contribute a Story** on the tab to add yours.
-- **Quick to tell:** every story takes about a minute or less, so nobody's stuck waiting.
+**Write Your Tales** helps any AI chat write stories about your character. They stay on your computer and aren't voiced. To share one with everyone, send it in on the site.
 
-### Tell your own
+## Good to know
 
-**Write Your Tales** turns any AI into your character's storyteller. Write a sentence or two about who they are, copy the ready-made prompt, and paste the answer back in the game. Your tales appear under your character's name, ready to tell. Your name, race, class, and zone are already filled in, and you can read every story before you tell it.
+Some stories are made with the help of AI, and the voices are AI-generated. Fireside Tales is free and isn't affiliated with Blizzard. Bugs or ideas: [firesidetales.dev/feedback](https://firesidetales.dev/feedback).
 
-### Easy at the fire
-
-1. Click the book on the minimap, or type `/tales`.
-2. Pick a story, or press **Tell a Tale** and let the fire choose.
-3. Press **Tell**, then **Speak** for each line. Start with an **Opener** to gather people, and end with a **Closer** if you like.
-
-**Tell a Tale** picks a story you haven't told yet, about the zone you're in if it can. Press it again for another.
-
-Sit down at a campfire and a small prompt asks if you'd like to tell a story, once per fire. It's easy to take, easy to ignore, and `/tales fire` turns it off.
-
-A small bar shows the next line and a cue for when people have had time to read, along with what's being said nearby. You can search, filter by mood, star your favorites, and line up stories for tonight.
-
-Fireside Tales never sends chat by itself. Every line waits for you to press **Speak**.
-
-### Commands
+## Commands
 
 | Command | What it does |
 | --- | --- |
-| `/tales stories` | Open or close the story menu |
-| `/tales add` | Open or close Write Your Tales |
-| `/tales fire` | Turn the campfire prompt off or on |
+| `/tales` | Open the story menu |
+| `/tales add` | Open Write Your Tales |
 | `/tales voices` | Open the Voices tab |
+| `/tales fire` | Turn the campfire prompt off or on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show your story counts |
-
-### Good to know
-
-The built-in stories are written with AI help and chosen by hand, and the logo and banner are AI-assisted art. Screenshots are from the real game. Most stories are fan fiction set in Azeroth. The legends retell Warcraft's own quests in new words, so their names and events come from the game. The voices in the voice packs are AI-generated, designed with ElevenLabs and recorded with fish.audio, and they aren't the game's voice actors. This addon is free, and it isn't affiliated with or endorsed by Blizzard Entertainment.
-
-Found a bug, have an idea, or want a story someone should write? Send it through [firesidetales.dev/feedback](https://firesidetales.dev/feedback), leave a comment, or open an issue on [GitHub](https://github.com/alexinslc/fireside-tales).
