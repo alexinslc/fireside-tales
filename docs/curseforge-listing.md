@@ -61,6 +61,7 @@ Some stories are made with the help of AI, and the voices are AI-generated. Fire
 | `/tales` | Open the story menu |
 | `/tales add` | Open Write Your Tales |
 | `/tales voices` | Open the Voices tab |
+| `/tales news` | Show what's new in this version |
 | `/tales fire` | Turn the campfire prompt off or on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show your story counts |
