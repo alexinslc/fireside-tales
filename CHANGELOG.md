@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.5
+
+- All race voices are new and improved. Update your voice packs to hear them.
+
 ## 1.10.4
 
 - Reorganized the built-in stories by menu section. Nothing changes in game.
