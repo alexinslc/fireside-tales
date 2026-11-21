@@ -17,8 +17,9 @@ These need the project owner's CurseForge account:
 
 1. Set `## Version` in `addon/FiresideTales/FiresideTales.toc`.
 2. Add a `## <version>` section to `CHANGELOG.md`. Its text becomes the release notes.
-3. Commit and push to `main`, and check that the Release workflow passes.
-4. Tag and push:
+3. Run `node tools/build-whatsnew.mjs`. It writes `addon/FiresideTales/WhatsNew.lua` from that section, which the What's New window shows once to each player after they update (and `/tales news` opens again).
+4. Commit and push to `main`, and check that the Release workflow passes.
+5. Tag and push:
 
    ```bash
    git tag v1.0.0
@@ -28,11 +29,11 @@ These need the project owner's CurseForge account:
    git push origin v1.0.0
    ```
 
-The tag has to match the TOC's version, and the changelog needs a section for it, or the release stops before uploading anything. CurseForge reviews a new project's first file before it goes live.
+The tag has to match the TOC's version, the changelog needs a section for it, and `WhatsNew.lua` has to match that section, or the release stops before uploading anything. CurseForge reviews a new project's first file before it goes live.
 
 ## Community stories
 
-`.github/workflows/community.yml` keeps `Community.lua` up to date with the stories approved on firesidetales.dev and releases a patch version on its own each Monday evening (UTC) when they changed. See "From approval to the addon" in `site/README.md`. A release by hand picks up whatever `Community.lua` has at the time.
+`.github/workflows/community.yml` keeps `Community.lua` up to date with the stories approved on firesidetales.dev and releases a patch version on its own each Monday evening (UTC) when they changed. It writes `WhatsNew.lua` too, so What's New says "New community stories are now available." See "From approval to the addon" in `site/README.md`. A release by hand picks up whatever `Community.lua` has at the time.
 
 ## When the client updates
 

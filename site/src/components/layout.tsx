@@ -2,7 +2,7 @@ import { NavLink, Outlet, Link } from "react-router";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-	{ to: "/", label: "This week", end: true },
+	{ to: "/", label: "Home", end: true },
 	{ to: "/past", label: "Past weeks" },
 	{ to: "/submit", label: "Contribute a story" },
 	{ to: "/guidelines", label: "Guidelines" },
@@ -26,13 +26,14 @@ export function PageTitle({ title, children }: { title: string; children?: React
 export function Layout() {
 	return (
 		<div className="flex min-h-screen flex-col">
-			<header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur">
-				<div className="mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2">
+			<header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur after:pointer-events-none after:absolute after:inset-x-0 after:-bottom-px after:h-px after:bg-gradient-to-r after:from-transparent after:via-ember/70 after:to-transparent">
+				<div className="mx-auto flex min-h-14 w-full max-w-6xl flex-wrap items-center gap-x-6 gap-y-1 px-4 py-2 sm:min-h-16">
 					<Link to="/" className="flex items-center gap-2.5 font-heading text-lg font-bold text-gold no-underline">
 						<img src="/img/icon.png" alt="" className="size-9 rounded-full border border-border" />
 						Fireside Tales
 					</Link>
-					<nav aria-label="Main" className="flex flex-wrap gap-x-5 gap-y-1 sm:ml-auto">
+					{/* One scrolling row on a phone, so the header stays short. */}
+					<nav aria-label="Main" className="-mx-4 flex w-[calc(100%+2rem)] gap-x-5 overflow-x-auto px-4 text-sm whitespace-nowrap [scrollbar-width:none] sm:mx-0 sm:ml-auto sm:w-auto sm:overflow-visible sm:px-0 sm:text-base">
 						{NAV.map((item) => (
 							<NavLink
 								key={item.to}

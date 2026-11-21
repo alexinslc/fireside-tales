@@ -141,6 +141,8 @@ The addon's `prompts` folder has more prompts for a race or class, a zone, every
 | `/tales` or `/tales stories` | Open or close the story menu |
 | `/tales help` | List the commands |
 | `/tales add` | Open or close the Write Your Tales window |
+| `/tales voices` | Open the Voices tab |
+| `/tales news` | Open or close What's New, which also opens once after each update |
 | `/tales fire` | Turn the campfire prompt off or back on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show who the addon thinks you are, and your story counts |

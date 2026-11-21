@@ -880,6 +880,9 @@ end)
 scenario("game events don't pop anything up", function()
 	check("no prompt frame exists", rawget(realG, "FiresideTalesFrame") == nil)
 	check("no prompt lines loaded", ns.PromptLines == nil)
+	-- What's New shows a moment after login, once per version; that's not an event's doing.
+	advance(4)
+	if ns.News.IsShown() then rawget(realG, "FiresideTalesNewsFrame"):Hide() end
 	local shownBefore = 0
 	for _, f in ipairs(allFrames) do if f:IsShown() then shownBefore = shownBefore + 1 end end
 	local n = #sent
@@ -974,7 +977,7 @@ scenario("/reload keeps saved data; slash leftovers", function()
 	slash("minimap")
 	check("old prompt settings cleared", db.settings == nil and db.position == nil)
 	slash("off")
-	check("/tales off is no longer a command", chatOut[#chatOut]:find("/tales stories | add | voices | fire | minimap | status", 1, true))
+	check("/tales off is no longer a command", chatOut[#chatOut]:find("/tales stories | add | voices | news | fire | minimap | status", 1, true))
 	slash("")
 	check("bare /tales opens the menu", storyWindow():IsShown())
 	slash("")
@@ -2235,6 +2238,71 @@ scenario("voices tab: no packs, getting one, and its settings", function()
 	storyWindow():Hide()
 	slash("voices")
 	check("/tales voices opens the Voices tab", storyWindow():IsShown() and shownText("Hear your own stories") ~= nil)
+end)
+
+scenario("what's new: once per version, and on request", function()
+	local function newsWindow() return rawget(realG, "FiresideTalesNewsFrame") end
+	local function newsText(needle)
+		for _, f in ipairs(allFrames) do
+			if f._type == "FontString" and newsWindow() and effectiveShown(f) and (f._text or ""):find(needle, 1, true) then
+				local p = f
+				while p and p ~= newsWindow() do p = p._parent end
+				if p then return f end
+			end
+		end
+	end
+	W.combat = false
+	realG.InCombatLockdown = function() return W.combat end
+	local db = {}
+	ns = boot(db)
+	check("not before the screen settles", not ns.News.IsShown())
+	local soundsBefore, chatBefore = W.sounds or 0, #chatOut
+	advance(4)
+	check("a fresh install shows What's New", ns.News.IsShown())
+	check("the version is saved", db.lastSeenVersion == ns.Version, db.lastSeenVersion)
+	check("it starts with the site", newsText("Got a tale of your own? Share it at firesidetales.dev") ~= nil)
+	local box
+	for _, f in ipairs(allFrames) do if f._type == "EditBox" and f._parent == newsWindow() then box = f end end
+	check("the address is ready to copy", box and box:GetText() == "firesidetales.dev")
+	check("it lists this version's changes", ns.WhatsNew.version == ns.Version and newsText(ns.WhatsNew.items[1]) ~= nil)
+	check("Escape closes it", (function() for _, n in ipairs(realG.UISpecialFrames) do if n == "FiresideTalesNewsFrame" then return true end end end)())
+	check("no sound and no chat", (W.sounds or 0) == soundsBefore and #chatOut == chatBefore)
+	newsWindow():Hide()
+
+	ns = boot(db)
+	advance(10)
+	check("a /reload of the same version shows nothing", not ns.News.IsShown())
+
+	db.lastSeenVersion = "0.0.1"
+	W.combat = true
+	ns = boot(db)
+	advance(10)
+	check("an update waits out combat", not ns.News.IsShown() and db.lastSeenVersion == "0.0.1")
+	W.combat = false
+	fire("PLAYER_REGEN_ENABLED")
+	check("and shows when combat ends", ns.News.IsShown() and db.lastSeenVersion == ns.Version)
+	newsWindow():Hide()
+	fire("PLAYER_REGEN_ENABLED")
+	check("only once", not ns.News.IsShown())
+
+	slash("news")
+	check("/tales news opens it any time", ns.News.IsShown())
+	slash("news")
+	check("and closes it", not ns.News.IsShown())
+	slash("stories")
+	click(findButton("What's New", storyWindow()), "What's New")
+	check("the story menu's What's New button opens it", ns.News.IsShown())
+	storyWindow():Hide()
+	newsWindow():Hide()
+
+	-- A list for another version isn't shown, but the site line still is.
+	local real = ns.WhatsNew
+	ns.WhatsNew = { version = "0.0.0", items = { "Old news." } }
+	ns.News.Show()
+	check("a mismatched list stays hidden", newsText("Old news.") == nil and newsText("Got a tale of your own?") ~= nil)
+	ns.WhatsNew = real
+	newsWindow():Hide()
+	realG.InCombatLockdown = nil
 end)
 
 setmetatable(realG, nil)

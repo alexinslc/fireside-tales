@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.6
+
+- Added a What's New window that opens once after each update. Reopen it with /tales news or from the story menu.
+
 ## 1.10.5
 
 - All race voices are new and improved. Update your voice packs to hear them.

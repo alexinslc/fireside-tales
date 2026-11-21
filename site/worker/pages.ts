@@ -98,7 +98,7 @@ export function pageFor(env: Env, path: string, data: { week: string; stories: P
 			return {
 				title: `${NAME} · Stories for the campfire`,
 				description: `This week's community stories and rumors for ${NAME}, the World of Warcraft: Forever addon for telling tales at the campfire. Contribute your own.`,
-				body: `<h1>Stories for the fire</h1>${ABOUT}<h2>This week at the fire: the week of ${escape(weekName(data.week))}</h2>${postHtml(data.homePost, data.stories)}${
+				body: `<h1>Tell a tale at the fire.</h1><p>Approved stories are featured for a week in the Fireside Tales addon, with your name on them. <a href="/submit">Contribute a story</a>.</p>${ABOUT}<h2>This week at the fire: the week of ${escape(weekName(data.week))}</h2>${postHtml(data.homePost, data.stories)}${
 					data.stories.length ? data.stories.map(storyHtml).join("") : "<p>This week is still waiting for its stories.</p>"
 				}<h2>How it works</h2><ol><li>Write a story or rumor, one line per chat message.</li><li>It's checked against the guidelines.</li><li>Each week, up to 100 are featured in the addon's Community tab.</li></ol><p><a href="/submit">Contribute a story</a></p>`,
 				jsonLd: [site, addon, ...postJson(data.homePost, data.week, `${env.SITE_URL}/`), ...(data.stories.length

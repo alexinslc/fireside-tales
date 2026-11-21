@@ -93,7 +93,8 @@ jobs:
           sed -i "s/^## Version:.*/## Version: $next/" "$toc"
           { printf '# Changelog\n\n## %s\n\n' "$next"; cat "$RUNNER_TEMP/community-notes.md"; printf '\n'; tail -n +3 CHANGELOG.md; } > CHANGELOG.new
           mv CHANGELOG.new CHANGELOG.md
-          git add "$toc" CHANGELOG.md
+          node tools/build-whatsnew.mjs
+          git add "$toc" CHANGELOG.md addon/FiresideTales/WhatsNew.lua
           git commit -m "Release $next with new community stories"
           git tag "v$next"
           git push origin HEAD:main "v$next"

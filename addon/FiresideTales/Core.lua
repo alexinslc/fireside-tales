@@ -297,6 +297,8 @@ SlashCmdList.FIRESIDETALES = function(input)
 		end
 	elseif command == "status" then
 		showStatus()
+	elseif command == "news" then
+		ns.News.Toggle()
 	elseif command == "voices" and (input or ""):lower():find("debug", 1, true) then
 		local s = ns.Voices.Settings()
 		s.debug = not s.debug
@@ -305,6 +307,6 @@ SlashCmdList.FIRESIDETALES = function(input)
 		ns.Voices.Status()
 		ns.Story.ShowTab("voices")
 	else
-		say("/tales stories | add | voices | fire | minimap | status")
+		say("/tales stories | add | voices | news | fire | minimap | status")
 	end
 end

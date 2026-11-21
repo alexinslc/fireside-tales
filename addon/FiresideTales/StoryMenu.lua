@@ -1594,16 +1594,23 @@ function buildWindow()
 	ns.PlaceFrame(window, "storyPosition", "CENTER", UIParent, "CENTER", 0, 40)
 	table.insert(UISpecialFrames, "FiresideTalesStoryFrame") -- Escape closes it.
 
-	-- The story count and a small version number sit quietly in the title bar,
-	-- left of the close button.
+	-- The story count, a small version number, and What's New sit quietly in the title
+	-- bar, left of the close button.
 	countLabel = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+	local news = CreateFrame("Button", nil, window)
+	news:SetPoint("TOPRIGHT", -30, -3)
+	news:SetNormalFontObject("GameFontNormalSmall")
+	news:SetHighlightFontObject("GameFontHighlightSmall")
+	news:SetText("What's New")
+	news:SetSize(64, 16)
+	news:SetScript("OnClick", function() ns.News.Toggle() end)
 	if ns.Version then
 		local version = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-		version:SetPoint("TOPRIGHT", -30, -6)
+		version:SetPoint("RIGHT", news, "LEFT", -8, 0)
 		version:SetText("v" .. ns.Version)
 		countLabel:SetPoint("RIGHT", version, "LEFT", -10, 0)
 	else
-		countLabel:SetPoint("TOPRIGHT", -30, -6)
+		countLabel:SetPoint("RIGHT", news, "LEFT", -10, 0)
 	end
 
 	-- Everything made from here until the tabs is the story pages, which the Voices tab covers.
