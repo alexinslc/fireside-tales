@@ -19,180 +19,162 @@
 			"order": 10,
 			"race": "Dwarf",
 			"sex": "male",
-			"fish": "81ee2ce8b96041c986101b6fff7d48b9",
+			"fish": "8319d68f747f4448abc13a9c61df9ecc",
 			"elevenlabs": "NZgtP3CnEw57ySaPG5dd",
-			"design": "Made with ElevenLabs Voice Design (dwarf-male-d-1), read with stability 0 and the tag [strong Scottish Highlands accent], then copied to fish.audio from that take."
+			"design": "Trained on fish.audio as \"FST - Dwarf Male\" from better source audio (dwarf-male-standard)."
 		},
 		"dwarf-female": {
 			"title": "Dwarf woman",
 			"order": 11,
 			"race": "Dwarf",
 			"sex": "female",
-			"fish": "6e67392e04854408b3ae87905cf0ad6c",
+			"fish": "7cd9de6e80134d2a93c1bef86cdd7321",
 			"elevenlabs": "y9SMdpmMBqB01DTPyWmH",
-			"design": "ElevenLabs Voice Design (dwarf-female-1)."
+			"design": "Trained on fish.audio as \"FST - Dwarf Female\" from better source audio (dwarf-female-maternal)."
 		},
 		"nightelf-male": {
 			"title": "Night elf man",
 			"order": 12,
 			"race": "NightElf",
 			"sex": "male",
-			"fish": "5d33a664fcc3474b8be11a62a97a4526",
+			"fish": "769f646aa52245bdaff1ce49c84932e2",
 			"elevenlabs": "x5wCuXoXsgdSGISuYgMV",
-			"design": "ElevenLabs Voice Design (nightelf-male-2)."
+			"design": "Trained on fish.audio as \"FST - Night Elf Male\" from better source audio (nightelf-male-standard)."
 		},
 		"nightelf-female": {
 			"title": "Night elf woman",
 			"order": 13,
 			"race": "NightElf",
 			"sex": "female",
-			"fish": "3d64a6261fe44e44b7b5b855fbba80f6",
+			"fish": "f778d43b530c4ca5bacb40a39099ef09",
 			"elevenlabs": "n7BRTpFeMwSCOS5ciNOe",
-			"design": "ElevenLabs Voice Design (nightelf-female-2)."
+			"design": "Trained on fish.audio as \"FST - Night Elf Female\" from better source audio (nightelf-female-standard)."
 		},
 		"tauren-male": {
 			"title": "Tauren man",
 			"order": 14,
 			"race": "Tauren",
 			"sex": "male",
-			"fish": "67f8542e693c494d803f13c1c69616a5",
+			"fish": "2781f365d80746e09914eed795b4f538",
 			"elevenlabs": "d5Nt5clSHWhPt7DmTCcg",
-			"design": "ElevenLabs Voice Design (tauren-male-1)."
+			"design": "Trained on fish.audio as \"FST - Tauren Male\" from better source audio (tauren-male-warrior)."
 		},
 		"tauren-female": {
 			"title": "Tauren woman",
 			"order": 15,
 			"race": "Tauren",
 			"sex": "female",
-			"fish": "090fd6a549434f6cb898561db44b53c6",
+			"fish": "f49f0d8793dd4c1084afc9fdd9714d1a",
 			"elevenlabs": "xSQmni65dYjXdl46L09F",
-			"design": "ElevenLabs Voice Design (tauren-female-2)."
+			"design": "Trained on fish.audio as \"FST - Tauren Female\" from better source audio (tauren-female-standard)."
 		},
 		"troll-male": {
 			"title": "Troll man",
 			"order": 16,
 			"race": "Troll",
 			"sex": "male",
-			"fish": "bd2f92ba2d1e4b9c9c86255a3d637a6e",
+			"fish": "d53ee66afb6048778523172d6fa1f61d",
 			"elevenlabs": "E6Hr6ba8kaMl4tMVbLGT",
-			"design": "ElevenLabs Voice Design (troll-male-1)."
+			"design": "Trained on fish.audio as \"FST - Troll Male\" from better source audio (troll-male-standard)."
 		},
 		"skyborne-male": {
 			"title": "Skyborne man",
 			"order": 17,
 			"race": "Skyborne",
 			"sex": "male",
-			"fish": "21a2ffeab806443a863bdbaa15177c1c",
+			"fish": "9d60237c30fc45bb936cac14e4398ed0",
 			"elevenlabs": "Me01QDivCtqQHaikOOWF",
-			"design": "ElevenLabs Voice Design (skyborne-male-1)."
+			"design": "Trained on fish.audio as \"FST - Skyborne Male\" from better source audio (skyborne-male-standard)."
 		},
 		"skyborne-female": {
 			"title": "Skyborne woman",
 			"order": 18,
 			"race": "Skyborne",
 			"sex": "female",
-			"fish": "19acb761f5494e47919551cf99a17dbe",
+			"fish": "cbb9b3d9467446baa63467906448d4b0",
 			"elevenlabs": "yJmI7BZnKSCDXgbPUQ1E",
-			"design": "ElevenLabs Voice Design (skyborne-female-3)."
+			"design": "Trained on fish.audio as \"FST - Skyborne Female\" from better source audio (skyborne-female-standard)."
 		},
 		"human-male": {
 			"title": "Human man",
 			"order": 19,
 			"race": "Human",
 			"sex": "male",
-			"fish": "57b4d8a3fc2f4794bcec9987ac1bd8aa",
+			"fish": "5b32fca3b1864d0d970300eb280f7f72",
 			"elevenlabs": "4ruRHiJlxBGbRMUogKB5",
-			"design": "ElevenLabs Voice Design (human-male-r2-3).",
-			"preview": "eleven-human-male-r2-3.mp3",
-			"generatedVoiceId": "4ruRHiJlxBGbRMUogKB5"
+			"design": "Trained on fish.audio as \"FST - Human Male\" from better source audio (human-male-standard)."
 		},
 		"human-female": {
 			"title": "Human woman",
 			"order": 20,
 			"race": "Human",
 			"sex": "female",
-			"fish": "6740794375be496e823798becf6eea20",
+			"fish": "1edd0028969b4676a43a56997ebbbaf3",
 			"elevenlabs": "kCQNGNcjovSFn8MLymYm",
-			"design": "ElevenLabs Voice Design (human-female-r2-3).",
-			"preview": "eleven-human-female-r2-3.mp3",
-			"generatedVoiceId": "kCQNGNcjovSFn8MLymYm"
+			"design": "Trained on fish.audio as \"FST - Human Female\" from better source audio (human-female-standard)."
 		},
 		"gnome-male": {
 			"title": "Gnome man",
 			"order": 21,
 			"race": "Gnome",
 			"sex": "male",
-			"fish": "6f44ada9c8cf4d72befe9a9c4e7027c6",
+			"fish": "86dc9f5d2b2a46529bfcb32552133c4d",
 			"elevenlabs": "7DLHHfiOOOU6hcuAcuh7",
-			"design": "ElevenLabs Voice Design (gnome-male-r2-2).",
-			"preview": "eleven-gnome-male-r2-2.mp3",
-			"generatedVoiceId": "7DLHHfiOOOU6hcuAcuh7"
+			"design": "Trained on fish.audio as \"FST - Gnome Male\" from better source audio (gnome-male-standard)."
 		},
 		"gnome-female": {
 			"title": "Gnome woman",
 			"order": 22,
 			"race": "Gnome",
 			"sex": "female",
-			"fish": "f941cf9882fd46e3b9d649769330b67c",
+			"fish": "e75be94cf1f54fe082e44e306d242659",
 			"elevenlabs": "WznCxoZ0Mx6ZwhKhPWff",
-			"design": "ElevenLabs Voice Design (gnome-female-r2-2).",
-			"preview": "eleven-gnome-female-r2-2.mp3",
-			"generatedVoiceId": "WznCxoZ0Mx6ZwhKhPWff"
+			"design": "Trained on fish.audio as \"FST - Gnome Female\" from better source audio (gnome-female-standard)."
 		},
 		"orc-male": {
 			"title": "Orc man",
 			"order": 23,
 			"race": "Orc",
 			"sex": "male",
-			"fish": "3d65b06ae116420cbec95c11cd97b9e2",
+			"fish": "b45118e97b03415683d5fa329a7cca95",
 			"elevenlabs": "wCUeGIgtTAftkxSx6Xub",
-			"design": "ElevenLabs Voice Design (orc-male-r2-1), copied to fish.audio straight from that design clip; copies from his longer reading came out too dark.",
-			"preview": "eleven-orc-male-r2-1.mp3",
-			"generatedVoiceId": "wCUeGIgtTAftkxSx6Xub"
+			"design": "Trained on fish.audio as \"FST - Orc Male\" from better source audio (orc-male-standard)."
 		},
 		"orc-female": {
 			"title": "Orc woman",
 			"order": 24,
 			"race": "Orc",
 			"sex": "female",
-			"fish": "2a00184a4703452fb8024030928cec53",
+			"fish": "a83e852432954c31b5053467dd63bc04",
 			"elevenlabs": "4zAVNKiSJI3gadiHcjhu",
-			"design": "ElevenLabs Voice Design (orc-female-r2-1).",
-			"preview": "eleven-orc-female-r2-1.mp3",
-			"generatedVoiceId": "4zAVNKiSJI3gadiHcjhu"
+			"design": "Trained on fish.audio as \"FST - Orc Female\" from better source audio (orc-female-standard)."
 		},
 		"undead-male": {
 			"title": "Undead man",
 			"order": 25,
 			"race": "Scourge",
 			"sex": "male",
-			"fish": "83356ae051f241ffb593d0d5b538b679",
+			"fish": "6d0999f1779044a8b9b6725aaf6a9a29",
 			"elevenlabs": "uCjeDDfU68zrykhtqdYm",
-			"design": "ElevenLabs Voice Design (undead-male-r2-2).",
-			"preview": "eleven-undead-male-r2-2.mp3",
-			"generatedVoiceId": "uCjeDDfU68zrykhtqdYm"
+			"design": "Trained on fish.audio as \"FST - Undead Male\" from better source audio (scourge-male-standard)."
 		},
 		"undead-female": {
 			"title": "Undead woman",
 			"order": 26,
 			"race": "Scourge",
 			"sex": "female",
-			"fish": "a7b3cb52a66f44f382618feef6e4ef14",
+			"fish": "6378822bab024784bede3824ef899fea",
 			"elevenlabs": "lXrhfJOMpCKyHBUXpEfj",
-			"design": "ElevenLabs Voice Design (undead-female-r2-1).",
-			"preview": "eleven-undead-female-r2-1.mp3",
-			"generatedVoiceId": "lXrhfJOMpCKyHBUXpEfj"
+			"design": "Trained on fish.audio as \"FST - Undead Female\" from better source audio (scourge-female-standard)."
 		},
 		"troll-female": {
 			"title": "Troll woman",
 			"order": 27,
 			"race": "Troll",
 			"sex": "female",
-			"fish": "33bbff42e87f420491f5f174c60d2b6d",
+			"fish": "57367809820f4c27bc394bb76ecd1a88",
 			"elevenlabs": "sezeD9ksR1Pqmi52i8LL",
-			"design": "ElevenLabs Voice Design (troll-female-r2-3).",
-			"preview": "eleven-troll-female-r2-3.mp3",
-			"generatedVoiceId": "sezeD9ksR1Pqmi52i8LL"
+			"design": "Trained on fish.audio as \"FST - Troll Female\" from better source audio (troll-female-standard)."
 		}
 	},
 	"fish": {

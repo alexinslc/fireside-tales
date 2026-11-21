@@ -24,8 +24,9 @@ The sounds are Ogg Vorbis, mono, 44.1 kHz at about 48 kbps, as Spoken's quest au
 (`config.json`'s `pack`).
 
 Their CurseForge projects are at `curseforge.com/wow/addons/fireside-tales-voices-<race>` (like
-`night-elf`). Narrator is 1812860 and Community 1812866 (the repository's
-`CF_COMMUNITY_VOICES_PROJECT_ID`).
+`night-elf`). Their project ids: Human 1812852, Dwarf 1812927, Night Elf 1812930, Gnome 1812932,
+Orc 1812858, Undead 1812934, Tauren 1812936, Troll 1812938, Skyborne 1812944, Narrator 1812860,
+and Community 1812866 (the repository's `CF_COMMUNITY_VOICES_PROJECT_ID`).
 
 A pack needs Fireside Tales, and adds each of its voices with `FiresideTales_AddVoice`.
 `config.json`'s `packs` says which voices go in each. Each pack is built whole by `build.mjs`, so
