@@ -5,8 +5,9 @@
 		"narrator-male": {
 			"title": "Male narrator",
 			"order": 1,
-			"fish": "a9e7976abe2c4441bd031ef29d138611",
-			"elevenlabs": "5PsTQGkk9ch3yCS9ZDsh"
+			"fish": "c6de281a464b424cad48a8661bac3cd8",
+			"elevenlabs": "5PsTQGkk9ch3yCS9ZDsh",
+			"design": "Trained on fish.audio as \"FST - Narrator\"."
 		},
 		"narrator-female": {
 			"title": "Female narrator",
