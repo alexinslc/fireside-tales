@@ -27,6 +27,10 @@ Stop sitting at campfires in silence. Tell any of 600+ tales line by line in `/s
 
 Click the minimap book or type `/tales`, pick a story, and press **Speak** for each line. Stuck? **Tell a Tale** picks one for you. There are stories for your race, class and zone, legends told across several nights, rumors, riddles and festival tales, all a minute or less.
 
+## In your language
+
+Stories come in English, German, French, Spanish (Spain and Latin America), Russian and Korean. The menus follow your game's language, and you can pick another for your stories in the **Settings** tab. Voices are in English for every language.
+
 ## Fully voiced
 
 Every story told near you is read aloud in a voice that fits the teller's race, man or woman. Grab the races you play with, or all of them. The Narrator covers any race you don't have.
@@ -52,7 +56,7 @@ Write your own at **[firesidetales.dev](https://firesidetales.dev/submit)**, the
 
 ## Good to know
 
-Some stories are made with the help of AI, and the voices are AI-generated. Fireside Tales is free and isn't affiliated with Blizzard. Bugs or ideas: [firesidetales.dev/feedback](https://firesidetales.dev/feedback).
+Some stories are made with the help of AI, and the translations and voices are AI-generated. Fireside Tales is free and isn't affiliated with Blizzard. Bugs or ideas: [firesidetales.dev/feedback](https://firesidetales.dev/feedback).
 
 ## Commands
 
