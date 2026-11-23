@@ -29,6 +29,9 @@ jobs:
       - name: Check What's New matches the changelog
         run: node tools/build-whatsnew.mjs --check
 
+      - name: Check the translations
+        run: node tools/i18n/build.mjs --check
+
       - name: Check the tag matches the TOC
         if: startsWith(github.ref, 'refs/tags/')
         run: |

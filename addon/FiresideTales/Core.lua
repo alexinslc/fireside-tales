@@ -8,6 +8,7 @@ local getMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
 ns.Version = getMetadata and getMetadata(ADDON, "Version") or nil
 
 local db, char, charKey
+local L = ns.L
 
 local function say(msg)
 	print("|cffd4af37Fireside Tales:|r " .. msg)
@@ -23,8 +24,8 @@ end
 
 local function currentZone()
 	local zone = plain(GetZoneText())
-	if zone == "" then return nil end
-	return zone
+	if not zone or zone == "" then return nil end
+	return ns.Locale.ZoneKey(zone) -- Stories are filed under the zone's English name.
 end
 
 -------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ ns.CurrentZone = currentZone
 -- Sends a line unless the game is blocking addon chat. Returns whether it was sent.
 function ns.SendLine(text, chatType)
 	if C_ChatInfo.InChatMessagingLockdown and C_ChatInfo.InChatMessagingLockdown() then
-		say("the game is blocking addon chat right now. Try again in a moment.")
+		say(L["the game is blocking addon chat right now. Try again in a moment."])
 		return false
 	end
 	C_ChatInfo.SendChatMessage(text, chatType)
@@ -205,6 +206,7 @@ function handlers.ADDON_LOADED(name)
 	db.settings, db.position = nil, nil
 	db.chars = db.chars or {}
 	db.imported = db.imported or {} -- Stories from the Write Your Tales window.
+	ns.Locale.Apply(db)
 end
 
 function handlers.PLAYER_LOGIN()
@@ -242,8 +244,13 @@ function ns.NoteFeaturedStory()
 	end
 	if #titles == 0 then return end
 	char.featuredNoted = current
-	say(("Your %s %s %s featured at the fire this week! Find %s in the Community tab of the story menu."):format(
-		#titles > 1 and "stories" or "story", table.concat(titles, " and "), #titles > 1 and "are" or "is", #titles > 1 and "them" or "it"))
+	local list = titles[1]
+	for i = 2, #titles do list = L["%s and %s"]:format(list, titles[i]) end
+	if #titles > 1 then
+		say(L["Your stories %s are featured at the fire this week! Find them in the Community tab of the story menu."]:format(list))
+	else
+		say(L["Your story %s is featured at the fire this week! Find it in the Community tab of the story menu."]:format(list))
+	end
 end
 
 function handlers.ZONE_CHANGED_NEW_AREA()
@@ -266,12 +273,12 @@ end)
 -------------------------------------------------------------------------------
 
 BINDING_HEADER_FIRESIDETALES = "Fireside Tales"
-BINDING_NAME_FIRESIDETALES_SPEAK = "Speak the next line"
-BINDING_NAME_FIRESIDETALES_STORIES = "Open or close the story menu"
+BINDING_NAME_FIRESIDETALES_SPEAK = L["Speak the next line"]
+BINDING_NAME_FIRESIDETALES_STORIES = L["Open or close the story menu"]
 
 local function showStatus()
-	say(("version %s. %s the %s %s: %d stories for you, %d pasted in across all characters."):format(
-		ns.Version or "unknown",
+	say(L["version %s. %s the %s %s: %d stories for you, %d pasted in across all characters."]:format(
+		ns.Version or L["unknown"],
 		charKey,
 		UnitRace("player"),
 		UnitClass("player"),
@@ -291,22 +298,44 @@ SlashCmdList.FIRESIDETALES = function(input)
 		ns.ToggleMinimapButton()
 	elseif command == "fire" then
 		if ns.Campfire.Toggle() then
-			say("I'll offer a tale when you settle by a campfire.")
+			say(L["I'll offer a tale when you settle by a campfire."])
 		else
-			say("no more campfire prompts. /tales fire turns them back on.")
+			say(L["no more campfire prompts. /tales fire turns them back on."])
 		end
 	elseif command == "status" then
 		showStatus()
 	elseif command == "news" then
 		ns.News.Toggle()
+	elseif command == "language" then
+		local code = (input or ""):match("^%s*%S+%s+(%S+)")
+		local LC = ns.Locale
+		if not code then
+			local codes = {}
+			for _, language in ipairs(LC.LANGUAGES) do
+				codes[#codes + 1] = language.code .. " (" .. language.name .. ")"
+			end
+			say(L["stories are told in %s. To change it: /tales language and one of %s, or auto for the game's language."]
+				:format(LC.Name(LC.Stories()), table.concat(codes, ", ")))
+			return
+		end
+		local wanted
+		for _, language in ipairs(LC.LANGUAGES) do
+			if language.code:lower() == code:lower() then wanted = language.code end
+		end
+		if code:lower() ~= "auto" and not wanted then
+			say(L["there's no language %s. /tales language lists them."]:format(code))
+			return
+		end
+		LC.SetStories(db, wanted)
+		say(L["stories will be told in %s after you type /reload."]:format(LC.Name(wanted or LC.Client())))
 	elseif command == "voices" and (input or ""):lower():find("debug", 1, true) then
 		local s = ns.Voices.Settings()
 		s.debug = not s.debug
-		say(s.debug and "voice debugging on: each clip's start, end, and stop show in chat." or "voice debugging off.")
-	elseif command == "voices" then
-		ns.Voices.Status()
+		say(s.debug and L["voice debugging on: each clip's start, end, and stop show in chat."] or L["voice debugging off."])
+	elseif command == "voices" or command == "settings" then
+		if command == "voices" then ns.Voices.Status() end
 		ns.Story.ShowTab("voices")
 	else
-		say("/tales stories | add | voices | news | fire | minimap | status")
+		say("/tales stories | add | settings | news | language | fire | minimap | status")
 	end
 end

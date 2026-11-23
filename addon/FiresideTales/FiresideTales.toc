@@ -7,6 +7,15 @@
 ## OptionalDeps: totalRP3
 
 StoryData.lua
+Locale.lua
+
+# Interface text and official names in each language, written by tools/i18n/build.mjs.
+locales\deDE\Strings.lua
+locales\frFR\Strings.lua
+locales\esES\Strings.lua
+locales\esMX\Strings.lua
+locales\ruRU\Strings.lua
+locales\koKR\Strings.lua
 
 # Stories, by the menu section they show in. A new file only loads after a full game restart.
 stories\shared\CampfireTales.lua
@@ -100,6 +109,15 @@ stories\festivals\WinterVeil.lua
 stories\Legends.lua
 stories\Community.lua
 stories\Riddles.lua
+
+# The stories in each language, written by tools/i18n/build.mjs. All load, so a line heard in
+# any language finds its voice.
+locales\deDE\Stories.lua
+locales\frFR\Stories.lua
+locales\esES\Stories.lua
+locales\esMX\Stories.lua
+locales\ruRU\Stories.lua
+locales\koKR\Stories.lua
 
 Openers.lua
 Core.lua

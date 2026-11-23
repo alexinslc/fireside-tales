@@ -1,5 +1,6 @@
 -- A book icon on the minimap: click to open the story menu, drag to move it.
 local _, ns = ...
+local L = ns.L
 
 local DEFAULT_ANGLE = 225
 local EDGE_OFFSET = 5
@@ -57,7 +58,7 @@ function ns.BuildMinimapButton()
 	button:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 		GameTooltip:AddLine("Fireside Tales")
-		GameTooltip:AddLine("Click to open your stories. Drag to move this button.", 1, 1, 1, true)
+		GameTooltip:AddLine(L["Click to open your stories. Drag to move this button."], 1, 1, 1, true)
 		GameTooltip:Show()
 	end)
 	button:SetScript("OnLeave", function()

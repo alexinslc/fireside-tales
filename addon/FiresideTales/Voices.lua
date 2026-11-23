@@ -5,6 +5,7 @@
 -- The sounds are separate addons, the voice packs, which add each voice with FiresideTales_AddVoice.
 -- ns.VoiceLines (VoiceLines.lua, written by tools/voice/build.mjs) holds the lines they have.
 local _, ns = ...
+local L = ns.L
 
 ns.Voices = {}
 local V = ns.Voices
@@ -21,25 +22,26 @@ local CHANNEL = "Master"
 
 local KIND_BY_EVENT = { CHAT_MSG_SAY = "say", CHAT_MSG_EMOTE = "emote" }
 
--- The voice packs there are, for the Voices tab, whether or not they're installed: one per race
+-- The voice packs there are, for the Settings tab, whether or not they're installed: one per race
 -- (each with its men and women), the narrator, and the community stories, in groups.
-local function pack(name, title, size)
+-- The address is made from the English title, so it's the same in every language.
+local function pack(name, english, title, size)
 	return { addon = "FiresideTalesVoices_" .. name, title = title, size = size,
-		url = "curseforge.com/wow/addons/fireside-tales-voices-" .. title:lower():gsub(" ", "-") }
+		url = "curseforge.com/wow/addons/fireside-tales-voices-" .. english:lower():gsub(" ", "-") }
 end
 V.PACKS = {
-	{ title = "Alliance", about = "Human, Dwarf, Night Elf, and Gnome tellers, men and women.", packs = {
-		pack("Human", "Human", "about 245 MB"), pack("Dwarf", "Dwarf", "about 265 MB"),
-		pack("NightElf", "Night Elf", "about 275 MB"), pack("Gnome", "Gnome", "about 270 MB") } },
-	{ title = "Horde", about = "Orc, Undead, Tauren, and Troll tellers, men and women.", packs = {
-		pack("Orc", "Orc", "about 255 MB"), pack("Undead", "Undead", "about 295 MB"),
-		pack("Tauren", "Tauren", "about 295 MB"), pack("Troll", "Troll", "about 295 MB") } },
-	{ title = "Skyborne", about = "Skyborne tellers of either faction, men and women.", packs = {
-		pack("Skyborne", "Skyborne", "about 250 MB") } },
-	{ title = "Narrator", about = "Reads every teller whose race voice isn't installed.", packs = {
-		pack("Narrator", "Narrator", "about 130 MB") } },
-	{ title = "Community Stories", about = "This week's community stories from firesidetales.dev, in every voice.",
-		packs = { pack("Community", "Community", "new each week, up to about 350 MB") } },
+	{ title = L["Alliance"], about = L["Human, Dwarf, Night Elf, and Gnome tellers, men and women."], packs = {
+		pack("Human", "Human", L["Human"], L["about %d MB"]:format(245)), pack("Dwarf", "Dwarf", L["Dwarf"], L["about %d MB"]:format(265)),
+		pack("NightElf", "Night Elf", L["Night Elf"], L["about %d MB"]:format(275)), pack("Gnome", "Gnome", L["Gnome"], L["about %d MB"]:format(270)) } },
+	{ title = L["Horde"], about = L["Orc, Undead, Tauren, and Troll tellers, men and women."], packs = {
+		pack("Orc", "Orc", L["Orc"], L["about %d MB"]:format(255)), pack("Undead", "Undead", L["Undead"], L["about %d MB"]:format(295)),
+		pack("Tauren", "Tauren", L["Tauren"], L["about %d MB"]:format(295)), pack("Troll", "Troll", L["Troll"], L["about %d MB"]:format(295)) } },
+	{ title = L["Skyborne"], about = L["Skyborne tellers of either faction, men and women."], packs = {
+		pack("Skyborne", "Skyborne", L["Skyborne"], L["about %d MB"]:format(250)) } },
+	{ title = L["Narrator"], about = L["Reads every teller whose race voice isn't installed."], packs = {
+		pack("Narrator", "Narrator", L["Narrator"], L["about %d MB"]:format(130)) } },
+	{ title = L["Community Stories"], about = L["This week's community stories from firesidetales.dev, in every voice."],
+		packs = { pack("Community", "Community", L["Community"], L["new each week, up to about %d MB"]:format(350)) } },
 }
 
 local voices = {} -- By key, from the packs.
@@ -206,7 +208,17 @@ local function findLine(kind, text)
 		if text:find(line[1]) then return line[2] end
 	end
 end
-V.FindLine = findLine
+
+-- A line in another language plays the sound of the English line it was made from. A later
+-- part of a line split for chat has no sound of its own: the first part's sound reads it all.
+local function findAnyLine(kind, text)
+	local entry = findLine(kind, text)
+	if entry then return entry end
+	local english, later = ns.Locale.SourceLine(text)
+	if later then return nil, "a later part of a line" end
+	if english then return findLine(kind, english) end
+end
+V.FindLine = findAnyLine
 
 -------------------------------------------------------------------------------
 -- Playing
@@ -278,8 +290,8 @@ end
 local function play(kind, text, teller, guid, asked)
 	if not PlaySoundFile then return nil, "this client can't play sounds" end
 	if not (asked or settings().on) then return nil, "voices are off" end
-	local entry = findLine(kind, text)
-	if not entry then return nil, "not a voiced line" end
+	local entry, why = findAnyLine(kind, text)
+	if not entry then return nil, why or "not a voiced line" end
 	local id = entry[1]
 	-- The teller's own voice if it has the line, or else the narrator.
 	local voice = tellerVoice(guid)
@@ -328,7 +340,7 @@ local function onChat(event, text, sender, ...)
 	local guid = plain((select(10, ...)))
 	if isPlayer(sender, guid) and not settings().own then return end
 	local clip, why = play(kind, tidy(text), shortName(sender), guid)
-	if not clip and why ~= "not a voiced line" then debug(("%s's line not played: %s"):format(shortName(sender), why)) end
+	if not clip and why ~= "not a voiced line" and why ~= "a later part of a line" then debug(("%s's line not played: %s"):format(shortName(sender), why)) end
 end
 
 local frame = CreateFrame("Frame")
@@ -344,10 +356,11 @@ function V.Status()
 	local n = narrator()
 	local races = raceVoices()
 	if not V.Any() then
-		say("no voice packs are installed. Open the Voices tab of the story menu to get one.")
+		say(L["no voice packs are installed. Open the Settings tab of the story menu to get one."])
 		return
 	end
-	say(("voices are %s. Narrator: %s. Race voices: %d%s. Your own stories: %s."):format(
-		s.on and "on" or "off", n and n.title or "none installed", #races,
-		s.races and "" or " (off)", s.own and "on" or "off"))
+	local status = s.races and L["voices are %s. Narrator: %s. Race voices: %d. Your own stories: %s."]
+		or L["voices are %s. Narrator: %s. Race voices: %d (off). Your own stories: %s."]
+	say(status:format(s.on and L["on"] or L["off"], n and n.title or L["none installed"], #races,
+		s.own and L["on"] or L["off"]))
 end

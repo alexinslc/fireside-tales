@@ -141,8 +141,10 @@ The addon's `prompts` folder has more prompts for a race or class, a zone, every
 | `/tales` or `/tales stories` | Open or close the story menu |
 | `/tales help` | List the commands |
 | `/tales add` | Open or close the Write Your Tales window |
-| `/tales voices` | Open the Voices tab |
+| `/tales settings` | Open the Settings tab: story language and voices |
+| `/tales voices` | Show which voices are on, and open the Settings tab |
 | `/tales news` | Open or close What's New, which also opens once after each update |
+| `/tales language` | Show or change the language stories are told in (German, French, Spanish, Russian, Korean, or English), as the Settings tab does |
 | `/tales fire` | Turn the campfire prompt off or back on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show who the addon thinks you are, and your story counts |
@@ -185,6 +187,10 @@ To test the whole addon outside the game, run the harness with [LuaJIT](https://
 ```sh
 luajit tools/harness/harness.lua
 ```
+
+### Other languages
+
+The addon's interface follows the game client's language, and stories are told in the player's story language (`/tales language`, the client's by default). Translations live in `translations/<language>/` as JSON and are built into `addon/FiresideTales/locales/` by `node tools/i18n/build.mjs`, which also checks them. A story with any string untranslated stays in English. Wrap new interface text in `L["..."]`, and text the addon itself says in chat in `ns.Locale.T("...")`. See [docs/translation-guide.md](docs/translation-guide.md).
 
 ### Local stories
 

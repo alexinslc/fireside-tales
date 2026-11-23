@@ -6,7 +6,7 @@ teller's race and sex. Without that voice, the narrator reads it. It only listen
 doesn't need the voices; each listener does.
 
 `addon/FiresideTales/Voices.lua` finds the line, picks the voice and plays the sounds in turn.
-`VoiceSettings.lua` is the Voices tab of the story menu. The sounds are in separate addons, the
+`VoiceSettings.lua` is the Settings tab of the story menu. The sounds are in separate addons, the
 voice packs, so a player downloads only the ones they want:
 
 | Pack | Voices | Size |
@@ -17,7 +17,7 @@ voice packs, so a player downloads only the ones they want:
 
 A pack per race isn't ideal, but CurseForge refuses an upload much over 500 MB (480 MiB went
 through and 510 MiB didn't), and a faction's races together are about 1.3 GB. `build.mjs` says
-when a pack is over. The Voices tab groups them as Alliance, Horde, Skyborne, Narrator, and
+when a pack is over. The Settings tab groups them as Alliance, Horde, Skyborne, Narrator, and
 Community, so it stays short.
 
 The sounds are Ogg Vorbis, mono, 44.1 kHz at about 48 kbps, as Spoken's quest audio is
@@ -47,7 +47,7 @@ node tools/voice/generate.mjs --voice races --spend --concurrency 15 --env-file 
 node tools/voice/build.mjs                          # VoiceLines.lua and every pack (needs oggenc)
 node tools/voice/build.mjs --pack FiresideTalesVoices_Narrator
 luajit tools/voice/test-voices.lua                  # Voices.lua's own checks
-luajit tools/harness/harness.lua                    # the whole addon, the Voices tab included
+luajit tools/harness/harness.lua                    # the whole addon, the Settings tab included
 ```
 
 - `config.json`'s `voices` lists every voice: its title, order, race and sex for a race voice, and
@@ -114,8 +114,19 @@ take, and the old sound drops out of the packs at the next build.
 
 ## In the game
 
-The story menu's Voices tab (the gear, last on the right) lists the packs: installed, or a button
+The story menu's Settings tab (the gear, last on the right) lists the packs: installed, or a button
 with its CurseForge address to copy. It turns reading aloud on or off, picks who reads (race voices, or the narrator for every
 story), turns hearing your own stories on or off, and plays a sample. `/tales voices` opens
 it. Sounds play in turn at the game's Master volume (Dialog can cut a sound off partway); past two waiting lines, the oldest is dropped, so
 a fast teller doesn't leave listeners behind.
+
+## Other languages
+
+Stories told in another language (see `docs/translation-guide.md`) still play the voices: `Locale.lua` knows every translation, so a German line heard by anyone plays the sound of the English line it was made from. A line split into parts for chat plays that sound on its first part, and nothing on the rest. So for now a translated story is read aloud in English.
+
+Voiced translations aren't made yet. The plan for when they are:
+
+- A language's sounds go in packs of their own, `FiresideTalesVoices_<Race>_<language>` (like `FiresideTalesVoices_Dwarf_deDE`), so players download only the languages they hear. Each line's sound is named by the same id as the English line, and the pack adds its voice with a `language` field.
+- `Locale.SourceLine` already knows which English line a translated line came from; it would also say which language it was, and `Voices.lua` would play that language's sound when it's installed, and the English one otherwise.
+- `lines.mjs` would collect each language's lines from `translations/`, with ids of their own text, and `generate.mjs --language deDE` would make them. The race voices were designed in English, so each language needs its voices auditioned again (`audition.mjs`) before anything is generated.
+

@@ -1,0 +1,9 @@
+{
+  "name": "fireside-tales-i18n",
+  "private": true,
+  "type": "module",
+  "description": "Translation tools for Fireside Tales. Only translate-community.mjs needs the packages.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.12.0"
+  }
+}

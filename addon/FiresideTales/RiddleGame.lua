@@ -18,8 +18,11 @@ local game
 
 -- Lowercase words only, with single spaces and a space at each end, so an answer can
 -- be found as whole words: " hearth stone " in " is it a hearth stone ".
+-- Letters outside A to Z (ü, ё, 한) are UTF-8 bytes from 128 up, which count as letters too,
+-- once the punctuation in that range is gone: no-break spaces, « », and quotes and dashes.
 local function words(text)
-	return " " .. text:lower():gsub("[^%w]+", " "):gsub("^ +", ""):gsub(" +$", "") .. " "
+	text = ns.Locale.Lower(text):gsub("\194[\160\171\187]", " "):gsub("\226\128[\128-\191]", " ")
+	return " " .. text:gsub("[^%w\128-\255]+", " "):gsub("^ +", ""):gsub(" +$", "") .. " "
 end
 
 -- Whether a message names one of the riddle's answers.
@@ -79,12 +82,13 @@ function ns.Riddle.Next()
 	if not game or game.finished then return nil end
 	local riddle = game.riddle
 	if game.winner then
-		return ("%s has it! It's %s."):format(game.winner, riddle.answer), "winner"
+		-- Said in chat, so in the story language, as the riddle is.
+		return ns.Locale.T("%s has it! It's %s."):format(game.winner, riddle.answer), "winner"
 	end
 	if not game.hinted and riddle.hint then
 		return riddle.hint, "hint"
 	end
-	return ("Nobody? It's %s."):format(riddle.answer), "reveal"
+	return ns.Locale.T("Nobody? It's %s."):format(riddle.answer), "reveal"
 end
 
 -- Called once the line from Next has been said.

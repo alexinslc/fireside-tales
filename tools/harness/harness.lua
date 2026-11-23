@@ -189,6 +189,7 @@ local function installApi()
 	realG.Ambiguate = function(sender) return (sender:gsub("%-.*$", "")) end
 	realG.GetCursorPosition = function() return 500, 500 end
 	realG.GetZoneText = function() return W.zone end
+	realG.GetLocale = function() return W.locale or "enUS" end
 	realG.UnitName = function(unit)
 		if unit == "player" then return W.name end
 		if unit == "target" then return W.target end
@@ -349,6 +350,8 @@ local function boot(db)
 			end
 		end
 	end
+	-- A scenario can add what a language's files would, before the saved settings load.
+	if W.beforeLoad then W.beforeLoad(ns) end
 	fire("ADDON_LOADED", "FiresideTales")
 	fire("PLAYER_LOGIN")
 	fire("PLAYER_ENTERING_WORLD", true, false)
@@ -977,7 +980,7 @@ scenario("/reload keeps saved data; slash leftovers", function()
 	slash("minimap")
 	check("old prompt settings cleared", db.settings == nil and db.position == nil)
 	slash("off")
-	check("/tales off is no longer a command", chatOut[#chatOut]:find("/tales stories | add | voices | news | fire | minimap | status", 1, true))
+	check("/tales off is no longer a command", chatOut[#chatOut]:find("/tales stories | add | settings | news | language | fire | minimap | status", 1, true))
 	slash("")
 	check("bare /tales opens the menu", storyWindow():IsShown())
 	slash("")
@@ -2174,10 +2177,15 @@ scenario("voices tab: no packs, getting one, and its settings", function()
 	link:Hide()
 
 	-- Packs are installed, as they would be after a reload.
+	-- A line without a name in it, since a sample never plays those.
+	local sampleId
+	for text, entry in pairs(ns.VoiceLines.say) do
+		if not text:find("{target}", 1, true) then sampleId = entry[1] break end
+	end
 	realG.FiresideTales_AddVoice({ key = "narrator-male", title = "Male narrator", addon = "FiresideTalesVoices_Narrator",
-		folder = "narrator-male", order = 1, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
+		folder = "narrator-male", order = 1, lengths = { [sampleId] = 2 } })
 	realG.FiresideTales_AddVoice({ key = "human-male", title = "Human man", addon = "FiresideTalesVoices_Human",
-		folder = "human-male", order = 19, race = "Human", sex = 2, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
+		folder = "human-male", order = 19, race = "Human", sex = 2, lengths = { [sampleId] = 2 } })
 	ns.VoiceSettings.Refresh()
 	check("an installed group says so", shownText("Installed") ~= nil)
 	check("a group partly installed says how much", shownText("1 of 4 installed") ~= nil)
@@ -2218,7 +2226,7 @@ scenario("voices tab: no packs, getting one, and its settings", function()
 	clickLabel("Play a Sample")
 	check("with the narrator picked, the sample is his", played[1] and played[1].path:find("\\narrator-male\\", 1, true), played[1] and played[1].path)
 	realG.FiresideTales_AddVoice({ key = "narrator-female", title = "Female narrator", addon = "FiresideTalesVoices_Narrator",
-		folder = "narrator-female", order = 2, lengths = { [ns.VoiceLines.say[next(ns.VoiceLines.say)][1]] = 2 } })
+		folder = "narrator-female", order = 2, lengths = { [sampleId] = 2 } })
 	ns.VoiceSettings.Refresh()
 	check("with two narrators, each is a choice", entry("Male narrator") and entry("Female narrator") and not entry("Narrator"))
 	entry("Female narrator").select(entry("Female narrator").data)
@@ -2303,6 +2311,162 @@ scenario("what's new: once per version, and on request", function()
 	ns.WhatsNew = real
 	newsWindow():Hide()
 	realG.InCombatLockdown = nil
+end)
+
+
+scenario("languages: stories told in German, keys and voices kept", function()
+	W.locale, W.zone = "deDE", "Wald von Elwynn"
+	local lantern = {
+		["The Lantern Keeper"] = "Der Laternenwärter",
+		["Campfire Tales"] = "Lagerfeuergeschichten",
+		["pokes at the fire and watches the sparks climb."] = "stochert im Feuer und sieht den Funken nach.",
+		["There was an old keeper who lit a lantern on a hill every night, long after the road below had washed away."] =
+			{ "Es gab einen alten Wärter, der jede Nacht eine Laterne auf einem Hügel entzündete,", "lange nachdem die Straße darunter weggespült war." },
+		["Folk called him mad. Nobody had walked that road in forty years. Who was he lighting it for?"] = "Die Leute hielten ihn für verrückt. Für wen zündete er sie an?",
+		["One winter he died, and the lantern went dark. Three nights later, I'm told, someone came knocking at his door."] = "Eines Winters starb er, und die Laterne erlosch. Drei Nächte später klopfte jemand an seine Tür.",
+		["A traveler, half frozen, swearing they'd been walking toward that light since they were young."] = "Ein Reisender, halb erfroren.",
+		["stares into the coals for a long moment."] = "starrt lange in die Glut.",
+		["So I try to keep a light on. You never know who's still on the road."] = "Also lasse ich ein Licht brennen.",
+		-- The next story is missing a line (false, over the real translation), so it stays English.
+		["The Stone That Hummed"] = "Der summende Stein",
+		["I'll let you guess what I hear these days."] = false,
+		["%s has it! It's %s."] = "%s hat es! Es ist %s.",
+		["Never Once Sold"] = "Nie verkauft",
+		["leans toward the fire."] = "beugt sich zum Feuer.",
+		["Not worth a copper and never once sold,"] = "Keinen Kupfer wert und nie verkauft,",
+		["yet hold me and wait, and I'll bring you back home. What am I?"] = "halt mich und warte, und ich bring dich heim. Was bin ich?",
+		["You chose where I take you, the last time you rested."] = "Du hast gewählt, wohin ich dich bringe.",
+		["a hearthstone"] = "ein Ruhestein",
+		["answers: hearthstone | hearthstones | hearth stone"] = { "ruhestein", "ruhesteine" },
+	}
+	W.beforeLoad = function(ns)
+		ns.AddTranslations("deDE", lantern)
+		ns.AddTranslations("ruRU", { ["Never Once Sold"] = "x", ["leans toward the fire."] = "наклоняется к огню." })
+		ns.AddGlossary("deDE", { zones = { ["Elwynn Forest"] = "Wald von Elwynn" }, zoneTerms = { ["Elwynn Forest"] = { "Goldhain" } },
+			festivals = { ["Winter Veil"] = "Winterhauch" } })
+		ns.AddStrings("deDE", { ["stories will be told in %s after you type /reload."] = "Geschichten werden nach /reload auf %s erzählt." })
+	end
+	local db = {}
+	ns, loaded, skipped = boot(db)
+	W.beforeLoad = nil
+	local function story(title) for _, s in ipairs(ns.Stories) do if (s.sourceTitle or s.title) == title then return s end end end
+	local keeper, stone = story("The Lantern Keeper"), story("The Stone That Hummed")
+	check("a whole translation is told in German", keeper.title == "Der Laternenwärter" and keeper.lines[1].text:find("^stochert"))
+	check("a long line becomes two parts", keeper.lines[2].part == 1 and keeper.lines[3].part == 2 and #keeper.lines == 8, #keeper.lines)
+	check("each part remembers its English line", keeper.lines[3].source:find("^There was an old keeper"))
+	check("a story missing one line's translation stays English", stone.title == "The Stone That Hummed" and stone.sourceTitle == nil)
+	check("the zone the client names in German is the English one", ns.CurrentZone() == "Elwynn Forest")
+	check("zone names show in German", ns.Locale.ZoneName("Elwynn Forest") == "Wald von Elwynn")
+	check("German zone words count", table.concat(ns.Locale.ZoneTerms("Elwynn Forest"), ",") == "wald von elwynn,goldhain")
+	check("the festival is found by its German calendar name", ns.Locale.FestivalKeyword({ name = "Winter Veil", keyword = "winter veil" }) == "winterhauch")
+
+	slash("stories")
+	local sectionKey
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "story") == keeper then sectionKey = keeper.key end
+	end
+	check("the story's key keeps its English title", keeper.key == "shared/Campfire Tales/The Lantern Keeper", keeper.key)
+	local search
+	for _, f in ipairs(allFrames) do if f._type == "EditBox" then search = search or f end end
+	search:SetText("laternenwärter")
+	local row = rowFor("Der Laternenwärter")
+	check("searching finds it in German", row ~= nil)
+	search:SetText("LATERNENWÄRTER")
+	check("searching ignores case, ä and Ä too", rowFor("Der Laternenwärter") ~= nil)
+	click(rowFor("Der Laternenwärter"), "keeper")
+	local before = #sent
+	FiresideTales_Speak()
+	FiresideTales_Speak()
+	FiresideTales_Speak()
+	check("Speak says the German lines, one part each press",
+		sent[before + 1].text == "stochert im Feuer und sieht den Funken nach." and sent[before + 1].chatType == "EMOTE"
+		and sent[before + 2].text:find("^Es gab") and sent[before + 3].text:find("^lange nachdem"))
+	for _ = 1, 5 do FiresideTales_Speak() end
+	check("told under its English key", ns.CharData().told["shared/Campfire Tales/The Lantern Keeper"] ~= nil)
+	storyWindow():Hide()
+
+	-- Voices: a translated line plays the English line's sound; a later part plays nothing.
+	local english = ns.Voices.FindLine("say", "Folk called him mad. Nobody had walked that road in forty years. Who was he lighting it for?")
+	if english then
+		check("a German line finds the English line's sound",
+			ns.Voices.FindLine("say", "Die Leute hielten ihn für verrückt. Für wen zündete er sie an?") == english)
+	end
+	local first = ns.Voices.FindLine("say", "There was an old keeper who lit a lantern on a hill every night, long after the road below had washed away.")
+	if first then
+		check("the first part of a split line finds its sound",
+			ns.Voices.FindLine("say", "Es gab einen alten Wärter, der jede Nacht eine Laterne auf einem Hügel entzündete,") == first)
+	end
+	local none, why = ns.Voices.FindLine("say", "lange nachdem die Straße darunter weggespült war.")
+	check("a later part has no sound", none == nil and why == "a later part of a line")
+	check("a line in another language finds it too", ns.Locale.SourceLine("наклоняется к огню.") == "leans toward the fire.")
+
+	-- Riddles: asked in German, German and English answers both count, and the result is said in German.
+	local stoneRiddle
+	for _, r in ipairs(ns.Riddles) do if r.sourceTitle == "Never Once Sold" then stoneRiddle = r end end
+	check("the riddle is in German", stoneRiddle and stoneRiddle.title == "Nie verkauft" and stoneRiddle.answer == "ein Ruhestein")
+	check("a German answer counts", ns.Riddle.Matches(stoneRiddle, "Ist es ein RUHESTEIN?"))
+	check("an English one still does", ns.Riddle.Matches(stoneRiddle, "hearthstone"))
+	check("the winner is said in German", ns.Locale.T("%s has it! It's %s."):format("Mira", stoneRiddle.answer) == "Mira hat es! Es ist ein Ruhestein.")
+
+	-- Lowercase in every language here, and riddle words with letters outside A to Z.
+	check("Cyrillic lowercases", ns.Locale.Lower("ЁЛКА Свеча") == "ёлка свеча")
+	check("Latin letters with marks lowercase", ns.Locale.Lower("ÉTÉ ÄÖÜ ÑÇ") == "été äöü ñç")
+	ns.Riddles[#ns.Riddles + 1] = { title = "t", lines = {}, answers = { "свеча", "양초" }, riddle = true }
+	check("a Russian answer counts as a whole word", ns.Riddle.Matches(ns.Riddles[#ns.Riddles], "Это СВЕЧА?"))
+	check("but not inside a longer word", not ns.Riddle.Matches(ns.Riddles[#ns.Riddles], "свечами"))
+	check("a Korean answer counts", ns.Riddle.Matches(ns.Riddles[#ns.Riddles], "양초 아니야?"))
+	check("French quotes and no-break spaces are spaces", ns.Riddle.Matches(ns.Riddles[#ns.Riddles], "«\194\160свеча\194\160»"))
+	table.remove(ns.Riddles)
+
+	-- Choosing the story language, which takes a /reload.
+	slash("language")
+	check("/tales language says the current one", chatOut[#chatOut]:find("Deutsch", 1, true))
+	slash("language esMX")
+	check("/tales language esMX saves it", db.storyLanguage == "esMX")
+	check("and says so in the client's language", chatOut[#chatOut]:find("Geschichten werden nach /reload auf Español (México) erzählt.", 1, true))
+	slash("language klingon")
+	check("an unknown language changes nothing", db.storyLanguage == "esMX")
+	slash("language en")
+	slash("language enUS")
+	check("English can be chosen on a German client", db.storyLanguage == "enUS")
+	ns = boot(db)
+	check("and after a reload the stories are English", story("The Lantern Keeper").title == "The Lantern Keeper")
+	slash("language auto")
+	check("auto goes back to the client's language", db.storyLanguage == nil)
+	W.locale, W.zone = nil, "Elwynn Forest"
+end)
+
+
+scenario("settings tab: choosing the story language", function()
+	W.locale = "deDE"
+	local db = {}
+	ns, loaded, skipped = boot(db)
+	local L = ns.L -- In German, as this client is.
+	local gameLanguage, reloadLabel = L["Game language (%s)"]:format("Deutsch"), L["Reload to Apply"]
+	slash("settings")
+	check("/tales settings opens the Settings tab", storyWindow():IsShown() and findButton(reloadLabel) == nil)
+	local menu
+	for _, f in ipairs(allFrames) do
+		if rawget(f, "_menu") and f._menu[1] and f._menu[1].text == gameLanguage then menu = f end
+	end
+	check("a story language dropdown", menu ~= nil)
+	local function entry(text) for _, e in ipairs(menu._menu) do if e.text == text then return e end end end
+	check("the interface is in German", gameLanguage ~= "Game language (Deutsch)")
+	check("it starts on the game's language, named in it", menu._menu[1].text == gameLanguage and menu._menu[1].isSelected(menu._menu[1].data))
+	check("every language is offered by its own name", #menu._menu == 8 and entry("Русский") and entry("한국어") and entry("Español (México)"))
+	entry("Français").select(entry("Français").data)
+	check("choosing one saves it", db.storyLanguage == "frFR")
+	local reload = findButton(reloadLabel)
+	check("and offers a reload to apply it", reload ~= nil)
+	local reloaded = false
+	realG.ReloadUI = function() reloaded = true end
+	click(reload, "Reload to Apply")
+	check("which reloads", reloaded)
+	entry(gameLanguage).select(entry(gameLanguage).data)
+	check("going back to the game's language needs no reload", db.storyLanguage == nil and findButton(reloadLabel) == nil)
+	realG.ReloadUI = nil
+	storyWindow():Hide()
+	W.locale = nil
 end)
 
 setmetatable(realG, nil)

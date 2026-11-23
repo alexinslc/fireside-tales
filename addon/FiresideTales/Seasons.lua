@@ -1,6 +1,7 @@
 -- Which festival is on today, and whether it's night, so the fire can pick a
 -- story that fits the evening.
 local _, ns = ...
+local L = ns.L
 
 ns.Season = {}
 
@@ -22,7 +23,7 @@ end
 ns.Season.Festivals = {
 	{
 		name = "Darkmoon Faire", keyword = "darkmoon",
-		offer = "The Darkmoon Faire is in town. Tell a tale?",
+		offer = L["The Darkmoon Faire is in town. Tell a tale?"],
 		-- Opens the Monday after the first Friday of the month, for a week.
 		dates = function(today)
 			local firstFriday = 1 + (6 - weekdayOfFirst(today)) % 7
@@ -30,24 +31,24 @@ ns.Season.Festivals = {
 			return today.monthDay >= opens and today.monthDay <= opens + 6
 		end,
 	},
-	{ name = "Lunar Festival", keyword = "lunar", offer = "The elders are honored tonight. Tell a tale?" },
-	{ name = "Love is in the Air", keyword = "love is in the air", offer = "Love is in the air. Tell a tale?" },
-	{ name = "Noblegarden", keyword = "noblegarden", offer = "Noblegarden is here. Tell a tale?" },
-	{ name = "Children's Week", keyword = "children", offer = "It's Children's Week. Tell a tale?" },
+	{ name = "Lunar Festival", keyword = "lunar", offer = L["The elders are honored tonight. Tell a tale?"] },
+	{ name = "Love is in the Air", keyword = "love is in the air", offer = L["Love is in the air. Tell a tale?"] },
+	{ name = "Noblegarden", keyword = "noblegarden", offer = L["Noblegarden is here. Tell a tale?"] },
+	{ name = "Children's Week", keyword = "children", offer = L["It's Children's Week. Tell a tale?"] },
 	{
 		name = "Midsummer Fire Festival", keyword = "midsummer",
-		offer = "The midsummer fires are lit. Tell a tale?",
+		offer = L["The midsummer fires are lit. Tell a tale?"],
 		dates = function(today) return between(today, 6, 21, 7, 5) end,
 	},
-	{ name = "Harvest Festival", keyword = "harvest", offer = "The harvest is in. Tell a tale?" },
+	{ name = "Harvest Festival", keyword = "harvest", offer = L["The harvest is in. Tell a tale?"] },
 	{
 		name = "Hallow's End", keyword = "hallow",
-		offer = "It's Hallow's End. Tell a tale?",
+		offer = L["It's Hallow's End. Tell a tale?"],
 		dates = function(today) return between(today, 10, 18, 11, 1) end,
 	},
 	{
 		name = "Winter Veil", keyword = "winter veil",
-		offer = "It's Winter Veil. Tell a tale?",
+		offer = L["It's Winter Veil. Tell a tale?"],
 		dates = function(today) return between(today, 12, 15, 1, 2) end,
 	},
 }
@@ -78,7 +79,7 @@ local function calendarHolidays(now)
 			local okEvent, event = pcall(C_Calendar.GetDayEvent, offset, day, index)
 			if okEvent and type(event) == "table" and event.calendarType == "HOLIDAY" and event.title then
 				monthHasAny = true
-				if day == now.monthDay then names[#names + 1] = event.title:lower() end
+				if day == now.monthDay then names[#names + 1] = ns.Locale.Lower(event.title) end
 			end
 		end
 	end
@@ -100,7 +101,10 @@ function ns.Season.Active()
 		local on
 		if holidays then
 			for _, title in ipairs(holidays) do
-				if title:find(festival.keyword, 1, true) then on = true end
+				-- The calendar is in the client's language.
+				if title:find(festival.keyword, 1, true) or title:find(ns.Locale.FestivalKeyword(festival), 1, true) then
+					on = true
+				end
 			end
 		else
 			on = festival.dates and festival.dates(now)

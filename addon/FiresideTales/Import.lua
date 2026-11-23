@@ -2,6 +2,7 @@
 -- any AI, and paste back what it writes. Stories are saved with the addon's data,
 -- outside its folder, so updating the addon never removes them.
 local _, ns = ...
+local L = ns.L
 
 local MAX_BYTES = 250
 local TARGET_ROOM = ("x"):rep(24) -- {target} is measured as a long character name.
@@ -22,6 +23,17 @@ local RACES = {
 }
 
 local STORIES_PER_PROMPT = 5
+-- Chat counts bytes, and Cyrillic letters take 2 and Korean ones 3, so lines in those are shorter.
+local LINE_LETTERS = setmetatable({ ruRU = 120, koKR = 75 }, { __index = function() return 220 end })
+-- In the story language, the stories themselves are written in it. The keywords stay English,
+-- since that's what the paste is read by.
+local function writeIn(language)
+	return ("- Write the titles, SAY lines, and EMOTE lines in %s, natural as a native speaker telling them. Keep the words CHARACTER, TITLE, MOOD, SAY, and EMOTE, and the mood words, in English. Use the place and character names the %s game client uses."):format(language, language)
+end
+local WRITE_IN = setmetatable({
+	deDE = writeIn("German"), frFR = writeIn("French"), esES = writeIn("Spanish as spoken in Spain"),
+	esMX = writeIn("Latin American Spanish"), ruRU = writeIn("Russian"), koKR = writeIn("Korean"),
+}, { __index = function() return nil end })
 local ABOUT_MAX_LETTERS = 500
 local PROFILE_STORY_LETTERS = 700 -- How much of a Total RP 3 backstory goes in the prompt.
 
@@ -137,7 +149,8 @@ local function buildPrompt()
 		"- Write the CHARACTER line once at the top, then start each story with its own TITLE line. Each title must be unique.",
 		"- MOOD must be exactly one of: funny, heartfelt, dark, action, spooky, wise.",
 		"- A story must take under a minute to tell. Aim for 4 to 6 lines, and never fewer than 3 or more than 8, with at least one SAY and one EMOTE.",
-		"- Each line must be under 220 characters and on a single line, because it's sent as one chat message. Don't use the vertical bar or curly braces.",
+		"- Each line must be under " .. LINE_LETTERS[ns.Locale.Stories()] .. " characters and on a single line, because it's sent as one chat message. Don't use the vertical bar or curly braces."
+			.. (WRITE_IN[ns.Locale.Stories()] and ("\n" .. WRITE_IN[ns.Locale.Stories()]) or ""),
 		"",
 		"How to write them:",
 		"- Write SAY lines in the first person, as if talking to people at the fire, and keep them easy to say aloud.",
@@ -164,21 +177,21 @@ end
 -- Each reader returns a section, or nil and what's wrong with it.
 local sectionReaders = {
 	CHARACTER = function(value)
-		if value == "" or value:find("%s") then return nil, "CHARACTER needs one first name." end
+		if value == "" or value:find("%s") then return nil, L["CHARACTER needs one first name."] end
 		return { kind = "character", listKey = value }
 	end,
 	RACE = function(value)
 		local race = RACES[value:lower()]
-		if not race then return nil, "unknown race: " .. value end
+		if not race then return nil, L["unknown race: %s"]:format(value) end
 		return { kind = "race", listKey = race }
 	end,
 	CLASS = function(value)
 		local class = value:upper()
-		if not CLASSES[class] then return nil, "unknown class: " .. value end
+		if not CLASSES[class] then return nil, L["unknown class: %s"]:format(value) end
 		return { kind = "class", listKey = class }
 	end,
 	ZONE = function(value)
-		if value == "" then return nil, "ZONE needs a zone name." end
+		if value == "" then return nil, L["ZONE needs a zone name."] end
 		return { kind = "zone", listKey = value }
 	end,
 	EVERYONE = function(value)
@@ -191,11 +204,11 @@ local sectionReaders = {
 
 -- Returns what's wrong with a story, or nil if it's fine to use.
 local function findProblem(story)
-	if story.unreadable then return "can't read: " .. story.unreadable:sub(1, 40) end
-	if story.title == "" then return "it has no title" end
-	if not MOODS[story.mood or ""] then return "MOOD must be funny, heartfelt, dark, action, spooky, or wise" end
+	if story.unreadable then return L["can't read: %s"]:format(story.unreadable:sub(1, 40)) end
+	if story.title == "" then return L["it has no title"] end
+	if not MOODS[story.mood or ""] then return L["MOOD must be funny, heartfelt, dark, action, spooky, or wise"] end
 	if #story.lines < MIN_LINES or #story.lines > MAX_LINES then
-		return ("it has %d lines (needs %d to %d)"):format(#story.lines, MIN_LINES, MAX_LINES)
+		return L["it has %d lines (needs %d to %d)"]:format(#story.lines, MIN_LINES, MAX_LINES)
 	end
 
 	local says, emotes, usesTarget = 0, 0, false
@@ -203,13 +216,13 @@ local function findProblem(story)
 		if line.kind == "say" then says = says + 1 else emotes = emotes + 1 end
 		local withoutTarget = line.text:gsub("{target}", "")
 		if line.text:find("{target}", 1, true) then usesTarget = true end
-		if withoutTarget:find("[|{}]") then return "a line uses |, {, or }" end
-		if line.text == "" then return "it has an empty line" end
-		if #line.text:gsub("{target}", TARGET_ROOM) > MAX_BYTES then return "a line is too long" end
+		if withoutTarget:find("[|{}]") then return L["a line uses |, {, or }"] end
+		if line.text == "" then return L["it has an empty line"] end
+		if #line.text:gsub("{target}", TARGET_ROOM) > MAX_BYTES then return L["a line is too long"] end
 	end
-	if says == 0 or emotes == 0 then return "it needs at least one SAY and one EMOTE" end
-	if story.kind == "target" and not usesTarget then return "TARGET stories must use {target}" end
-	if story.kind ~= "target" and usesTarget then return "only TARGET stories can use {target}" end
+	if says == 0 or emotes == 0 then return L["it needs at least one SAY and one EMOTE"] end
+	if story.kind == "target" and not usesTarget then return L["TARGET stories must use {target}"] end
+	if story.kind ~= "target" and usesTarget then return L["only TARGET stories can use {target}"] end
 	return nil
 end
 
@@ -252,7 +265,7 @@ local function parse(text)
 			if section then
 				story = { kind = section.kind, listKey = section.listKey, theme = section.theme, title = value, lines = {} }
 			else
-				problems[#problems + 1] = ('"%s": no valid section above it'):format(value)
+				problems[#problems + 1] = L["\"%s\": no valid section above it"]:format(value)
 			end
 		elseif story and label == "MOOD" then
 			story.mood = value:lower()
@@ -319,11 +332,11 @@ end
 local function setEditing(story)
 	editing = story
 	if story then
-		pasteLabel:SetText(('3. Change "%s" here, then press Save.'):format(story.title))
-		addButton:SetText("Save")
+		pasteLabel:SetText(L["3. Change \"%s\" here, then press Save."]:format(story.title))
+		addButton:SetText(L["Save"])
 	else
-		pasteLabel:SetText("3. Paste what the AI wrote here, then press Add.")
-		addButton:SetText("Add")
+		pasteLabel:SetText(L["3. Paste what the AI wrote here, then press Add."])
+		addButton:SetText(L["Add"])
 	end
 end
 
@@ -350,13 +363,13 @@ local function addPasted()
 		ns.Story.StoriesChanged(edited and stories[1])
 	end
 
-	local parts = { ("Added %d, replaced %d, skipped %d."):format(added, replaced, #problems) }
-	if edited and added + replaced == 0 then parts[1] = "Not saved yet." end
+	local parts = { L["Added %d, replaced %d, skipped %d."]:format(added, replaced, #problems) }
+	if edited and added + replaced == 0 then parts[1] = L["Not saved yet."] end
 	for index = 1, math.min(SHOWN_PROBLEMS, #problems) do
 		parts[#parts + 1] = problems[index]
 	end
 	if #problems > SHOWN_PROBLEMS then
-		parts[#parts + 1] = ("...and %d more."):format(#problems - SHOWN_PROBLEMS)
+		parts[#parts + 1] = L["...and %d more."]:format(#problems - SHOWN_PROBLEMS)
 	end
 	resultLabel:SetText(table.concat(parts, "\n"))
 end
@@ -410,7 +423,7 @@ local function makeStepLabel(top, text, left)
 end
 
 local function build()
-	window = ns.NewWindow("FiresideTalesImportFrame", "Write Your Tales", "Interface\\AddOns\\FiresideTales\\Textures\\Icon", 500, 590)
+	window = ns.NewWindow("FiresideTalesImportFrame", L["Write Your Tales"], "Interface\\AddOns\\FiresideTales\\Textures\\Icon", 500, 590)
 	window:SetFrameStrata("DIALOG")
 	ns.MakeDraggable(window, "importPosition")
 	ns.PlaceFrame(window, "importPosition", "CENTER", UIParent, "CENTER", 0, 40)
@@ -423,10 +436,10 @@ local function build()
 	aboutBox:SetMaxLetters(ABOUT_MAX_LETTERS)
 
 	-- Step 2: the prompt. It can be selected and copied, but not edited.
-	makeStepLabel(-126, "2. Copy this prompt, then paste it into any AI.")
+	makeStepLabel(-126, L["2. Copy this prompt, then paste it into any AI."])
 	copyHint = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	copyHint:SetPoint("TOPLEFT", 12, -230)
-	local selectPrompt = ns.MakeFlatButton(window, "Select Prompt", 96)
+	local selectPrompt = ns.MakeFlatButton(window, L["Select Prompt"], 96)
 	selectPrompt:SetPoint("TOPRIGHT", -12, -120)
 
 	promptBox = makeTextBox(-146, 76)
@@ -440,7 +453,7 @@ local function build()
 	selectPrompt:SetScript("OnClick", function()
 		promptBox:SetFocus()
 		promptBox:HighlightText()
-		copyHint:SetText("Selected. Press Cmd+C on a Mac or Ctrl+C on Windows to copy it.")
+		copyHint:SetText(L["Selected. Press Cmd+C on a Mac or Ctrl+C on Windows to copy it."])
 	end)
 
 	-- Set up last, because typing here refreshes the prompt box above.
@@ -451,7 +464,7 @@ local function build()
 	end)
 
 	-- Step 3: what the AI wrote.
-	pasteLabel = makeStepLabel(-250, "3. Paste what the AI wrote here, then press Add.")
+	pasteLabel = makeStepLabel(-250, L["3. Paste what the AI wrote here, then press Add."])
 	local box
 	editBox, box = makeTextBox(-266, nil, 104)
 
@@ -463,7 +476,7 @@ local function build()
 	addButton = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
 	addButton:SetSize(90, 22)
 	addButton:SetPoint("BOTTOMRIGHT", -12, 12)
-	addButton:SetText("Add")
+	addButton:SetText(L["Add"])
 	addButton:SetScript("OnClick", addPasted)
 
 	-- Closing the window stops editing; the saved story stays as it was.
@@ -481,9 +494,9 @@ end
 
 local function open()
 	if ns.Import.RoleplayProfile() then
-		aboutLabel:SetText(("1. %s's Total RP 3 profile is in the prompt. Anything to add? Optional."):format(ns.PlayerName()))
+		aboutLabel:SetText(L["1. %s's Total RP 3 profile is in the prompt. Anything to add? Optional."]:format(ns.PlayerName()))
 	else
-		aboutLabel:SetText(("1. Who is %s? A sentence or two: where they're from, how they talk. Optional."):format(ns.PlayerName()))
+		aboutLabel:SetText(L["1. Who is %s? A sentence or two: where they're from, how they talk. Optional."]:format(ns.PlayerName()))
 	end
 	aboutBox:SetText(ns.CharData().about or "")
 	refreshPrompt() -- You may have traveled since it was last open.

@@ -82,6 +82,10 @@ end
 -- Load Voices.lua ------------------------------------------------------------
 local db = {}
 local ns = { GetDB = function() return db end }
+-- Interface text in English, as Locale.lua gives it on an English client.
+ns.L = setmetatable({}, { __index = function(_, key) return key end })
+-- No translated lines here, so every line is its own English.
+ns.Locale = { SourceLine = function() return nil end }
 -- The test's own lines, so it doesn't depend on which takes exist. The real VoiceLines.lua is
 -- loaded separately below, only to check that it parses.
 ns.VoiceLines = {

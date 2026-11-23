@@ -1,10 +1,22 @@
--- The Voices tab of the story menu: which voice packs are installed, where to get the others,
--- and the player's choices for how stories are read aloud.
+-- The Settings tab of the story menu: the language stories are told in, which voice packs are
+-- installed, where to get the others, and the player's choices for how stories are read aloud.
 local _, ns = ...
+local L = ns.L
 
 ns.VoiceSettings = {}
 
-local panel
+-- Why a sample didn't play, from Voices.lua, which keeps its reasons in English.
+local REASONS = {
+	["this client can't play sounds"] = L["this client can't play sounds"],
+	["voices are off"] = L["voices are off"],
+	["not a voiced line"] = L["not a voiced line"],
+	["no voice for this teller is installed"] = L["no voice for this teller is installed"],
+	["this voice doesn't have that line yet"] = L["this voice doesn't have that line yet"],
+	["no voice pack is installed"] = L["no voice pack is installed"],
+	["that voice has no lines yet"] = L["that voice has no lines yet"],
+}
+
+local panel, languageMenu
 local packRows = {}
 local checks = {}
 local summary, readerMenu, sampleStatus
@@ -36,7 +48,7 @@ local function makeAddressBox(parent)
 end
 
 local function buildLinkWindow()
-	linkWindow = ns.NewWindow("FiresideTalesVoiceLinkFrame", "Get Voice Packs",
+	linkWindow = ns.NewWindow("FiresideTalesVoiceLinkFrame", L["Get Voice Packs"],
 		"Interface\\AddOns\\FiresideTales\\Textures\\Icon", 460, 180)
 	linkWindow:SetFrameStrata("DIALOG")
 	ns.MakeDraggable(linkWindow, "voiceLinkPosition")
@@ -61,13 +73,13 @@ local function buildLinkWindow()
 		row.box:SetPoint("TOPRIGHT", -18, LINK_TOP - (i - 1) * LINK_ROW + 2)
 		row.installed = linkWindow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 		row.installed:SetPoint("RIGHT", row.box, "RIGHT", 0, 0)
-		row.installed:SetText("|cff80d080Installed|r")
+		row.installed:SetText("|cff80d080" .. L["Installed"] .. "|r")
 		linkWindow.rows[i] = row
 	end
 
 	local hint = linkWindow:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	hint:SetPoint("BOTTOM", 0, 14)
-	hint:SetText("Click an address to select it, then press Cmd+C on a Mac or Ctrl+C on Windows to copy it.")
+	hint:SetText(L["Click an address to select it, then press Cmd+C on a Mac or Ctrl+C on Windows to copy it."])
 	linkWindow.hint = hint
 
 	linkWindow:Hide()
@@ -79,9 +91,8 @@ local function showLinks(group)
 	if not linkWindow then buildLinkWindow() end
 	local V = ns.Voices
 	linkWindow.intro:SetText(#group.packs > 1
-		and "Get these from CurseForge or the CurseForge app, then reload the game. CurseForge limits each "
-			.. "download to about 500 MB, so each race is a pack of its own."
-		or "Get it from CurseForge or the CurseForge app, then reload the game.")
+		and L["Get these from CurseForge or the CurseForge app, then reload the game. CurseForge limits each download to about 500 MB, so each race is a pack of its own."]
+		or L["Get it from CurseForge or the CurseForge app, then reload the game."])
 	local first
 	for i, row in ipairs(linkWindow.rows) do
 		local pack = group.packs[i]
@@ -122,10 +133,10 @@ function ns.VoiceSettings.Refresh()
 	if any then
 		local n = V.Narrator()
 		local races = V.RaceVoices()
-		summary:SetText(("|cff80d080Reading stories aloud.|r Narrator: %s. Race voices: %s."):format(
-			n and n.title or "none installed", #races > 0 and tostring(#races) or "none installed"))
+		summary:SetText(L["|cff80d080Reading stories aloud.|r Narrator: %s. Race voices: %s."]:format(
+			n and n.title or L["none installed"], #races > 0 and tostring(#races) or L["none installed"]))
 	else
-		summary:SetText("|cffff8060No Voice Packs Installed|r")
+		summary:SetText("|cffff8060" .. L["No Voice Packs Installed"] .. "|r")
 	end
 
 	for _, row in ipairs(packRows) do
@@ -133,8 +144,8 @@ function ns.VoiceSettings.Refresh()
 		for _, pack in ipairs(row.group.packs) do
 			if V.HasPack(pack.addon) then have = have + 1 end
 		end
-		row.status:SetText(have == count and "|cff80d080Installed|r"
-			or have > 0 and ("|cffd4af37%d of %d installed|r"):format(have, count) or "")
+		row.status:SetText(have == count and "|cff80d080" .. L["Installed"] .. "|r"
+			or have > 0 and "|cffd4af37" .. L["%d of %d installed"]:format(have, count) .. "|r" or "")
 		row.get:SetShown(have < count)
 	end
 
@@ -142,6 +153,7 @@ function ns.VoiceSettings.Refresh()
 	checks.own:SetChecked(s.own)
 	checks.own:SetEnabled(s.on)
 	readerMenu.refresh()
+	languageMenu.refresh()
 end
 
 local function makeCheck(parent, label, detail, onClick)
@@ -187,7 +199,7 @@ local function makePackRow(parent, group, index)
 	about:SetWordWrap(false)
 	about:SetText(group.about)
 
-	row.get = ns.MakeFlatButton(row, "Get", 60)
+	row.get = ns.MakeFlatButton(row, L["Get"], 60)
 	row.get:SetPoint("RIGHT", 0, 0)
 	row.get:SetScript("OnClick", function() showLinks(group) end)
 
@@ -201,10 +213,10 @@ end
 -- The choices for who reads: race voices, then each narrator installed (or just "Narrator").
 local function readerChoices()
 	local V = ns.Voices
-	local list = { { key = "races", text = "Race voices" } }
+	local list = { { key = "races", text = L["Race voices"] } }
 	local narrators = V.Narrators()
 	if #narrators <= 1 then
-		list[2] = { key = "narrator", text = "Narrator" }
+		list[2] = { key = "narrator", text = L["Narrator"] }
 	else
 		for _, n in ipairs(narrators) do list[#list + 1] = { key = "narrator", voice = n.key, text = n.title } end
 	end
@@ -245,7 +257,7 @@ function ns.VoiceSettings.MakeReaderMenu(parent)
 		return menu
 	end
 	-- No dropdown in this client: a button that steps through the choices.
-	local button = ns.MakeFlatButton(parent, "Race voices", 200)
+	local button = ns.MakeFlatButton(parent, L["Race voices"], 200)
 	button:SetScript("OnClick", function()
 		local list = readerChoices()
 		for i, choice in ipairs(list) do
@@ -263,6 +275,89 @@ function ns.VoiceSettings.MakeReaderMenu(parent)
 	return menu
 end
 
+-------------------------------------------------------------------------------
+-- Story language
+-------------------------------------------------------------------------------
+
+-- The language chosen for stories, which applies from the next /reload: nil is the game's own.
+local function chosenLanguage()
+	local db = ns.GetDB()
+	return db and db.storyLanguage or nil
+end
+
+-- "Game language (Deutsch)", then each language by its own name.
+local function languageChoices()
+	local LC = ns.Locale
+	local list = { { text = L["Game language (%s)"]:format(LC.Name(LC.Client())) } }
+	for _, language in ipairs(LC.LANGUAGES) do
+		list[#list + 1] = { code = language.code, text = language.name }
+	end
+	return list
+end
+
+local function isLanguage(choice)
+	return choice.code == chosenLanguage()
+end
+
+local function chooseLanguage(choice)
+	ns.Locale.SetStories(ns.GetDB(), choice.code)
+	ns.PlayUISound("IG_MAINMENU_OPTION")
+	ns.VoiceSettings.Refresh()
+end
+
+-- Whether the choice differs from what the stories are in now, so a reload is waiting.
+local function reloadWaiting()
+	local LC = ns.Locale
+	return (chosenLanguage() or LC.Client()) ~= LC.Stories()
+end
+
+-- A dropdown where the game has one, or else a button that steps through the choices.
+local function makeLanguageMenu(parent)
+	local menu = {}
+	local ok, dropdown = pcall(CreateFrame, "DropdownButton", nil, parent, "WowStyle1DropdownTemplate")
+	if ok and dropdown and dropdown.SetupMenu then
+		dropdown:SetWidth(180)
+		dropdown:SetupMenu(function(_, root)
+			for _, choice in ipairs(languageChoices()) do
+				root:CreateRadio(choice.text, isLanguage, chooseLanguage, choice)
+			end
+		end)
+		menu.frame = dropdown
+		menu.update = function() if dropdown.GenerateMenu then dropdown:GenerateMenu() end end
+	else
+		local button = ns.MakeFlatButton(parent, "", 180)
+		button:SetScript("OnClick", function()
+			local list = languageChoices()
+			for i, choice in ipairs(list) do
+				if isLanguage(choice) then return chooseLanguage(list[i % #list + 1]) end
+			end
+			chooseLanguage(list[1])
+		end)
+		menu.frame = button
+		menu.update = function()
+			for _, choice in ipairs(languageChoices()) do
+				if isLanguage(choice) then button:SetText(choice.text) end
+			end
+		end
+	end
+	menu.label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	menu.label:SetPoint("RIGHT", menu.frame, "LEFT", -8, 0)
+	menu.label:SetText(L["Story language"])
+	-- A changed language takes a reload, which this offers in the label's place.
+	menu.reload = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+	menu.reload:SetSize(130, 22)
+	menu.reload:SetPoint("RIGHT", menu.frame, "LEFT", -8, 0)
+	menu.reload:SetText(L["Reload to Apply"])
+	menu.reload:SetScript("OnClick", function() if ReloadUI then ReloadUI() end end)
+	menu.refresh = function()
+		menu.update()
+		local waiting = reloadWaiting()
+		menu.reload:SetShown(waiting)
+		menu.label:SetShown(not waiting)
+	end
+	return menu
+end
+
 -- Builds the Voices page over the story menu's own pages. The menu shows and hides it with its tab.
 function ns.VoiceSettings.Build(window, top, bottom)
 	local V = ns.Voices
@@ -274,14 +369,17 @@ function ns.VoiceSettings.Build(window, top, bottom)
 
 	local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 20, -16)
-	title:SetText("Voices")
+	title:SetText(L["Settings"])
+
+	-- The language stories are told in, in the title's row.
+	languageMenu = makeLanguageMenu(panel)
+	languageMenu.frame:SetPoint("TOPRIGHT", -16, -12)
 
 	local intro = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	intro:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
 	intro:SetWidth(560)
 	intro:SetJustifyH("LEFT")
-	intro:SetText("Stories told nearby are read aloud in the voice of the teller's race. "
-		.. "Each race's voices are a separate download, so get only the ones you want.")
+	intro:SetText(L["Stories told nearby are read aloud in the voice of the teller's race. Each race's voices are a separate download, so get only the ones you want."])
 
 	summary = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	summary:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", 0, -10)
@@ -298,13 +396,13 @@ function ns.VoiceSettings.Build(window, top, bottom)
 	rule:SetPoint("TOPLEFT", 20, optionsTop)
 	rule:SetSize(560, 1)
 
-	checks.on = makeCheck(panel, "Read stories aloud", "Turn this off to keep the packs installed but quiet.",
+	checks.on = makeCheck(panel, L["Read stories aloud"], L["Turn this off to keep the packs installed but quiet."],
 		function(on)
 			V.Settings().on = on
 			if not on then V.Stop() end
 		end)
 	checks.on:SetPoint("TOPLEFT", 16, optionsTop - 10)
-	checks.own = makeCheck(panel, "Hear your own stories", "Read aloud as you tell them, too.",
+	checks.own = makeCheck(panel, L["Hear your own stories"], L["Read aloud as you tell them, too."],
 		function(on) V.Settings().own = on end)
 	checks.own:SetPoint("TOPLEFT", checks.on, "BOTTOMLEFT", 0, -16)
 
@@ -312,25 +410,25 @@ function ns.VoiceSettings.Build(window, top, bottom)
 	-- or else a button that steps through the same choices.
 	local readerLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	readerLabel:SetPoint("TOPLEFT", 320, optionsTop - 14)
-	readerLabel:SetText("Who reads")
+	readerLabel:SetText(L["Who reads"])
 	readerMenu = ns.VoiceSettings.MakeReaderMenu(panel)
 	readerMenu.frame:SetPoint("TOPLEFT", readerLabel, "BOTTOMLEFT", 0, -6)
 	local readerNote = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	readerNote:SetPoint("TOPLEFT", readerMenu.frame, "BOTTOMLEFT", 2, -6)
 	readerNote:SetWidth(250)
 	readerNote:SetJustifyH("LEFT")
-	readerNote:SetText("With race voices, the narrator reads any teller whose race pack isn't installed.")
+	readerNote:SetText(L["With race voices, the narrator reads any teller whose race pack isn't installed."])
 
 	local sample = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
 	sample:SetSize(110, 22)
 	sample:SetPoint("BOTTOMLEFT", 20, 14)
-	sample:SetText("Play a Sample")
+	sample:SetText(L["Play a Sample"])
 	sample:SetScript("OnClick", function()
 		local text, why = V.PlaySample()
-		sampleStatus:SetText(text and ('|cffd4af37"' .. text .. '"|r') or ("Couldn't play one: " .. tostring(why) .. "."))
+		sampleStatus:SetText(text and ('|cffd4af37"' .. text .. '"|r') or L["Couldn't play one: %s."]:format(REASONS[why] or tostring(why)))
 	end)
 
-	local stop = ns.MakeFlatButton(panel, "Stop", 50)
+	local stop = ns.MakeFlatButton(panel, L["Stop"], 50)
 	stop:SetPoint("LEFT", sample, "RIGHT", 4, 0)
 	stop:SetScript("OnClick", function()
 		V.Stop()
@@ -345,7 +443,7 @@ function ns.VoiceSettings.Build(window, top, bottom)
 
 	local volume = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	volume:SetPoint("BOTTOMLEFT", sample, "TOPLEFT", 0, 8)
-	volume:SetText("Voices play at the game's Master volume, in Settings, under Audio.")
+	volume:SetText(L["Voices play at the game's Master volume, in Settings, under Audio."])
 
 	panel:Hide()
 	panel:SetScript("OnShow", ns.VoiceSettings.Refresh)

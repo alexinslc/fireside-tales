@@ -1,6 +1,7 @@
 -- What's New: a small window, shown once after each update, with how to share a story
 -- and what this version changed (from WhatsNew.lua). /tales news opens it again.
 local _, ns = ...
+local L = ns.L
 
 ns.News = {}
 
@@ -22,7 +23,7 @@ local function itemsFor()
 end
 
 local function build()
-	window = ns.NewWindow("FiresideTalesNewsFrame", "What's New", "Interface\\AddOns\\FiresideTales\\Textures\\Icon", WIDTH, 220)
+	window = ns.NewWindow("FiresideTalesNewsFrame", L["What's New"], "Interface\\AddOns\\FiresideTales\\Textures\\Icon", WIDTH, 220)
 	window:SetFrameStrata("DIALOG")
 	ns.MakeDraggable(window, "newsPosition")
 	ns.PlaceFrame(window, "newsPosition", "CENTER", UIParent, "CENTER", 0, 80)
@@ -32,7 +33,7 @@ local function build()
 	share:SetPoint("TOPLEFT", 66, -36)
 	share:SetPoint("TOPRIGHT", -14, -36)
 	share:SetJustifyH("LEFT")
-	share:SetText("Got a tale of your own? Share it at " .. SITE_URL)
+	share:SetText(L["Got a tale of your own? Share it at %s"]:format(SITE_URL))
 
 	-- Addons can't open a web page, so the address is ready to copy. It can't be edited.
 	local box = CreateFrame("EditBox", nil, window, "InputBoxTemplate")
@@ -54,7 +55,7 @@ local function build()
 
 	local hint = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	hint:SetPoint("TOPLEFT", box, "BOTTOMLEFT", -6, -4)
-	hint:SetText("Cmd+C or Ctrl+C to copy")
+	hint:SetText(L["Cmd+C or Ctrl+C to copy"])
 
 	versionText = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	versionText:SetPoint("TOPLEFT", 20, -118)
@@ -81,7 +82,7 @@ local function fill()
 	itemsText:SetShown(items ~= nil)
 	local height = 126
 	if items then
-		versionText:SetText("New in version " .. ns.Version)
+		versionText:SetText(L["New in version %s"]:format(ns.Version))
 		itemsText:SetText(items)
 		height = 118 + versionText:GetStringHeight() + 8 + itemsText:GetStringHeight() + 22
 	end

@@ -40,7 +40,7 @@ Every story told near you is read aloud in a voice that fits the teller's race, 
 | [Night Elf](https://www.curseforge.com/wow/addons/fireside-tales-voices-night-elf) | [Tauren](https://www.curseforge.com/wow/addons/fireside-tales-voices-tauren) | [Skyborne](https://www.curseforge.com/wow/addons/fireside-tales-voices-skyborne): either faction |
 | [Gnome](https://www.curseforge.com/wow/addons/fireside-tales-voices-gnome) | [Troll](https://www.curseforge.com/wow/addons/fireside-tales-voices-troll) | |
 
-Free, about 250 MB per race. See what you have in the **Voices** tab (`/tales voices`).
+Free, about 250 MB per race. See what you have in the **Settings** tab (`/tales settings`).
 
 ## Share your story
 
@@ -60,8 +60,9 @@ Some stories are made with the help of AI, and the voices are AI-generated. Fire
 | --- | --- |
 | `/tales` | Open the story menu |
 | `/tales add` | Open Write Your Tales |
-| `/tales voices` | Open the Voices tab |
+| `/tales settings` | Choose the story language and voices |
 | `/tales news` | Show what's new in this version |
+| `/tales language` | Choose the language stories are told in |
 | `/tales fire` | Turn the campfire prompt off or on |
 | `/tales minimap` | Show or hide the minimap icon |
 | `/tales status` | Show your story counts |

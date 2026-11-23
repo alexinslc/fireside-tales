@@ -2,6 +2,7 @@
 -- read the last one, and what's being said nearby. It stays out of the way of
 -- the fire, and only listens to chat while it's showing.
 local _, ns = ...
+local L = ns.L
 
 local WIDTH = 470
 local LINE_TOP = 28 -- Room above the story line.
@@ -88,7 +89,7 @@ local function updateCue()
 	local remaining = cueLength - (GetTime() - cueStart)
 	if remaining <= 0 then
 		stopCue()
-		cueLabel:SetText("Go ahead when you're ready.")
+		cueLabel:SetText(L["Go ahead when you're ready."])
 	else
 		cueBar:SetValue(remaining / cueLength)
 	end
@@ -100,7 +101,7 @@ function ns.Teller.StartCue(text)
 	cueLength = ns.Teller.ReadSeconds(text)
 	cueBar:SetValue(1)
 	cueBar:Show()
-	cueLabel:SetText("Let them read...")
+	cueLabel:SetText(L["Let them read..."])
 	bar:SetScript("OnUpdate", updateCue)
 end
 
@@ -262,17 +263,17 @@ local function build()
 	cueLabel = bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	cueLabel:SetPoint("BOTTOMLEFT", 12, 16)
 
-	speakButton = makeButton("Speak", -76, ns.Story.SpeakNext)
-	anotherButton = ns.MakeFlatButton(bar, "Another", 64)
+	speakButton = makeButton(L["Speak"], -76, ns.Story.SpeakNext)
+	anotherButton = ns.MakeFlatButton(bar, L["Another"], 64)
 	anotherButton:SetPoint("RIGHT", speakButton, "LEFT", -4, 0)
 	anotherButton:SetScript("OnClick", ns.Story.TellATale)
 	anotherButton:Hide()
-	framingButton = ns.MakeFlatButton(bar, "Opener", 60)
+	framingButton = ns.MakeFlatButton(bar, L["Opener"], 60)
 	framingButton:SetScript("OnClick", ns.Story.SayFraming)
 	framingButton:HookScript("OnEnter", ns.Story.ShowFramingTooltip)
 	framingButton:HookScript("OnLeave", function() GameTooltip:Hide() end)
 	framingButton:Hide()
-	local menu = ns.MakeFlatButton(bar, "Menu", 60)
+	local menu = ns.MakeFlatButton(bar, L["Menu"], 60)
 	menu:SetPoint("BOTTOMRIGHT", -12, 10)
 	menu:SetScript("OnClick", ns.Story.Toggle)
 	applyView()

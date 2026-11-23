@@ -53,11 +53,23 @@ jobs:
         shell: pwsh
         run: ./tools/check-stories.ps1
 
+      - name: Translate the community stories
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::warning::No ANTHROPIC_API_KEY secret, so this week's community stories stay in English in every language."
+          else
+            (cd tools/i18n && npm ci --no-audit --no-fund)
+            node tools/i18n/translate-community.mjs || echo "::warning::Some languages weren't translated this week; their community stories stay in English."
+          fi
+          node tools/i18n/build.mjs
+
       - name: Commit the stories
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add addon/FiresideTales/stories/Community.lua
+          git add addon/FiresideTales/stories/Community.lua translations addon/FiresideTales/locales
           if git diff --cached --quiet; then
             echo "No new stories."
           else
@@ -80,7 +92,7 @@ jobs:
             echo "Community.lua hasn't changed since $last."
             exit 0
           fi
-          if ! git diff --quiet "$last" -- addon ':(exclude)addon/FiresideTales/stories/Community.lua'; then
+          if ! git diff --quiet "$last" -- addon ':(exclude)addon/FiresideTales/stories/Community.lua' ':(exclude)addon/FiresideTales/locales/*/Stories.lua'; then
             echo "::warning::Other addon files changed since $last, so this release needs its own changelog. Release by hand."
             exit 0
           fi

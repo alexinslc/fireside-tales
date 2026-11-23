@@ -93,9 +93,11 @@ end
 -- "by Mira, Roleplay", or "shared anonymously".
 function ns.CommunityCredit(story)
 	local author, ruleset = story.author or "", story.ruleset or ""
-	if author ~= "" and ruleset ~= "" then return ("by %s, %s"):format(author, ruleset) end
-	if author ~= "" then return "by " .. author end
-	return "shared anonymously"
+	local L = ns.L -- Locale.lua loads after this file, but this runs later.
+	local rulesets = { Normal = L["Normal"], Hardcore = L["Hardcore"] }
+	if author ~= "" and ruleset ~= "" then return L["by %s, %s"]:format(author, rulesets[ruleset] or ruleset) end
+	if author ~= "" then return L["by %s"]:format(author) end
+	return L["shared anonymously"]
 end
 
 -- A story counts as being about a zone if its text mentions the zone's full name
