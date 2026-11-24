@@ -183,7 +183,7 @@ export function SubmitForm() {
 						</Button>
 						<p className="text-sm text-muted-foreground">
 							By sending it, you're saying it's your own writing and we can share it in Fireside Tales under the addon's{" "}
-							<a className="text-gold underline" href="https://github.com/alexinslc/fireside-tales/blob/main/LICENSE">MIT license</a>. We may tidy a line or two.
+							<a className="text-gold underline" href="https://github.com/death-walrus-studios/fireside-tales/blob/main/LICENSE">MIT license</a>. We may tidy a line or two.
 						</p>
 					</div>
 				</CardContent>

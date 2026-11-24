@@ -17,7 +17,7 @@ Everything the project form asks for. Paste the description in Markdown mode.
 
 ## Description
 
-![Fireside Tales](https://raw.githubusercontent.com/alexinslc/fireside-tales/main/art/banner.png)
+![Fireside Tales](https://raw.githubusercontent.com/death-walrus-studios/fireside-tales/main/art/banner.png)
 
 **Stay awhile and listen.**
 

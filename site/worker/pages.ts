@@ -14,7 +14,7 @@ export interface PageStory {
 
 const NAME = "Fireside Tales";
 const ADDON_URL = "https://www.curseforge.com/wow/addons/fireside-tales";
-const REPO_URL = "https://github.com/alexinslc/fireside-tales";
+const REPO_URL = "https://github.com/death-walrus-studios/fireside-tales";
 
 export function escape(text: unknown): string {
 	return String(text ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);

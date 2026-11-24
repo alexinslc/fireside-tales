@@ -56,7 +56,7 @@ export function GuidelinesPage() {
 							))}
 						</ol>
 						<p className="text-muted-foreground">Sharing a story means you wrote it and are happy for it to be part of Fireside Tales under the addon's{" "}
-							<a className="text-gold underline" href="https://github.com/alexinslc/fireside-tales/blob/main/LICENSE">MIT license</a>.
+							<a className="text-gold underline" href="https://github.com/death-walrus-studios/fireside-tales/blob/main/LICENSE">MIT license</a>.
 							We only keep an email if you give us one, and delete it once we've let you know.</p>
 					</CardContent>
 				</Card>

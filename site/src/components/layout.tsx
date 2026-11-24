@@ -54,7 +54,7 @@ export function Layout() {
 					<p>
 						<a className="text-gold hover:underline" href="https://www.curseforge.com/wow/addons/fireside-tales">Get the addon on CurseForge</a>
 						{" · "}
-						<a className="text-gold hover:underline" href="https://github.com/alexinslc/fireside-tales">GitHub</a>
+						<a className="text-gold hover:underline" href="https://github.com/death-walrus-studios/fireside-tales">GitHub</a>
 						{" · "}
 						<Link className="text-gold hover:underline" to="/feedback">Send feedback</Link>
 					</p>

@@ -31,7 +31,7 @@
     // Cloudflare Access protects /admin and /api/admin. Set these once Access is on.
     "ACCESS_TEAM_DOMAIN": "mission-access.cloudflareaccess.com",
     "ACCESS_AUD": "50a87c564d8db4816452ce977cd288f5eb2f41ede854b14a4132f150d87a1984",
-    "GITHUB_REPO": "alexinslc/fireside-tales",
+    "GITHUB_REPO": "death-walrus-studios/fireside-tales",
     "SITE_URL": "https://firesidetales.dev",
     // Must be on a domain verified with the email service (Resend).
     "EMAIL_FROM": "Fireside Tales <stories@firesidetales.dev>"

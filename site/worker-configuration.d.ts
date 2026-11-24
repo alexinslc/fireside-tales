@@ -7,7 +7,7 @@ interface __BaseEnv_Env {
 	TURNSTILE_SITE_KEY: "1x00000000000000000000AA";
 	ACCESS_TEAM_DOMAIN: "";
 	ACCESS_AUD: "";
-	GITHUB_REPO: "alexinslc/fireside-tales";
+	GITHUB_REPO: "death-walrus-studios/fireside-tales";
 	SITE_URL: "https://firesidetales.dev";
 	EMAIL_FROM: "Fireside Tales <stories@firesidetales.dev>";
 	DEV_ADMIN: string;
