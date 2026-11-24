@@ -1,0 +1,58 @@
+name: Wago voice pack
+
+# Sends a voice pack to Wago, with the key that's already here. The packs are built on a computer and
+# kept out of git, so put the zip on a draft release first (tools/voice/README.md):
+#
+#   gh release create voice-packs --draft --title "Voice packs" --notes "" <zip>
+#
+# then run this with the zip's name and its Wago project id, and delete the draft.
+on:
+  workflow_dispatch:
+    inputs:
+      zip:
+        description: The zip's name, like FiresideTalesVoices_Narrator-1.10.6.zip
+        required: true
+      project:
+        description: The pack's Wago project id
+        required: true
+      notes:
+        description: What changed
+        default: New recordings.
+
+# A draft release can only be read with write access.
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    env:
+      # Keep this the same as in release.yml.
+      GAME_VERSION: "1.60.1"
+    steps:
+      - name: Upload to Wago
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ZIP: ${{ inputs.zip }}
+          PROJECT: ${{ inputs.project }}
+          NOTES: ${{ inputs.notes }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+        run: |
+          if [ -z "$WAGO_API_TOKEN" ]; then
+            echo "::error::Set the WAGO_API_TOKEN secret (see docs/RELEASING.md)"
+            exit 1
+          fi
+          if ! [[ "$PROJECT" =~ ^[A-Za-z0-9]{8}$ ]]; then
+            echo "::error::That isn't a Wago project id"
+            exit 1
+          fi
+          gh release download voice-packs --pattern "$ZIP" --dir dist
+          zip_file="$(ls dist/*.zip)"
+          version="$(unzip -p "$zip_file" '*/*.toc' | tr -d '\r' | sed -n 's/^## Version: //p')"
+          metadata="$(jq -n --arg notes "$NOTES" --arg label "$version" --arg patch "$GAME_VERSION" \
+            '{label: $label, stability: "stable", changelog: $notes, supported_forever_patches: [$patch]}')"
+          echo "Sending $(du -h "$zip_file" | cut -f1), version $version"
+          curl -sS --fail-with-body -H "Authorization: Bearer $WAGO_API_TOKEN" -H "Accept: application/json" \
+            --form-string "metadata=$metadata" -F "file=@$zip_file" \
+            "https://addons.wago.io/api/projects/$PROJECT/version"
