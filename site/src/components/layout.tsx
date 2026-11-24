@@ -56,6 +56,8 @@ export function Layout() {
 						{" · "}
 						<a className="text-gold hover:underline" href="https://github.com/death-walrus-studios/fireside-tales">GitHub</a>
 						{" · "}
+						<a className="text-gold hover:underline" href="https://discord.gg/GyrhmXnQTW">Discord</a>
+						{" · "}
 						<Link className="text-gold hover:underline" to="/feedback">Send feedback</Link>
 					</p>
 				</div>
