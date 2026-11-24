@@ -12,6 +12,7 @@ These need the project owner's CurseForge account:
 4. In the GitHub repository's **Settings > Secrets and variables > Actions**, add:
    - A **secret** named `CF_API_TOKEN`, holding the token.
    - A **variable** named `CF_PROJECT_ID`, holding the project ID.
+   - For Wago, a **secret** named `WAGO_API_TOKEN`, holding a key from [addons.wago.io/account/apikeys](https://addons.wago.io/account/apikeys). Without it, releases skip Wago. The project ID is in the workflow.
 
 ## Each release
 
