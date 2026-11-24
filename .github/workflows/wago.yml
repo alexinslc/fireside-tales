@@ -1,0 +1,42 @@
+name: Wago upload
+
+# Sends a version that's already on GitHub to Wago, with its own zip and notes. Releases do this
+# themselves; run this by hand when one was skipped or failed.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The release's tag, like v1.0.0
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    env:
+      # Keep this the same as in release.yml.
+      GAME_VERSION: "1.60.1"
+      WAGO_PROJECT_ID: kGr94lKy
+    steps:
+      - name: Upload to Wago
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+        run: |
+          if [ -z "$WAGO_API_TOKEN" ]; then
+            echo "::error::Set the WAGO_API_TOKEN secret (see docs/RELEASING.md)"
+            exit 1
+          fi
+          gh release download "$TAG" --pattern '*.zip' --dir dist
+          gh release view "$TAG" --json body --jq .body > notes.md
+          zip_file="$(ls dist/*.zip)"
+          stability=stable
+          metadata="$(jq -n --rawfile notes notes.md --arg label "${TAG#v}" --arg stability "$stability" --arg patch "$GAME_VERSION" \
+            '{label: $label, stability: $stability, changelog: $notes, supported_forever_patches: [$patch]}')"
+          curl -sS --fail-with-body -H "Authorization: Bearer $WAGO_API_TOKEN" -H "Accept: application/json" \
+            --form-string "metadata=$metadata" -F "file=@$zip_file" \
+            "https://addons.wago.io/api/projects/$WAGO_PROJECT_ID/version"
