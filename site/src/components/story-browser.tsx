@@ -12,9 +12,9 @@ import type { Story } from "@/lib/api";
 const PAGE = 24;
 const QUICK_SECONDS = 20;
 
-const MOOD_BAR: Record<string, string> = {
-	funny: "bg-mood-funny", heartfelt: "bg-mood-heartfelt", dark: "bg-mood-dark",
-	action: "bg-mood-action", spooky: "bg-mood-spooky", wise: "bg-mood-wise",
+const MOOD_TEXT: Record<string, string> = {
+	funny: "text-mood-funny", heartfelt: "text-mood-heartfelt", dark: "text-mood-dark",
+	action: "text-mood-action", spooky: "text-mood-spooky", wise: "text-mood-wise",
 };
 
 // A week's worth of stories (up to 100), easy to narrow down: one tap on a mood, story
@@ -93,8 +93,8 @@ export function StoryBrowser({ stories, copyable = false }: { stories: Story[]; 
 	};
 
 	const chip = (active: boolean) => cn(
-		"inline-flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors",
-		active ? "border-gold bg-gold/15 text-gold" : "border-border text-muted-foreground hover:border-gold/60 hover:text-foreground",
+		"inline-flex h-9 items-center gap-2 rounded-[3px] border px-3 font-[family-name:var(--font-ui)] text-[15px] transition-colors",
+		active ? "border-[#ffd100] bg-[#ffd100]/10 text-[#ffd100]" : "border-[#3a3f4d] bg-[#05070d] text-[#cfc9b8] hover:border-[#6f7484] hover:text-white",
 	);
 
 	return (
@@ -122,10 +122,10 @@ export function StoryBrowser({ stories, copyable = false }: { stories: Story[]; 
 				))}
 			</div>
 			<div className="mb-6 flex flex-wrap items-center gap-2">
-				<div className="inline-flex rounded-full border p-0.5" role="group" aria-label="Kind">
+				<div className="inline-flex rounded-[3px] border border-[#3a3f4d] bg-[#05070d] p-0.5 font-[family-name:var(--font-ui)]" role="group" aria-label="Kind">
 					{[["", "Everything"], ["story", "Stories"], ["rumor", `Rumors (${rumors})`]].map(([value, label]) => (
 						<button key={value} type="button" aria-pressed={kind === value} onClick={() => set({ kind: value })}
-							className={cn("h-8 rounded-full px-3.5 text-sm font-medium transition-colors", kind === value ? "bg-gold/15 text-gold" : "text-muted-foreground hover:text-foreground")}>
+							className={cn("h-8 rounded-[2px] px-3 text-[15px] transition-colors", kind === value ? "bg-[#ffd100]/10 text-[#ffd100]" : "text-muted-foreground hover:text-foreground")}>
 							{label}
 						</button>
 					))}
@@ -134,15 +134,15 @@ export function StoryBrowser({ stories, copyable = false }: { stories: Story[]; 
 					<Timer className="size-4" />Under {QUICK_SECONDS} seconds
 				</button>
 				{filtering && <Button variant="ghost" onClick={clear}><X />Clear</Button>}
-				<span className="ml-auto text-sm text-muted-foreground" aria-live="polite">
+				<span className="ml-auto font-[family-name:var(--font-ui)] text-sm text-muted-foreground" aria-live="polite">
 					{filtering ? `${shown.length} of ${stories.length}` : `${stories.length} ${stories.length === 1 ? "tale" : "tales"}`}
 				</span>
 			</div>
 
 			{rows.length === 0 ? (
-				<p className="rounded-xl border p-6 text-muted-foreground">Nothing matches. <button type="button" className="text-gold underline" onClick={clear}>Clear the filters</button></p>
+				<p className="tooltip p-5 text-[#cfc9b8]">Nothing matches. <button type="button" className="text-gold underline" onClick={clear}>Clear the filters</button></p>
 			) : (
-				<div ref={listRef} className="grid gap-x-6 gap-y-2 md:grid-cols-2">
+				<div ref={listRef} className="grid items-start gap-3 md:grid-cols-2 lg:grid-cols-3">
 					{rows.map((story) => (
 						<StoryRow key={story.id} story={story} seconds={seconds.get(story.id) ?? 0} open={open === story.id}
 							onToggle={() => setOpen(open === story.id ? null : story.id)} copyable={copyable} />
@@ -167,29 +167,30 @@ function StoryRow({ story, seconds, open, onToggle, copyable }: {
 	const copy = async () => {
 		try { await navigator.clipboard.writeText(toPaste(story)); setCopied(true); } catch { /* the button just stays as it was */ }
 	};
+	const quote = (story.lines.find((l) => l.kind === "say") ?? story.lines[0])?.text ?? "";
 	return (
-		<article id={story.id} className={cn("scroll-mt-24 overflow-hidden rounded-lg border bg-card/60 transition-colors", open ? "border-gold/70 md:col-span-2" : "hover:border-gold/50")}>
-			<button type="button" onClick={onToggle} aria-expanded={open} className="flex w-full items-stretch text-left">
-				<span aria-hidden className={cn("w-1.5 shrink-0", MOOD_BAR[story.mood] ?? "bg-muted")} />
-				<span className="min-w-0 flex-1 px-4 py-3">
-					<span className="flex items-baseline gap-2">
-						<span className="truncate font-heading text-lg font-bold text-gold">{story.title}</span>
-						{story.kind === "rumor" && <span className="shrink-0 rounded-full border px-2 text-xs text-muted-foreground">rumor</span>}
+		<article id={story.id} data-open={open} className={cn("tooltip scroll-mt-24 transition-colors", open && "md:col-span-2 lg:col-span-3")}>
+			<button type="button" onClick={onToggle} aria-expanded={open} className="flex w-full items-start gap-3 px-3.5 py-3 text-left">
+				<span className="min-w-0 flex-1 text-[15px] leading-[1.35]">
+					<span className="block truncate text-[17px] font-bold text-white">{story.title}</span>
+					<span className="flex justify-between gap-3">
+						<span className={MOOD_TEXT[story.mood] ?? "text-white"}>{capitalize(story.mood)} {story.kind === "rumor" ? "Rumor" : "Tale"}</span>
+						<span className="text-white">{seconds} sec</span>
 					</span>
-					<span className="block truncate text-sm text-muted-foreground">
-						{capitalize(story.mood)} · {seconds}s · {credit(story)}
-					</span>
+					<span className="block text-[#9d9d9d]">{story.author ? `Told ${credit(story)}` : "Shared anonymously"}</span>
+					{!open && quote && <span className="mt-1 line-clamp-2 block text-flavor">&ldquo;{quote}&rdquo;</span>}
+					<span className="mt-1 block text-use">Use: Tell this tale at the fire.</span>
 				</span>
-				<ChevronDown aria-hidden className={cn("m-4 size-5 shrink-0 self-center text-muted-foreground transition-transform", open && "rotate-180")} />
+				<ChevronDown aria-hidden className={cn("mt-1 size-5 shrink-0 text-[#9d9d9d] transition-transform", open && "rotate-180")} />
 			</button>
 			{open && (
-				<div className="border-t px-4 py-4">
+				<div className="px-3.5 pb-3.5">
 					<ChatPreview lines={story.lines} name={story.author} />
 					<div className="mt-3 flex flex-wrap gap-2">
 						{copyable && (
 							<Button variant="outline" onClick={copy}>{copied ? <Check /> : <Copy />}{copied ? "Copied! Paste it into Write Your Tales" : "Copy for the game"}</Button>
 						)}
-						<Button variant="ghost" asChild><a href={`#${story.id}`}>Link to this tale</a></Button>
+						<Button variant="ghost" asChild><a href={`#${story.id}`} className="font-[family-name:var(--font-ui)] text-[#9d9d9d]">Link to this tale</a></Button>
 					</div>
 				</div>
 			)}

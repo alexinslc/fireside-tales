@@ -33,7 +33,7 @@ export function GuidelinesPage() {
 			<PageTitle title="Guidelines">Everything here is said out loud in game chat, where anyone nearby can read it. These rules keep the fire a good place to sit.</PageTitle>
 			<div className="space-y-6">
 				<Card>
-					<CardHeader><CardTitle className="font-heading text-2xl text-gold">What makes a good story</CardTitle></CardHeader>
+					<CardHeader><CardTitle className="text-2xl">What makes a good story</CardTitle></CardHeader>
 					<CardContent>
 						<ul className="space-y-3">
 							{GOOD.map(([lead, rest]) => <li key={lead}><strong>{lead}</strong> {rest}</li>)}
@@ -41,16 +41,16 @@ export function GuidelinesPage() {
 					</CardContent>
 				</Card>
 				<Card>
-					<CardHeader><CardTitle className="font-heading text-2xl text-gold">What we can't accept</CardTitle></CardHeader>
+					<CardHeader><CardTitle className="text-2xl">What we can't accept</CardTitle></CardHeader>
 					<CardContent><ul className="list-disc space-y-2 pl-5">{NOT_OK.map((item) => <li key={item}>{item}</li>)}</ul></CardContent>
 				</Card>
 				<Card>
-					<CardHeader><CardTitle className="font-heading text-2xl text-gold">What happens after you share</CardTitle></CardHeader>
+					<CardHeader><CardTitle className="text-2xl">What happens after you share</CardTitle></CardHeader>
 					<CardContent className="space-y-4">
 						<ol className="space-y-4">
 							{AFTER.map((step, i) => (
 								<li key={step} className="flex gap-4">
-									<span className="grid size-8 shrink-0 place-items-center rounded-full border font-heading text-gold">{i + 1}</span>
+									<span className="grid size-8 shrink-0 place-items-center rounded-[3px] bg-[#05070d] font-[family-name:var(--font-ui)] font-bold text-[#ffd100] shadow-[0_0_0_1px_#000,0_0_0_2px_#6f7484]">{i + 1}</span>
 									<span>{step}</span>
 								</li>
 							))}

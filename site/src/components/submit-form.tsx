@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
-import { CircleCheck, CircleAlert, Flame, Send } from "lucide-react";
+import { CircleCheck, CircleAlert, Send } from "lucide-react";
 import { LIMITS, findProblems, parseWriting, toWriting, tidyStory, storySeconds } from "@shared/rules.js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,18 +25,15 @@ function Rules() {
 		"Plain letters and punctuation. No links or {target}.",
 		"Your own writing, kind to everyone at the fire.",
 	];
+	// Written as a quest's objectives, on the same paper as the quest on the home page.
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle className="font-heading text-xl text-gold">The short rules</CardTitle>
-				<CardDescription>The rest are in the <Link className="text-gold underline" to="/guidelines">guidelines</Link>.</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<ul className="space-y-1.5 text-sm">
-					{rules.map((rule) => <li key={rule} className="flex gap-2"><Flame className="mt-0.5 size-4 shrink-0 text-ember" aria-hidden="true" />{rule}</li>)}
-				</ul>
-			</CardContent>
-		</Card>
+		<section className="parchment px-6 py-6">
+			<h3 className="rule-title text-2xl">The short rules</h3>
+			<ul className="mt-3 space-y-2 text-[16px]">
+				{rules.map((rule) => <li key={rule} className="flex gap-3"><span aria-hidden className="mt-2 size-2 shrink-0 rotate-45 bg-[#6b4c22]" />{rule}</li>)}
+			</ul>
+			<p className="mt-3 text-[15px]">The rest are in the <Link className="underline" to="/guidelines">guidelines</Link>.</p>
+		</section>
 	);
 }
 
@@ -113,11 +110,11 @@ export function SubmitForm() {
 			<div className="mx-auto max-w-2xl">
 				<Card>
 					<CardHeader>
-						<CardTitle className="font-heading text-2xl text-gold">Thank you!</CardTitle>
+						<CardTitle className="text-2xl">Thank you!</CardTitle>
 						<CardDescription className="text-base">"{sent.title}" is waiting at the fire. Every story is checked before it goes in the game.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<p>Your code: <span className="font-[family-name:var(--font-chat)] text-2xl font-bold tracking-widest text-gold">{sent.receipt}</span></p>
+						<p>Your code: <span className="tooltip inline-block px-3 py-1 text-2xl font-bold tracking-widest text-[#ffd100]">{sent.receipt}</span></p>
 						<p>{sent.emailed
 							? "We'll email you when it's approved and again when it's featured."
 							: <><Link className="text-gold underline" to={`/status?code=${sent.receipt}`}>Check on it later</Link> with that code.</>}</p>
@@ -192,18 +189,20 @@ export function SubmitForm() {
 			<div className="space-y-6 lg:sticky lg:top-24">
 			<Card>
 				<CardHeader>
-					<CardTitle className="font-heading text-xl text-gold">How it looks</CardTitle>
+					<CardTitle className="text-2xl">How it looks</CardTitle>
 					<CardDescription>What players will see in chat. It updates as you type.</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<ChatPreview lines={lines} name={draft.author} />
 					{lines.length > 0 && (
 						<div className="space-y-1.5">
-							<div className="h-2 overflow-hidden rounded-full border bg-black/40" aria-hidden="true">
-								<div className={Math.round(seconds) > limit ? "h-full bg-destructive" : "h-full bg-gradient-to-r from-gold to-ember"}
+							{/* A cast bar: it fills as the story gets longer, and fails red past the limit. */}
+							<div className="relative h-5 overflow-hidden rounded-[2px] bg-black shadow-[0_0_0_1px_#000,0_0_0_2px_#6f7484]" aria-hidden="true">
+								<div className={Math.round(seconds) > limit ? "h-full bg-gradient-to-b from-[#ff3a2a] to-[#8e1b12]" : "h-full bg-gradient-to-b from-[#ffd84a] to-[#c78a00]"}
 									style={{ width: `${Math.min(100, (seconds / limit) * 100)}%` }} />
+								<span className="absolute inset-0 grid place-items-center font-[family-name:var(--font-ui)] text-[13px] font-bold text-white [text-shadow:1px_1px_0_#000]">Telling a tale</span>
 							</div>
-							<p className="text-sm text-muted-foreground">About {aboutSeconds(lines)} seconds to tell. Keep it under {limit}.</p>
+							<p className="font-[family-name:var(--font-ui)] text-sm text-muted-foreground">About {aboutSeconds(lines)} seconds to tell. Keep it under {limit}.</p>
 						</div>
 					)}
 					{started && (

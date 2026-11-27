@@ -51,7 +51,7 @@ export function FeedbackPage() {
 			<Page className="max-w-2xl">
 				<Card>
 					<CardHeader>
-						<CardTitle className="font-heading text-2xl text-gold">Thank you!</CardTitle>
+						<CardTitle className="text-2xl">Thank you!</CardTitle>
 						<CardDescription className="text-base">We read every note. {contact.trim() ? "If we have a question, we'll get in touch." : ""}</CardDescription>
 					</CardHeader>
 					<CardContent>
@@ -73,7 +73,7 @@ export function FeedbackPage() {
 							<RadioGroup value={kind} onValueChange={setKind} className="grid gap-2 sm:grid-cols-2">
 								{KINDS.map((k) => (
 									<Label key={k.value} htmlFor={`kind-${k.value}`}
-										className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 font-normal has-[[data-state=checked]]:border-gold has-[[data-state=checked]]:bg-accent">
+										className="flex min-h-11 cursor-pointer items-center gap-3 rounded-[3px] border bg-[#05070d] px-3 font-normal has-[[data-state=checked]]:border-[#ffd100] has-[[data-state=checked]]:bg-[#ffd100]/8">
 										<RadioGroupItem id={`kind-${k.value}`} value={k.value} />{k.label}
 									</Label>
 								))}

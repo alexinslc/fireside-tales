@@ -10,12 +10,12 @@ export function ChatPreview({ lines, name, className }: {
 	const teller = name?.trim() || "Bram";
 	const shown = lines.filter((line) => line.text);
 	return (
-		<div className={cn("rounded-lg border bg-black/55 px-4 py-3 font-[family-name:var(--font-chat)] text-[15px] leading-relaxed", className)}>
-			{shown.length === 0 && <p className="text-muted-foreground italic">Your story will appear here as people will see it.</p>}
+		<div className={cn("chat-frame px-3.5 py-3 text-[16px] leading-snug", className)}>
+			{shown.length === 0 && <p className="text-[#9c9a92]">Your story will appear here as people will see it.</p>}
 			{shown.map((line, index) => {
 				const text = line.kind === "emote" ? `${teller} ${line.text}` : `[${teller}] says: ${line.text}`;
 				const tone = line.kind === "emote" ? "text-emote" : "text-say";
-				return <p key={index} className={cn("mb-2 last:mb-0", tone)}>{text}</p>;
+				return <p key={index} className={cn("mb-1.5 last:mb-0", tone)}>{text}</p>;
 			})}
 		</div>
 	);

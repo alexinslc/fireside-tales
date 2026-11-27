@@ -5,12 +5,18 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: "Cinzel", Georgia, serif;
-    --font-sans: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
-    --font-chat: "Trebuchet MS", Arial, sans-serif;
+    --font-heading: "IM Fell English", Georgia, serif;
+    --font-sans: "Alegreya", Georgia, serif;
+    --font-ui: "Archivo Narrow", "Arial Narrow", Arial, sans-serif;
+    --font-chat: "Archivo Narrow", "Arial Narrow", Arial, sans-serif;
     --color-gold: var(--gold);
     --color-ember: var(--ember);
     --color-say: #ffffff;
+    --color-parchment: var(--parchment);
+    --color-ink: var(--ink);
+    --color-flavor: #ffd100;
+    --color-use: #1eff00;
+    --color-night: var(--night);
     --color-emote: #ff8040;
     --color-good: #7fd08a;
     --color-mood-funny: #ffd246;
@@ -59,114 +65,167 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Night at the fire, drawn with the game's own interface: chat frames, item tooltips,
+   quest parchment and the red buttons. No gold-on-brown fantasy template. */
 :root {
-    --background: #0d0907;
-    --foreground: #efe3c8;
-    --card: #1a130e;
-    --card-foreground: #efe3c8;
-    --popover: #1d1611;
-    --popover-foreground: #efe3c8;
-    --primary: #b2451b;
-    --primary-foreground: #fff3dc;
-    --secondary: #2a2019;
-    --secondary-foreground: #efe3c8;
-    --muted: #241b14;
-    --muted-foreground: #b9a888;
-    --accent: #33261b;
-    --accent-foreground: #f0c75e;
-    --destructive: #e5604d;
-    --border: #4d3825;
-    --input: #4a3826;
-    --ring: #d4af37;
-    --gold: #f0c75e;
-    --ember: #f07f30;
-    --chart-1: #f0c75e;
-    --chart-2: #e8742a;
-    --chart-3: #b9a888;
-    --chart-4: #8f2216;
-    --chart-5: #4a3826;
-    --radius: 0.6rem;
-    --sidebar: #1b1510;
-    --sidebar-foreground: #efe3c8;
-    --sidebar-primary: #8f2216;
-    --sidebar-primary-foreground: #ffe7a3;
-    --sidebar-accent: #33261b;
-    --sidebar-accent-foreground: #f0c75e;
-    --sidebar-border: #4a3826;
-    --sidebar-ring: #d4af37;
+    --night: #070a12;
+    --background: #0a0d16;
+    --foreground: #e6e1d3;
+    --card: #0e1220;
+    --card-foreground: #e6e1d3;
+    --popover: #0e1220;
+    --popover-foreground: #e6e1d3;
+    --primary: #8e1b12;
+    --primary-foreground: #ffd100;
+    --secondary: #1a1f2e;
+    --secondary-foreground: #e6e1d3;
+    --muted: #151a28;
+    --muted-foreground: #9c9a92;
+    --accent: #1c2233;
+    --accent-foreground: #ffd100;
+    --destructive: #ff4b3e;
+    --border: #3a3f4d;
+    --input: #3a3f4d;
+    --ring: #ffd100;
+    --gold: #ffd100;
+    --ember: #ff8040;
+    --parchment: #e9d9b4;
+    --ink: #2b1a0c;
+    --chart-1: #ffd100;
+    --chart-2: #ff8040;
+    --chart-3: #9c9a92;
+    --chart-4: #8e1b12;
+    --chart-5: #3a3f4d;
+    --radius: 0.2rem;
+    --sidebar: #0e1220;
+    --sidebar-foreground: #e6e1d3;
+    --sidebar-primary: #8e1b12;
+    --sidebar-primary-foreground: #ffd100;
+    --sidebar-accent: #1c2233;
+    --sidebar-accent-foreground: #ffd100;
+    --sidebar-border: #3a3f4d;
+    --sidebar-ring: #ffd100;
     color-scheme: dark;
-}
-
-.dark {
-    --background: #0d0907;
-    --foreground: #efe3c8;
-    --card: #1a130e;
-    --card-foreground: #efe3c8;
-    --popover: #1d1611;
-    --popover-foreground: #efe3c8;
-    --primary: #b2451b;
-    --primary-foreground: #fff3dc;
-    --secondary: #2a2019;
-    --secondary-foreground: #efe3c8;
-    --muted: #241b14;
-    --muted-foreground: #b9a888;
-    --accent: #33261b;
-    --accent-foreground: #f0c75e;
-    --destructive: #e5604d;
-    --border: #4d3825;
-    --input: #4a3826;
-    --ring: #d4af37;
-    --gold: #f0c75e;
-    --ember: #f07f30;
-    --chart-1: #f0c75e;
-    --chart-2: #e8742a;
-    --chart-3: #b9a888;
-    --chart-4: #8f2216;
-    --chart-5: #4a3826;
-    --radius: 0.6rem;
-    --sidebar: #1b1510;
-    --sidebar-foreground: #efe3c8;
-    --sidebar-primary: #8f2216;
-    --sidebar-primary-foreground: #ffe7a3;
-    --sidebar-accent: #33261b;
-    --sidebar-accent-foreground: #f0c75e;
-    --sidebar-border: #4a3826;
-    --sidebar-ring: #d4af37;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
+  html {
+    @apply font-sans;
+  }
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
-    font-size: 17px;
-    /* Smoke drifting up from an ember glow, with no images to load. */
-    background-image:
-      radial-gradient(ellipse 70% 45% at 50% 105%, rgb(240 127 48 / 0.18), transparent 70%),
-      radial-gradient(ellipse 50% 30% at 15% 0%, rgb(185 168 136 / 0.06), transparent 70%),
-      radial-gradient(ellipse 45% 30% at 85% 10%, rgb(185 168 136 / 0.05), transparent 70%);
-    background-attachment: fixed;
-    }
+    font-size: 18px;
+    line-height: 1.55;
+  }
   h1, h2, h3 {
     font-family: var(--font-heading);
-    color: var(--gold);
-    letter-spacing: 0.02em;
-    }
+    font-weight: 400;
+    color: #f4ecd8;
+    letter-spacing: 0;
+  }
   a {
     text-underline-offset: 3px;
-    }
-  h1 {
-    text-shadow: 0 0 24px rgb(240 127 48 / 0.25);
-    }
-  [data-slot="card"] {
-    background-image: linear-gradient(180deg, rgb(240 199 94 / 0.035), transparent 40%);
-    }
+  }
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
-    }
-  html {
-    @apply font-sans;
-    }
+  }
+  [data-slot="card"] {
+    border-radius: 3px;
+    background: linear-gradient(180deg, #121729, #0b0e19);
+    box-shadow: inset 0 0 0 1px #000, 0 0 0 1px #4a4f5c, 0 10px 30px rgb(0 0 0 / 0.45);
+  }
+  [data-slot="card-title"] {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    color: #f4ecd8;
+  }
+  input, textarea, [data-slot="select-trigger"] {
+    border-radius: 2px !important;
+    background: #05070d !important;
+  }
 }
+
+@layer components {
+  /* The red interface button: dark red, gold letters, a thin gold rim. */
+  .btn-red {
+    background: linear-gradient(180deg, #b3261a 0%, #7a140d 55%, #5a0d08 100%);
+    color: #ffd100;
+    border: 1px solid #c9a24a;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 -2px 0 rgb(0 0 0 / 0.35), 0 1px 0 #000;
+    text-shadow: 0 1px 0 #000;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    border-radius: 3px;
+  }
+  .btn-red:hover { background: linear-gradient(180deg, #cc3324 0%, #8e1b12 55%, #661009 100%); color: #fff2a8; }
+  .btn-red:active { background: linear-gradient(180deg, #5a0d08, #8e1b12); }
+
+  /* A frame like a chat window: see-through black, no border until you look for it. */
+  .chat-frame {
+    background: rgb(0 0 0 / 0.62);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 2px;
+    font-family: var(--font-chat);
+    text-shadow: 1px 1px 0 #000;
+  }
+  .chat-tab {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    padding: 3px 12px 2px;
+    background: rgb(0 0 0 / 0.62);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-bottom: 0;
+    border-radius: 3px 3px 0 0;
+    color: #ffd100;
+  }
+  .chat-tab[aria-selected="false"] { color: #bdb8a8; background: rgb(0 0 0 / 0.35); }
+
+  /* An item tooltip: deep blue-black, a light grey rim, white title. */
+  .tooltip {
+    background: rgb(6 9 24 / 0.94);
+    border: 1px solid #6f7484;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px #000, inset 0 0 0 2px rgb(255 255 255 / 0.06), 0 8px 24px rgb(0 0 0 / 0.5);
+    font-family: var(--font-ui);
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+  }
+  .tooltip:hover, .tooltip[data-open="true"] { border-color: #b8bccb; }
+
+  /* Quest log paper: warm parchment, dark ink. */
+  .parchment {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgb(255 255 255 / 0.35), transparent 55%),
+      radial-gradient(ellipse at 100% 100%, rgb(120 80 30 / 0.25), transparent 60%),
+      var(--parchment);
+    color: var(--ink);
+    border-radius: 2px;
+    box-shadow: inset 0 0 40px rgb(110 70 20 / 0.35), 0 0 0 1px #6b4c22, 0 12px 30px rgb(0 0 0 / 0.5);
+  }
+  .parchment h2, .parchment h3 { color: #3a1d06; }
+  .parchment a { color: #7a1a0a; }
+
+  /* A heading with the thin rule under it, as the game's panels do. */
+  .rule-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .rule-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, #6f7484, transparent);
+  }
+  .parchment .rule-title::after { background: linear-gradient(90deg, #7b5a2c, transparent); }
+}
+
+/* The hero's chat lines arrive one at a time, unless motion is turned down. */
+@keyframes line-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.line-in { animation: line-in 0.5s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .line-in { animation: none; } }

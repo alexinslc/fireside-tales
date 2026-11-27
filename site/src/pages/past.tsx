@@ -23,13 +23,13 @@ function WeekPost({ week }: { week: WeekSummary }) {
 	const moods = Object.entries(week.moods).sort((a, b) => b[1] - a[1]);
 	return (
 		<article className="border-b border-border/60 py-8 first:pt-0 last:border-b-0">
-			<p className="mb-1 text-sm tracking-wide text-muted-foreground uppercase">From the fire</p>
-			<h2 className="mb-2 text-3xl font-bold">
+			<p className="mb-1 font-[family-name:var(--font-ui)] text-sm tracking-wide text-muted-foreground uppercase">From the fire</p>
+			<h2 className="mb-2 text-4xl">
 				<Link to={`/past/${week.week}`} className="text-foreground no-underline hover:text-gold">The week of {weekName(week.week, true)}</Link>
 			</h2>
 			{week.post && (
 				<>
-					<p className="mb-2 font-heading text-xl font-bold text-gold">{week.post.title}</p>
+					<p className="mb-2 text-xl text-flavor">&ldquo;{week.post.title}&rdquo;</p>
 					<p className="mb-3 text-lg">{week.post.excerpt}</p>
 				</>
 			)}
@@ -81,7 +81,7 @@ export function PastPage() {
 			</PageTitle>
 			{weeks && weeks.length > 0 && <PastFilters filters={filters} onChange={change} placeholder="Search every week: a word, a place, an author" />}
 			{failed && <p className="text-muted-foreground">Couldn't load past weeks. Try again in a moment.</p>}
-			{!weeks && !failed && <Skeleton className="h-40 rounded-xl" />}
+			{!weeks && !failed && <Skeleton className="h-40 rounded-[4px]" />}
 			{weeks?.length === 0 && (
 				<Card className="max-w-xl">
 					<CardContent className="space-y-4 pt-6">
@@ -93,7 +93,7 @@ export function PastPage() {
 
 			{searching ? (
 				<section aria-live="polite">
-					{!results && <Skeleton className="h-40 rounded-xl" />}
+					{!results && <Skeleton className="h-40 rounded-[4px]" />}
 					{results && (
 						<>
 							<p className="mb-6 text-muted-foreground">

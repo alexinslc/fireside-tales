@@ -11,19 +11,19 @@ export function WeekPost({ post, stories }: { post: PublicPost; stories: Story[]
 		return story ? [{ story, note: h.note }] : [];
 	});
 	return (
-		<section className="mb-10 max-w-3xl">
-			<h2 className="mb-4 text-3xl font-bold">{post.title}</h2>
+		<section className="parchment mb-10 max-w-3xl px-6 py-7 sm:px-9">
+			<h2 className="mb-4 text-4xl">{post.title}</h2>
 			<div className="space-y-4 text-lg leading-relaxed">
 				{post.intro.split(/\n\n/).map((paragraph, i) => <p key={i} className="whitespace-pre-line">{paragraph}</p>)}
 			</div>
 			{picks.length > 0 && (
-				<div className="mt-6 rounded-xl border bg-card/60 p-5">
-					<h3 className="mb-3 font-heading text-lg font-bold text-gold">Highlights</h3>
+				<div className="mt-6">
+					<h3 className="rule-title mb-3 text-2xl">Highlights</h3>
 					<ul className="space-y-2">
 						{picks.map(({ story, note }) => (
 							<li key={story.id}>
-								<a href={`#${story.id}`} className="font-semibold text-gold hover:underline">{story.title}</a>
-								<span className="text-muted-foreground"> {credit(story)}</span>
+								<a href={`#${story.id}`} className="font-bold underline">{story.title}</a>
+								<span className="text-[#6b4c22]"> {credit(story)}</span>
 								{note && <span>: {note}</span>}
 							</li>
 						))}

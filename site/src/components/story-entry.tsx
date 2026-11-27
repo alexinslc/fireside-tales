@@ -22,9 +22,9 @@ export function StoryEntry({ story, showWeek = false }: { story: Story; showWeek
 	};
 	const anchor = `/past/${story.week}#${story.id}`;
 	return (
-		<article id={story.id} className="scroll-mt-24 border-b border-border/60 py-8 first:pt-0 last:border-b-0">
-			<h2 className="mb-1 font-heading text-2xl font-bold text-gold">{story.title}</h2>
-			<p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+		<article id={story.id} className="tooltip mb-3 scroll-mt-24 p-4">
+			<h2 className="mb-0.5 font-[family-name:var(--font-ui)] text-[19px] font-bold text-white">{story.title}</h2>
+			<p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] text-[#9d9d9d]">
 				<span className="flex items-center gap-1.5"><MoodDot mood={story.mood} />{capitalize(story.mood)} {story.kind}</span>
 				<span aria-hidden>·</span>
 				<span>about {aboutSeconds(story.lines)} seconds</span>

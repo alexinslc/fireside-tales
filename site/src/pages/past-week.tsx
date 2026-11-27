@@ -39,10 +39,10 @@ export function PastWeekPage() {
 
 	return (
 		<Page className="max-w-5xl">
-			<Link to="/past" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground no-underline hover:text-gold"><ArrowLeft className="size-4" />All past weeks</Link>
+			<Link to="/past" className="mb-6 inline-flex items-center gap-1.5 font-[family-name:var(--font-ui)] text-sm text-muted-foreground no-underline hover:text-[#ffd100]"><ArrowLeft className="size-4" />All past weeks</Link>
 			<header className="mb-8">
-				<p className="mb-1 text-sm tracking-wide text-muted-foreground uppercase">From the fire</p>
-				<h1 className="mb-3 text-4xl font-bold sm:text-5xl">The week of {weekName(week, true)}</h1>
+				<p className="mb-1 font-[family-name:var(--font-ui)] text-sm tracking-wide text-muted-foreground uppercase">From the fire</p>
+				<h1 className="mb-3 text-4xl sm:text-6xl">The week of {weekName(week, true)}</h1>
 				{post && (
 					<>
 						<p className="mb-3 text-lg text-muted-foreground">
@@ -57,7 +57,7 @@ export function PastWeekPage() {
 			</header>
 
 			{failed && <p className="text-muted-foreground">Couldn't load this week. Try again in a moment.</p>}
-			{!post && !failed && <Skeleton className="h-64 rounded-xl" />}
+			{!post && !failed && <Skeleton className="h-64 rounded-[4px]" />}
 			{post && (
 				<>
 					{post.post && <WeekPost post={post.post} stories={post.stories} />}
