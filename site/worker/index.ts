@@ -749,15 +749,16 @@ function trustedWrite(request: Request): boolean {
 }
 
 // Headers that keep browsers strict: no framing (so the review page can't be hidden inside
-// another site), no guessing file types, and only this site's own scripts plus the bot check.
+// another site), no guessing file types, and only this site's own scripts plus the bot check
+// and Cloudflare Web Analytics, which counts visits.
 const CONTENT_SECURITY = [
 	"default-src 'self'",
-	"script-src 'self' https://challenges.cloudflare.com",
+	"script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
 	"frame-src https://challenges.cloudflare.com",
 	"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
 	"font-src 'self' https://fonts.gstatic.com",
 	"img-src 'self' data:",
-	"connect-src 'self'",
+	"connect-src 'self' https://cloudflareinsights.com",
 	"object-src 'none'",
 	"base-uri 'self'",
 	"form-action 'self'",
